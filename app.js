@@ -1,15 +1,23 @@
+/* Mongodb setup */
 const mongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 var uri = "mongodb+srv://veronicafalgiani:NEPuCX3YD0DpAB19@afsm.wit5h.mongodb.net/";
 
+
 /* Start server */
 const express = require("express");
+var cors = require('cors')
 const path = require('path');
+
 const app = express();
+app.use(cors());
+app.use(express.json());
+
 const port = 3100;
 const host = "0.0.0.0";
 
 app.listen(port, host, () => console.log("Server up on port 3100"));
+
 
 /* Serving static files in express so I can use them */
 app.use(express.static(__dirname));
@@ -18,10 +26,24 @@ app.use(express.static(path.join(__dirname, "/html/")));
 app.use(express.static(path.join(__dirname, "/js/")));
 app.use(express.static(path.join(__dirname, "/img/")));
 
+
+/* Auth */
+const auth = require('js/auth').auth;
+
+
 /* Get index page */
 app.get("/", (req,res) =>{
   res.sendFile(path.join(__dirname, "html/index.html"));
 })
+
+/* Create a new user */
+app.post("/users", auth, function (req, res) {
+  addUser(res, req.body);
+})
+
+async function addUser(res, user) {
+
+}
 
 /* Register user */
 
