@@ -66,7 +66,7 @@
         <script src="../js/app.js"></script>
         <script>
             /* This function will ALWAYS be executed no matter the conditions so I had to put it at the start and use localStorage
-            to get the wanted results (the first time it will give an error, but then it will work) */
+            to get the wanted results */
             getFromMarvel("characters", `nameStartsWith=${localStorage.getItem("heroName")}`).then(result => writeSelectHeroes(result.data.results));
             getFromMarvel("series", `titleStartsWith=${localStorage.getItem("seriesName")}`).then(result => writeSelectSeries(result.data.results));
 
