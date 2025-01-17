@@ -31,22 +31,29 @@
                         </div>
                         <div class="mb-3">
                             <label for="inputHero" class="form-label">Eroe Preferito</label>
+                            <div id="seriesHelp" class="form-text">Inserire le prime lettere dell'eroe per cercare</div>
                             <div class="d-flex">
                                 <input class="form-control" placeholder="Eroe" id="selectHero">
-                                <button type="submitHero" class="btn btn-outline-success" onclick="getHero()">Cerca</button>
+                                <button type="submitHero" class="btn btn-outline-success" onclick="searchHero()">Cerca</button>
                             </div>
                             <select class="form-select" size="3" id="inputHero">
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="inputSeries" class="form-label">Serie Preferita</label>
-                            <input type="series" class="form-control" id="inputSeries">
+                            <div id="seriesHelp" class="form-text">Inserire le prime lettere della serie per cercare</div>
+                            <div class="d-flex">
+                                <input class="form-control" placeholder="Serie" id="selectSeries">
+                                <button type="submitSeries" class="btn btn-outline-success" onclick="searchSeries()">Cerca</button>
+                            </div>
+                            <select class="form-select" size="3" id="inputSeries">
+                            </select>
                         </div>
                         <div class="mb-4">
                             <label for="inputImg" class="form-label">Foto profilo</label>
                             <input class="form-control" type="file" id="inputImg">
                         </div>                          
-                        <button type="submitForm" class="btn btn-primary mb-4 " onclick="register()">Registrati</button>
+                        <button type="submitForm" class="btn btn-primary mb-4" onclick="register()">Registrati</button>
                         <br>
                         <a href="login.html">Sei già iscritto?</a>
                     </form>
@@ -58,15 +65,32 @@
         <script src="../js/marvel.js"></script>
         <script src="../js/app.js"></script>
         <script>
-            /* Get all superheroes and populate form-select of heroes */            
-            function getHero() {
-                heroName = document.getElementById("selectHero");
-                console.log(heroName.value)      
+            /* This function will ALWAYS be executed no matter the conditions so I had to put it at the start and use localStorage
+            to get the wanted results (the first time it will give an error, but then it will work) */
+            getFromMarvel("characters", `nameStartsWith=${localStorage.getItem("heroName")}`).then(result => writeSelectHeroes(result.data.results));
+            getFromMarvel("series", `titleStartsWith=${localStorage.getItem("seriesName")}`).then(result => writeSelectSeries(result.data.results));
+
+            /* When i press on the button the input is saved in a localStorage Item and the page is reloaded so 
+            the getFromMarvel() function can give us updated results */
+            function searchHero() {
+                localStorage.setItem("heroName", document.getElementById("selectHero").value)
+                console.log(localStorage.getItem("heroName"))
+                location.reload()
+            }  
+            
+            /* Same as above but with series */
+            function searchSeries() {
+                localStorage.setItem("seriesName", document.getElementById("selectSeries").value)
+                console.log(localStorage.getItem("seriesName"))
+                location.reload()
+            }
+
+            function register() {
+                // Cleaning the localstorage
+                localStorage.clear();
                 
-                // TODO: ERROR RESUTL UNDEFINED WHEN GETFROMMARVEL IS IN A FUNCTION
-                getFromMarvel("characters", `name=${heroName}`).then(result => writeSelectHeroes(result.data.results));
-                console.log(result)
-            }               
+                //TODO
+            }
         </script>
     </body>
 </html>
