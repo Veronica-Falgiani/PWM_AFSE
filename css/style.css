@@ -1,0 +1,22 @@
+#login-form {
+    width: 500px;
+}
+
+#registrati-form {
+    width: 700px
+}
+
+.container {
+    min-height: 100vh;
+}
+
+.mx-auto {
+    background-color: #212529;
+}
+
+body {
+    background-image:    url('../img/marvelbg.jpg');
+    background-size:     cover;                      
+    background-repeat:   no-repeat;
+    background-position: center center;            
+}
