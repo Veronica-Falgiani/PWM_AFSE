@@ -18,8 +18,8 @@
                     <hr>
                     <form>
                         <div class="mb-3">
-                            <label for="inputName" class="form-label">Nome</label>
-                            <input type="name" class="form-control" id="inputName" placeholder="Nome">
+                            <label for="inputUsername" class="form-label">Username</label>
+                            <input type="username" class="form-control" id="inputUsername" placeholder="Username">
                         </div>
                         <div class="mb-3">
                             <label for="inputEmail" class="form-label">Email</label>
@@ -61,9 +61,8 @@
             </div>
         </div>
 
-        <script src="../js/menu.js"></script>
-        <script src="../js/marvel.js"></script>
-        <script src="../js/app.js"></script>
+        <script src="/js/menu.js"></script>
+        <script src="/js/marvel.js"></script>
         <script>
             /* This function will ALWAYS be executed no matter the conditions so I had to put it at the start and use localStorage
             to get the wanted results */
@@ -86,10 +85,27 @@
             }
 
             function register() {
-                // Cleaning the localstorage
-                localStorage.clear();
+                // cleaning the localstorage
+                //localStorage.clear();
                 
-                //TODO
+                // getting all the values from the form
+                var username = document.getElementById("inputUsername").value;
+                var email = document.getElementById("inputEmail").value;
+                var password = document.getElementById("inputPassword").value;
+                var hero = document.getElementById("inputHero").value;
+                var series = document.getElementById("inputSeries").value;
+                var img = document.getElementById("inputImg").value;
+
+                var data = {
+                    username: username,
+                    email: email,
+                    password: password,
+                    hero: hero,
+                    series: series,
+                    img: img
+                }
+
+                console.log(data)
             }
         </script>
     </body>
