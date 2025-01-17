@@ -35,15 +35,28 @@
 
         <script src="js/menu.js"></script>
         <script>
-            /* function login() {
-                var email = document.getElementById("inputEmail").value;
-                var password = document.getElementById("inputPassword").value;
+                function login() {
+                    var email = document.getElementById("inputEmail").value;
+                    var password = document.getElementById("inputPassword").value;
 
-                user = {
-                    email: email,
-                    password: password
-                };
-            }*/
+                    user = {
+                        email: email,
+                        password: password
+                    };
+
+                    console.log(user)
+
+                    fetch("http://127.0.0.1:3100/login", {
+                        method: "POST",
+                        headers: { "Content-Type" : "application/json" },
+                        body: JSON.stringify(user)
+                    })
+                    .then(response => response.json())
+                    .then(loggedUser => {
+                        localStorage.setItem("user", JSON.stringify(loggedUser))
+                        window.location.href = "user.html"
+                    })
+                }
         </script>
     </body>
 </html>

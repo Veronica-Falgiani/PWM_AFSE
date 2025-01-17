@@ -40,6 +40,11 @@ function auth(req, res, next) {
     next()
 }
 
+function hash(input) {
+    return crypto.createHash('md5')
+        .update(input)
+        .digest('hex')
+}
 
 /* Get index page */
 app.get("/", (req,res) =>{
@@ -48,16 +53,13 @@ app.get("/", (req,res) =>{
 
 /* Create a new user */
 app.post("/users", auth, function (req, res) {
-    addUser(res, req.body);
+    console.log("qui");
+    addUser(req, res);
 })
 
-function hash(input) {
-    return crypto.createHash('md5')
-        .update(input)
-        .digest('hex')
-}
+async function addUser(req, res) {
+    let user = req.body;
 
-async function addUser(res, user) {
     if (user.username == undefined) {
         res.status(400).send("Missing Name")
         return
@@ -102,4 +104,42 @@ async function addUser(res, user) {
 }
 
 /* Login as user */
-app.get()
+app.post("/login", async (req, res) => {
+    console.log("qui");
+    loginUser(req, res);
+})
+
+function loginUser(req, res) {
+    let user = req.body;
+
+    if (user.email == undefined) {
+        res.status(400).send("Missing Email")
+        return
+    }
+    if (user.password == undefined) {
+        res.status(400).send("Missing Password")
+        return
+    }
+
+    user.password = hash(user.password);
+
+    console.log(user)
+
+    var clientdb = new mongoClient(mongodbURI).connect();
+    var filter = {
+        $and: [
+            { "email": user.email },
+            { "password": user.password }
+        ]
+    }
+
+    var loggedUser = clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    console.log(loggedUser);
+
+    if (loggedUser == null) {
+        res.status(401).send("Unauthorized")
+    } else {
+        res.json(loggedUser)
+    }
+}

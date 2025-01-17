@@ -109,11 +109,10 @@
 
                 fetch("http://127.0.0.1:3100/users?apikey=123456", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
-                }).then(response => {
+                })
+                .then(response => {
                     if (response.ok) {
                         window.location.href = "profile.html"
                     } else {
