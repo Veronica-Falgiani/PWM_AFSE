@@ -16,18 +16,18 @@
                 <div class="row align-items-center">
                     <h3>Registrati</h1>
                     <hr>
-                    <form>
+                    <form action="/register" method="post">
                         <div class="mb-3">
                             <label for="inputUsername" class="form-label">Username</label>
-                            <input type="username" class="form-control" id="inputUsername" placeholder="Username">
+                            <input type="username" name="username" class="form-control" id="inputUsername" placeholder="Username">
                         </div>
                         <div class="mb-3">
                             <label for="inputEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+                            <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Email">
                         </div>
                         <div class="mb-3">
                             <label for="inputPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                            <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Password">
                         </div>
                         <div class="mb-3">
                             <label for="inputHero" class="form-label">Eroe Preferito</label>
@@ -36,7 +36,7 @@
                                 <input class="form-control" placeholder="Eroe" id="selectHero">
                                 <button type="submitHero" class="btn btn-outline-success" onclick="searchHero()">Cerca</button>
                             </div>
-                            <select class="form-select" size="3" id="inputHero">
+                            <select class="form-select" name="hero" size="3" id="inputHero">
                             </select>
                         </div>
                         <div class="mb-3">
@@ -46,14 +46,14 @@
                                 <input class="form-control" placeholder="Serie" id="selectSeries">
                                 <button type="submitSeries" class="btn btn-outline-success" onclick="searchSeries()">Cerca</button>
                             </div>
-                            <select class="form-select" size="3" id="inputSeries">
+                            <select class="form-select" name="series" size="3" id="inputSeries">
                             </select>
                         </div>
                         <div class="mb-4">
                             <label for="inputImg" class="form-label">Foto profilo</label>
-                            <input class="form-control" type="file" id="inputImg">
+                            <input class="form-control" name="img" type="file" id="inputImg">
                         </div>                          
-                        <button type="submitForm" class="btn btn-primary mb-4" onclick="register()">Registrati</button>
+                        <button type="submitForm" class="btn btn-primary mb-4">Registrati</button>
                         <br>
                         <a href="login.html">Sei già iscritto?</a>
                     </form>
@@ -82,44 +82,6 @@
                 localStorage.setItem("seriesName", document.getElementById("selectSeries").value)
                 console.log(localStorage.getItem("seriesName"))
                 location.reload()
-            }
-
-            function register() {
-                // cleaning the localstorage
-                //localStorage.clear();
-                
-                // getting all the values from the form
-                var username = document.getElementById("inputUsername").value;
-                var email = document.getElementById("inputEmail").value;
-                var password = document.getElementById("inputPassword").value;
-                var hero = document.getElementById("inputHero").value;
-                var series = document.getElementById("inputSeries").value;
-                var img = document.getElementById("inputImg").value;
-
-                var data = {
-                    username: username,
-                    email: email,
-                    password: password,
-                    hero: hero,
-                    series: series,
-                    img: img
-                }
-
-                console.log(data)
-
-                fetch("http://127.0.0.1:3100/users?apikey=123456", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = "profile.html"
-                    } else {
-                        response.text().then(text =>
-                            alert(text)
-                    )}
-                })
             }
         </script>
     </body>

@@ -14,6 +14,7 @@ const mongodbURI = "mongodb+srv://veronicafalgiani:NEPuCX3YD0DpAB19@afsm.wit5h.m
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded());
 
 const port = 3100;
 const host = "0.0.0.0";
@@ -51,14 +52,20 @@ app.get("/", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/index.html"));
 })
 
+app.get("/register", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/register.html"));
+})
+
 /* Create a new user */
-app.post("/users", auth, function (req, res) {
-    console.log("qui");
+app.post("/register", function (req, res) {
+    console.log("Ricevuto una richiesta POST");
+    console.log(req.body);
     addUser(req, res);
 })
 
 async function addUser(req, res) {
     let user = req.body;
+    console.log()
 
     if (user.username == undefined) {
         res.status(400).send("Missing Name")
@@ -105,7 +112,6 @@ async function addUser(req, res) {
 
 /* Login as user */
 app.post("/login", async (req, res) => {
-    console.log("qui");
     loginUser(req, res);
 })
 
