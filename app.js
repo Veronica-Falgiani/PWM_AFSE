@@ -56,6 +56,14 @@ app.get("/register", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/register.html"));
 })
 
+app.get("/login", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/login.html"));
+})
+
+app.get("/profile", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/profile.html"));
+})
+
 /* Create a new user */
 app.post("/register", function (req, res) {
     console.log("Ricevuto una richiesta POST");
@@ -99,7 +107,7 @@ async function addUser(req, res) {
     var clientdb = await new mongoClient(mongodbURI).connect();
     try {
         var items = await clientdb.db("AFSM").collection("Users").insertOne(user);
-        res.json(items);
+        res.redirect("/profile");
     }
     catch(e) {
         if(e.code == 11000) {
@@ -115,7 +123,7 @@ app.post("/login", async (req, res) => {
     loginUser(req, res);
 })
 
-function loginUser(req, res) {
+async function loginUser(req, res) {
     let user = req.body;
 
     if (user.email == undefined) {
@@ -131,7 +139,8 @@ function loginUser(req, res) {
 
     console.log(user)
 
-    var clientdb = new mongoClient(mongodbURI).connect();
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
     var filter = {
         $and: [
             { "email": user.email },

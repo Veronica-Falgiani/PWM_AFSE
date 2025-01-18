@@ -16,16 +16,16 @@
                 <div class="row align-items-center">
                     <h3>Log-In</h1>
                     <hr>
-                    <form>
+                    <form action="/login" method="post">
                         <div class="mb-3">
                         <label for="inputEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="inputEmail">
+                        <input type="email" name="email" class="form-control" id="inputEmail">
                         </div>
                         <div class="mb-4">
                         <label for="inputPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="inputPassword">
+                        <input type="password" name="password" class="form-control" id="inputPassword">
                         </div>
-                        <button type="submit" class="btn btn-primary mb-4" onclick="login()">Login</button>
+                        <button type="submit" class="btn btn-primary mb-4">Login</button>
                         <br>
                         <a href="register.html">Sei già registrato?</a>
                     </form>
@@ -34,29 +34,5 @@
         </div>
 
         <script src="js/menu.js"></script>
-        <script>
-                function login() {
-                    var email = document.getElementById("inputEmail").value;
-                    var password = document.getElementById("inputPassword").value;
-
-                    user = {
-                        email: email,
-                        password: password
-                    };
-
-                    console.log(user)
-
-                    fetch("http://127.0.0.1:3100/login", {
-                        method: "POST",
-                        headers: { "Content-Type" : "application/json" },
-                        body: JSON.stringify(user)
-                    })
-                    .then(response => response.json())
-                    .then(loggedUser => {
-                        localStorage.setItem("user", JSON.stringify(loggedUser))
-                        window.location.href = "user.html"
-                    })
-                }
-        </script>
     </body>
 </html>
