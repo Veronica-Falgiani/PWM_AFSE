@@ -107,6 +107,7 @@ async function addUser(req, res) {
     var clientdb = await new mongoClient(mongodbURI).connect();
     try {
         var items = await clientdb.db("AFSM").collection("Users").insertOne(user);
+        //res.json(items)
         res.redirect("/profile");
     }
     catch(e) {
@@ -148,13 +149,14 @@ async function loginUser(req, res) {
         ]
     }
 
-    var loggedUser = clientdb.db("AFSM").collection("Users").findOne(filter);
+    var loggedUser = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
     console.log(loggedUser);
 
     if (loggedUser == null) {
         res.status(401).send("Unauthorized")
     } else {
-        res.json(loggedUser)
+        //res.json(loggedUser)
+        res.redirect("/profile")
     }
 }
