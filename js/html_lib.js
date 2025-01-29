@@ -97,3 +97,34 @@ function writeHero(heroJson) {
     </ul>
     `
 }
+
+/* PROFILE.HTML */
+/* Prints the description of the user in the profile page */
+/*function writeProfile() {
+    console.log(document.body)
+
+    const profile = document.getElementById("profilo")
+    profilo.innerHTML = 
+    `
+    <div class="mx-auto p-5 border rounded" id="registrati-form"> 
+        <h3> Profilo </h3>
+        <hr>
+        <img class="mb-3" src="../img/${user.img}" width="150px" height="150px">  
+        <p> Nome: ${user.username}</p>
+        <p> Mail: ${user.email}</p>
+        <p> Password: ${user.password}</p>
+        <p> Eroe preferito: ${user.hero}</p>
+        <p> Serie preferita: ${user.series}</p>
+        <button class="btn btn-primary">Modifica profilo</button>
+        <hr>
+        <button class="btn btn-danger">Elimina profilo</button>
+    </div> 
+    `
+}*/
+
+
+
+
+
+/* Various exports of functions */
+module.exports = writeProfile;
