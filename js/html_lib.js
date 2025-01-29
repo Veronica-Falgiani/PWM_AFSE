@@ -127,4 +127,3 @@ function writeHero(heroJson) {
 
 
 /* Various exports of functions */
-module.exports = writeProfile;
