@@ -44,6 +44,66 @@ function writeSelectSeries(seriesJson) {
     }
 }
 
+/* When the user send the fonts the locaStorage is updated */
+function sendForm() {
+    localStorage.setItem("userEmail", document.getElementById("inputEmail").value)
+    localStorage.removeItem("heroName")
+    localStorage.removeItem("seriesName")
+}
+
+/* PROFILE.HTML */
+/* Prints the description of the user in the profile page */
+function writeProfile(userInfo) {
+    console.log(userInfo.username)
+    getHero(userInfo.hero)
+    getSeries(userInfo.series)
+    const profilo = document.getElementById("profilo")
+    profilo.innerHTML = 
+    `
+    <h3> Profilo </h3>
+    <hr>
+    <img class="mb-3" src="../img/tmp.jpg" width="150px" height="150px">  
+    <p> Nome: ${userInfo.username}</p>
+    <p> Mail: ${userInfo.email}</p>
+    <p> Password: ******</p>
+    <p id="hero"> Eroe preferito: </p>
+    <p id="series"> Serie preferita: </p>
+    <button class="btn btn-primary">Modifica profilo</button>
+    <hr>
+    <button class="btn btn-danger">Elimina profilo</button>
+    `
+}
+
+async function getHero(hero) {
+    const res = getFromMarvel(`characters/${hero}`).then(result => {
+        heroJson = (JSON.stringify(result.data.results))
+        const heroInfo = JSON.parse(heroJson);
+        return heroInfo[0].name
+    })
+    
+    const populateHero = async () => {
+        const hero = await res;
+        document.getElementById("hero").innerHTML = `Eroe preferito: ${hero}`
+    };
+
+    populateHero();
+}
+
+
+async function getSeries(series) {
+    const res = getFromMarvel(`series/${series}`).then(result => {
+        seriesJson = (JSON.stringify(result.data.results))
+        const seriesInfo = JSON.parse(seriesJson);
+        return seriesInfo[0].title
+    })
+    
+    const populateSeries = async () => {
+        const series = await res;
+        document.getElementById("series").innerHTML = `Serie preferita: ${series}`
+    };
+
+    populateSeries();
+}
 
 /* CARD.HTML */
 /* prints all the info about a character in an html format */
@@ -97,33 +157,3 @@ function writeHero(heroJson) {
     </ul>
     `
 }
-
-/* PROFILE.HTML */
-/* Prints the description of the user in the profile page */
-/*function writeProfile() {
-    console.log(document.body)
-
-    const profile = document.getElementById("profilo")
-    profilo.innerHTML = 
-    `
-    <div class="mx-auto p-5 border rounded" id="registrati-form"> 
-        <h3> Profilo </h3>
-        <hr>
-        <img class="mb-3" src="../img/${user.img}" width="150px" height="150px">  
-        <p> Nome: ${user.username}</p>
-        <p> Mail: ${user.email}</p>
-        <p> Password: ${user.password}</p>
-        <p> Eroe preferito: ${user.hero}</p>
-        <p> Serie preferita: ${user.series}</p>
-        <button class="btn btn-primary">Modifica profilo</button>
-        <hr>
-        <button class="btn btn-danger">Elimina profilo</button>
-    </div> 
-    `
-}*/
-
-
-
-
-
-/* Various exports of functions */

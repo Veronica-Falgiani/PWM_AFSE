@@ -5,9 +5,10 @@ const mongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const url = require('url');   
 const crypto = require('crypto');
+require("dotenv").config();
 
 /* Mongodb setup */
-const mongodbURI = process.env.AUTH_KEY;
+const mongodbURI = process.env.MONGODB_URI;
 
 /* Function used to encrypt/decrypt passwords */
 function hash(input) {
@@ -141,6 +142,7 @@ async function loginUser(req, res) {
     user.password = hash(user.password);
 
     console.log(user)
+    console.log(process.env.MONGODB_URI)
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
@@ -163,4 +165,31 @@ async function loginUser(req, res) {
     }
 }
 
-/* Function to show a user description on the profile page */
+
+/* ---- POPULATE PROFILE ---- */
+app.post("/profile", async(req,res) => {
+    getUserInfo(req,res);
+})
+
+/* Searches the info of the user in the database based on the email */
+async function getUserInfo(req,res) {
+    let email = req.body.email;
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "email": email },
+        ]
+    }
+
+    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    console.log(userInfo);
+
+    if (userInfo == null) {
+        res.status(401).send("Unauthorized")
+    } else {
+        res.json(userInfo)
+    }
+}
