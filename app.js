@@ -66,8 +66,20 @@ app.get("/profile", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/profile.html"));
 })
 
-app.get("/crediti", (req,res) =>{
+app.get("/credits", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/credits.html"));
+})
+
+app.get("/packs", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/packs.html"));
+})
+
+app.get("/trade", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/trade.html"));
+})
+
+app.get("/album", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/album.html"));
 })
 
 /* ---- CREATE NEW USER ---- */

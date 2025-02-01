@@ -48,7 +48,7 @@ else {
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/profile">Profilo</a></li>
                             <li><a class="dropdown-item" href="/album">Album</a></li>
-                            <li><a class="dropdown-item" href="/crediti">Crediti totali: ${localStorage.getItem("crediti")}</a></li>
+                            <li><a class="dropdown-item" href="/credits">Crediti totali: ${localStorage.getItem("crediti")}</a></li>
                             <li><hr></li>
                             <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
                         </ul>
