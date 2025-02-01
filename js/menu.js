@@ -32,13 +32,13 @@ else {
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="trade.html">Scambi</a>
+                        <a class="nav-link" href="/trade">Scambi</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="credits.html">Crediti</a>
+                        <a class="nav-link" href="/credits">Crediti</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="packs.html">Pacchetti</a>
+                        <a class="nav-link" href="/packs">Pacchetti</a>
                     </li>
                     
                     <li class="nav-item dropdown">
@@ -46,9 +46,9 @@ else {
                             "NOME"
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="profile.html">Profilo</a></li>
-                            <li><a class="dropdown-item" href="album.html">Album</a></li>
-                            <li><a class="dropdown-item" href="album.html">Crediti totali: ${credits}</a></li>
+                            <li><a class="dropdown-item" href="/profile">Profilo</a></li>
+                            <li><a class="dropdown-item" href="/album">Album</a></li>
+                            <li><a class="dropdown-item" href="/crediti">Crediti totali: ${localStorage.getItem("crediti")}</a></li>
                             <li><hr></li>
                             <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
                         </ul>

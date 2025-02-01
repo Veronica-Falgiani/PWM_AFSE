@@ -66,6 +66,9 @@ app.get("/profile", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/profile.html"));
 })
 
+app.get("/crediti", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/credits.html"));
+})
 
 /* ---- CREATE NEW USER ---- */
 app.post("/register", function (req, res) {
@@ -103,6 +106,10 @@ async function addUser(req, res) {
     }
 
     user.password = hash(user.password);
+
+    user.credits = 0
+    user.cards = {}
+    user.albums = {}
 
     console.log(user);
 
@@ -191,5 +198,43 @@ async function getUserInfo(req,res) {
         res.status(401).send("Unauthorized")
     } else {
         res.json(userInfo)
+    }
+}
+
+
+/* ---- GET CREDITS ---- */
+app.post("/credits", (req,res) =>{
+    getCredits(req,res);
+})
+
+/* Updates db with incremented credits an then returns the value of credits */
+async function getCredits(req,res) {
+    let eur = req.body.euros;
+    let email = req.body.email;
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "email": email },
+        ]
+    }
+
+    var increment = { 
+        $inc : {"credits": Number(eur)} 
+    } 
+
+    /* findOneandUpdate did't work even with return original set to false */
+    var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, increment);
+    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    if (response.modifiedCount == 0) {
+        res.status(401).send("Failed to update credits")
+    } else {
+        if (userInfo == null) {
+            res.status(401).send("Unauthorized")
+        } else {
+            res.json(userInfo.credits)
+        } 
     }
 }

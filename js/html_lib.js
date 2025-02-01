@@ -51,10 +51,12 @@ function sendForm() {
     localStorage.removeItem("seriesName")
 }
 
+
 /* PROFILE.HTML */
 /* Prints the description of the user in the profile page */
 function writeProfile(userInfo) {
     console.log(userInfo.username)
+    localStorage.setItem("crediti", userInfo.credits)
     getHero(userInfo.hero)
     getSeries(userInfo.series)
     const profilo = document.getElementById("profilo")
@@ -104,6 +106,36 @@ async function getSeries(series) {
 
     populateSeries();
 }
+
+
+/* CREDITS.HTML */
+/* Populates the euros field inside the modal and saves it in the localStorage*/
+function setCredits(eur) {
+    document.getElementById("importo").innerHTML = `Importo: ${eur}€`
+    localStorage.setItem("euros", eur)
+}
+
+async function addCredits() {
+    euros = localStorage.getItem("euros")
+    email = localStorage.getItem("userEmail")
+
+    await fetch("http://localhost:3100/credits", {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ "euros" : euros, 
+                               "email" : email})
+    })
+        .then(response => response.json()).then(res => {
+            localStorage.removeItem("euros")
+            crediti = localStorage.setItem("crediti", res)
+            document.getElementById("crediti").innerHTML = `Totale crediti: ${res}`
+        })
+        .catch(error => console.log('error', error));
+}
+
 
 /* CARD.HTML */
 /* prints all the info about a character in an html format */
