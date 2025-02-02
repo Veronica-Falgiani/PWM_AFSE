@@ -250,3 +250,12 @@ async function getCredits(req,res) {
         } 
     }
 }
+
+/* ---- ADD CARDS TO PROFILE ---- */
+app.post("/packs", (req, res) => {
+    addCards(req,res);
+})
+
+async function addCards(req,res) {
+    
+}

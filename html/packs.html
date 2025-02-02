@@ -14,23 +14,50 @@
             <div class="mx-auto p-5 border rounded" id="shop"> 
                 <h3> Acquisto pacchetti </h3>
                 <hr>
+                <h5 class="p-3" style="text-align:center" id="crediti"> Totale crediti: </h5>              
                 <div class="row p-3">
-                    <div class="col p-3 m-3 border rounded">
-                        Scambio1
+                    <div class="col">
+                        <button class="btn btn-danger" onclick="setCards(5, 5)" data-bs-toggle="modal" data-bs-target="#cardModal">
+                            1 pacchetto<br>(5 crediti)
+                        </button>
                     </div>
-                    <div class="col p-3 m-3 border rounded">
-                        Scambio1
+                    <div class="col">
+                        <button class="btn btn-danger" onclick="setCards(15, 12)" data-bs-toggle="modal" data-bs-target="#cardModal">
+                            3 pacchetti<br>(12 crediti)
+                        </button>
                     </div>
-                    <div class="col p-3 m-3 border rounded">
-                        Scambio1
+                    <div class="col">
+                        <button class="btn btn-danger" onclick="setCards(25, 18)" data-bs-toggle="modal" data-bs-target="#cardModal">
+                            5 pacchetti<br>(18 crediti)
+                        </button>
                     </div>
-                    <div class="col p-3 m-3 border rounded">
-                        Scambio1
+                </div>
+                <p style="text-align:center; color: gray;">(Ogni pacchetto contiene 5 carte)</p>
+            </div>
+            <div class="modal fade" id="cardModal">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h3 class="modal-title fs-5" id="modalLabel">Sei sicuro?</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="bodyModal">
+                        <div class="row p-3" id="bodyModal">
+                            <button class="btn btn-danger" onclick="buyCards()">
+                                <h5>Acquista</h5>
+                            </button>                                        
+                        </div>
                     </div>
                 </div>
             </div> 
         </div>
 
         <script src="js/menu.js"></script>
+        <script src="js/html_lib.js"></script>
+        <script>
+            window.addEventListener("load", (event) => {
+                document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("crediti")}`
+            })
+        </script>
     </body>
 </html>

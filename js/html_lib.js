@@ -115,6 +115,7 @@ function setCredits(eur) {
     localStorage.setItem("euros", eur)
 }
 
+/* Takes the values from local storage and adds credits based on them */
 async function addCredits() {
     euros = localStorage.getItem("euros")
     email = localStorage.getItem("userEmail")
@@ -134,6 +135,96 @@ async function addCredits() {
             document.getElementById("crediti").innerHTML = `Totale crediti: ${res}`
         })
         .catch(error => console.log('error', error));
+}
+
+
+/* PACKS.HTML */
+/* Populates the euros field inside the modal and saves it in the localStorage*/
+function setCards(num, cred) {
+    localStorage.setItem("cards", num)
+    localStorage.setItem("packCreds", cred)
+}
+
+/* Buys the cards, saves them in the user's db and then shows them */
+async function buyCards() {
+    cards = []
+    heroNum = []
+    numCards = localStorage.getItem("cards")
+    credits = localStorage.getItem("packCreds")
+    email = localStorage.getItem("userEmail")
+
+    console.log("test")
+    for(i = 0; i < numCards; i++) {
+        heroInfo = {}
+        
+        hero = await getRandomHero()
+        id = hero.id
+        name = hero.name
+        thumbnail = `${hero.thumbnail.path}.${hero.thumbnail.extension}`
+
+        cards.push({"id": id, "name": name, "thumbnail": thumbnail})
+    }
+    
+    console.log(cards)
+
+    /* FINIRE INSERIMENTO NEL DB DELLE CARTE */
+    /*await fetch("http://localhost:3100/packs", {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ "cards" : cards, 
+                               "email" : email,
+                               "credits" : credits})
+    })
+        .then(response => response.json()).then(res => {
+            localStorage.removeItem("euros")
+            crediti = localStorage.setItem("crediti", res)
+            document.getElementById("crediti").innerHTML = `Totale crediti: ${res}`
+        })
+        .catch(error => console.log('error', error));*/
+}
+
+/* return id, name and image of a randomly picked hero in the marvel api */
+async function getRandomHero() {
+    maxHero = 1564;
+    num = Math.floor(Math.random() * maxHero);
+
+    hero = getFromMarvel("/characters", `limit=1&offset=${num}`).then(result => {return result.data.results[0]})
+    console.log(hero)
+
+    return hero
+}
+
+function writeCards(heroes) {
+    const modalPacks = document.getElementById("cardModal");
+    modalPacks.innerHTML = 
+    `
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h3 class="modal-title fs-5" id="modalLabel">Carte trovate</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row" id="bodyModal">
+            </div>
+        </div>
+    </div>
+    `;
+
+    for(i = 0; i < heroes.length; i++) {
+        const modalBody = document.getElementById("bodyModal");
+        bodyModal.innerHTML += 
+        `
+        <div class="col p-3 m-3 border rounded">
+            <img src="${heroes[i].thumbnail.path}.${heroes[i].thumbnail.extension}" width="100px" height="100px">
+            <br>
+            ${heroes[i].name} 
+        </div>
+        `
+    }
 }
 
 
