@@ -225,6 +225,21 @@ function writeCards(heroes) {
     }
 }
 
+/* CARDS.HTML*/
+/* Prints all the cards of the logged user */
+function populateCards(cards) {
+    for(i = 0; i < cards.length; i++) {
+        /* TO DO GET CARDS AND THEN PRINT */
+        const cardsRow = document.getElementById("cards");
+        cardsRow.innerHTML += 
+        `
+        <button class="col p-3 m-3 border rounded">
+            <img class="mb-3" src="${cards[i].thumbnail}" width="100px" height="100px">  
+            <p> ${cards[i].name}</p>
+        </button>
+        `
+    }
+}
 
 /* CARD.HTML */
 /* prints all the info about a character in an html format */

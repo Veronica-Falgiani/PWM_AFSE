@@ -82,6 +82,10 @@ app.get("/album", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/album.html"));
 })
 
+app.get("/cards", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/cards.html"));
+})
+
 /* ---- CREATE NEW USER ---- */
 app.post("/register", function (req, res) {
     console.log("Ricevuto una richiesta POST");
@@ -298,4 +302,29 @@ async function addCards(req,res) {
             res.json(userInfo.credits)
         } 
     }
+}
+
+/* GET CARDS FOR THE PAGE */
+app.post("/cards", (req,res) => {
+    getCards(req,res);
+})
+
+async function getCards(req,res) {
+    email = req.body.email;
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "email": email },
+        ]
+    }
+
+    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    if (userInfo == null) {
+        res.status(401).send("Unauthorized")
+    } else {
+        res.json(userInfo.cards)
+    } 
 }
