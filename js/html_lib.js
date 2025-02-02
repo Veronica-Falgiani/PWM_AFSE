@@ -168,7 +168,7 @@ async function buyCards() {
     console.log(cards)
 
     /* FINIRE INSERIMENTO NEL DB DELLE CARTE */
-    /*await fetch("http://localhost:3100/packs", {
+    await fetch("http://localhost:3100/packs", {
         method: "POST",
         headers: {
             "Content-type": "application/json",
@@ -179,11 +179,9 @@ async function buyCards() {
                                "credits" : credits})
     })
         .then(response => response.json()).then(res => {
-            localStorage.removeItem("euros")
-            crediti = localStorage.setItem("crediti", res)
-            document.getElementById("crediti").innerHTML = `Totale crediti: ${res}`
+            console.log(res)
         })
-        .catch(error => console.log('error', error));*/
+        .catch(error => console.log('error', error));
 }
 
 /* return id, name and image of a randomly picked hero in the marvel api */

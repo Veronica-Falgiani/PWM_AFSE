@@ -256,6 +256,46 @@ app.post("/packs", (req, res) => {
     addCards(req,res);
 })
 
+/* Updates credits and then inserts card info in the db of the user */
 async function addCards(req,res) {
+    email = req.body.email
+    cards = req.body.cards
+    credits = -Math.abs(Number(req.body.credits))
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "email": email },
+        ]
+    }
+
+    var removeCredits = { 
+        $inc : {"credits": credits} 
+    } 
+
+    for(i = 0; i < cards.length; i++){
+        var addCards = { 
+            $push : {"cards": cards[i]} 
+        } 
+     
+        var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, addCards);
+        if (response.modifiedCount == 0) {
+            res.status(401).send("Failed to update cards")
+        }
+    }
+
+    var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, removeCredits);
     
+    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    if (response.modifiedCount == 0) {
+        res.status(401).send("Failed to update cards")
+    } else {
+        if (userInfo == null) {
+            res.status(401).send("Unauthorized")
+        } else {
+            res.json(userInfo.credits)
+        } 
+    }
 }
