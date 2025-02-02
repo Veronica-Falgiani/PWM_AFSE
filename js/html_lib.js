@@ -233,12 +233,18 @@ function populateCards(cards) {
         const cardsRow = document.getElementById("cards");
         cardsRow.innerHTML += 
         `
-        <button class="col p-3 m-3 border rounded">
+        <button class="col p-3 m-3 border rounded" onclick="getCard(${cards[i].id})">
             <img class="mb-3" src="${cards[i].thumbnail}" width="100px" height="100px">  
             <p> ${cards[i].name}</p>
         </button>
-        `
+        `;
     }
+}
+
+/* Gets the value id of the card and then redirects to /card */
+function getCard(id) {
+    localStorage.setItem("heroId", id)  
+    window.location.href = "/card";  
 }
 
 /* CARD.HTML */

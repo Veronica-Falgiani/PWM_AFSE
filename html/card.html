@@ -17,10 +17,12 @@
         </div>
 
         <script src="js/menu.js"></script>
-        <script src="js/marvel.js"></script>
+        <script src="js/html_lib.js"></script>
         <script>
-            var id = 1009718;
-            getFromMarvel(`characters/${id}`).then(result => writeHero(result.data.results));
+            window.addEventListener("load", async (event) => {
+                id = localStorage.getItem("heroId");
+                getFromMarvel(`characters/${id}`).then(result => writeHero(result.data.results));
+            })
         </script>
     </body>
 </html>

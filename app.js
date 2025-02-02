@@ -86,6 +86,10 @@ app.get("/cards", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/cards.html"));
 })
 
+app.get("/card", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/card.html"));
+})
+
 /* ---- CREATE NEW USER ---- */
 app.post("/register", function (req, res) {
     console.log("Ricevuto una richiesta POST");
