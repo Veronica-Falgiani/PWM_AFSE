@@ -34,7 +34,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="/register" method="put">
+                            <form action="/profile" method="put">
                                 <p> Si può modificare anche un solo campo </p>
                                 <input type="hidden" name="username" class="form-control" id="inputModUsername" value="">
                                 <div class="mb-3">
@@ -49,7 +49,7 @@
                                     <label for="inputImg" class="form-label">Foto profilo</label>
                                     <input class="form-control" name="img" type="file" id="inputImg">
                                 </div>                          
-                                <button type="submitForm" class="btn btn-primary mb-4" onclick="modUser()">Modifica</button>
+                                <button type="submitForm" class="btn btn-primary mb-4">Modifica</button>
                             </form>
                         </div>
                     </div>
@@ -65,10 +65,10 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="/register" method="delete">
+                            <form action="/profile" method="delete">
                                 <p> Vuoi veramente eliminare il profilo? </p>
                                 <input type="hidden" name="username" class="form-control" id="inputDelUsername" value="">
-                                <button type="submitForm" class="btn btn-danger mb-4" onclick="dekUser()">Si</button>
+                                <button type="submitForm" class="btn btn-danger mb-4">Si</button>
                             </form>
                         </div>
                     </div>

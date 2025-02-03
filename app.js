@@ -223,20 +223,36 @@ async function getUserInfo(req,res) {
 
 /* ---- UPDATE USER ---- */
 app.put("/profile", (req, res) => {
-    updateUser(req,res)
+    updateUser(req,res);
 })
 
 /* Updates the current user */
 async function updateUser() {
-    let user = req.body;
+    username = req.body.username;
+    email = req.body.username;
+    password = req.body.password;
+    img = req.body.img
+
+    var filter = {
+        $and: [
+            { "username": username },
+        ]
+    }
+
+    console.log(form)
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
-    if(user.password != null) {
-        user.password = hash(user.password);
-        var item = await clientdb.db("AFSM").collection("Users").insertOne(user);
+    if(email != null) {
+        var item = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"email":email}});
     }
-    
+    if(password != null) {
+        password = hash(password);
+        var item = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"password":password}});
+    }
+    if(img != null) {
+        var item = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"img":img}});
+    }
     
     try {
         res.redirect("/profile");

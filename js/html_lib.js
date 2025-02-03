@@ -108,33 +108,6 @@ async function getSeries(series) {
     populateSeries();
 }
 
-/* Sends a request to modify the user */
-async function modUser() {
-    euros = localStorage.getItem("euros")
-    username = localStorage.getItem("username")
-
-    await fetch("http://localhost:3100/credits", {
-        method: "POST",
-        headers: {
-            "Content-type": "application/json",
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({ "euros" : euros, 
-                               "username" : username})
-    })
-        .then(response => response.json()).then(res => {
-            localStorage.removeItem("euros")
-            crediti = localStorage.setItem("credits", res)
-            document.getElementById("crediti").innerHTML = `Totale crediti: ${res}`
-        })
-        .catch(error => console.log('error', error));
-}
-
-/* Sends a request to delete the user */
-function delUser() {
-    console.log("delete")
-}
-
 
 /* CREDITS.HTML */
 /* Populates the euros field inside the modal and saves it in the localStorage*/
