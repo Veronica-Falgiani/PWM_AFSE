@@ -34,23 +34,16 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="/profile?_method=PUT" method="post">
-                                <p> Si può modificare anche un solo campo </p>
-                                <input type="hidden" name="username" class="form-control" id="inputModUsername" value="">
-                                <div class="mb-3">
-                                    <label for="inputEmail" class="form-label">Email</label>
-                                    <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Email">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="inputPassword" class="form-label">Password</label>
-                                    <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Password">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="inputImg" class="form-label">Foto profilo</label>
-                                    <input class="form-control" name="img" type="file" id="inputImg">
-                                </div>                          
-                                <button type="submitForm" class="btn btn-primary mb-4">Modifica</button>
-                            </form>
+                            <p> Si può modificare anche un solo campo </p>
+                            <div class="mb-3">
+                                <label for="inputEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="inputEmail" placeholder="Email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="inputPassword" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                            </div>                       
+                            <button class="btn btn-primary mb-4" onclick="modifyUser()">Modifica</button>
                         </div>
                     </div>
                 </div>
@@ -65,11 +58,9 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="/profile" method="delete">
-                                <p> Vuoi veramente eliminare il profilo? </p>
-                                <input type="hidden" name="username" class="form-control" id="inputDelUsername" value="">
-                                <button type="submitForm" class="btn btn-danger mb-4">Si</button>
-                            </form>
+                            <p> Vuoi veramente eliminare il profilo? </p>
+                            <input type="hidden" class="form-control" id="inputDelUsername" value="">
+                            <button class="btn btn-danger mb-4">Si</button>
                         </div>
                     </div>
                 </div>
@@ -82,6 +73,27 @@
             window.addEventListener("load", async (event) => {
                 writeProfile()
             })
+
+            async function modifyUser() {
+                username = localStorage.getItem("username")
+                email = document.getElementById("inputEmail").value
+                password = document.getElementById("inputPassword").value
+
+                fetch(`http://localhost:3100/user/${username}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-type": "application/json",
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ "email" : email, 
+                                           "password" : password })
+                    })
+                    .then(result => result.json()).then(res => {
+                        localStorage.setItem("email", res.email)
+                        window.location.href = "http://localhost:3100/profile";
+                    })
+                    .catch(error => console.log('Error updating the user', error));
+            }
         </script>
     </body>
 </html>

@@ -101,7 +101,7 @@ async function addUser(req, res) {
     let user = req.body;
 
     if (user.username == undefined) {
-        res.status(400).send("Missing Name")
+        res.status(400).send("Missing Username")
         return
     }
     if (user.email == undefined) {
@@ -120,24 +120,27 @@ async function addUser(req, res) {
         res.status(400).send("Missing Series")
         return
     }
-    if (user.img == undefined) {
-        res.status(400).send("Missing Image")
-        return
-    }
 
     user.password = hash(user.password);
 
     user.credits = 0
-    user.cards = {}
-    user.albums = {}
+    user.cards = []
+    user.albums = []
 
     console.log(user);
 
     var clientdb = await new mongoClient(mongodbURI).connect();
-    
+
+    var filter = {
+        $and: [
+            { "username": user.username }
+        ]
+    }
+
     try {
         var items = await clientdb.db("AFSM").collection("Users").insertOne(user);
-        res.redirect("/profile");
+        var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
+        res.json(userInfo);
     }
     catch(e) {
         if(e.code == 11000) {
@@ -157,8 +160,6 @@ app.post("/login", async (req, res) => {
 async function loginUser(req, res) {
     let user = req.body;
 
-    console.log(user)
-
     if (user.username == undefined) {
         res.status(400).send("Missing Username")
         return
@@ -169,8 +170,6 @@ async function loginUser(req, res) {
     }
 
     user.password = hash(user.password);
-
-    console.log(user)
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
@@ -183,7 +182,7 @@ async function loginUser(req, res) {
 
     var loggedUser = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
-    console.log(loggedUser);
+    //console.log(loggedUser);
 
     if (loggedUser == null) {
         res.status(401).send("Unauthorized")
@@ -194,13 +193,13 @@ async function loginUser(req, res) {
 
 
 /* ---- GET USER INFO ---- */
-app.get("/user/:id", async(req,res) => {
+app.get("/user/:username", async(req,res) => {
     getUserInfo(req,res);
 })
 
 /* Searches the info of the user in the database based on the email */
 async function getUserInfo(req,res) {
-    let username = req.body.username;
+    let username = req.params.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
@@ -222,16 +221,17 @@ async function getUserInfo(req,res) {
 }
 
 /* ---- UPDATE USER ---- */
-app.put("/profile", (req, res) => {
+app.put("/user/:username", (req, res) => {
     updateUser(req,res);
 })
 
 /* Updates the current user */
-async function updateUser() {
-    username = req.body.username;
-    email = req.body.username;
+async function updateUser(req, res) {
+    username = req.params.username;
+    email = req.body.email;
     password = req.body.password;
-    img = req.body.img
+
+    console.log(req.params, req.body) 
 
     var filter = {
         $and: [
@@ -241,19 +241,20 @@ async function updateUser() {
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
-    if(email != null) {
+    if(email != "") {
         var item = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"email":email}});
     }
-    if(password != null) {
+    if(password != "") {
         password = hash(password);
         var item = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"password":password}});
     }
-    if(img != null) {
-        var item = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"img":img}});
-    }
     
+    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    console.log(userInfo)
+
     try {
-        res.redirect("/profile");
+        res.json(userInfo);
     }
     catch(e) {
         if(e.code == 11000) {
@@ -265,7 +266,7 @@ async function updateUser() {
 }
 
 /* ---- DELETE USER ---- */
-app.delete("/profile", (req, res) => {
+app.delete("/user/:username", (req, res) => {
     deleteUser(req,res);
 })
 
@@ -382,12 +383,12 @@ async function addCards(req,res) {
 }
 
 /* GET CARDS FOR THE PAGE */
-app.post("/cards", (req,res) => {
+app.post("/cards/:username", (req,res) => {
     getCards(req,res);
 })
 
 async function getCards(req,res) {
-    username = req.body.username;
+    username = req.params.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
