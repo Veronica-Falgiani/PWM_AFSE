@@ -60,7 +60,7 @@
                         <div class="modal-body">
                             <p> Vuoi veramente eliminare il profilo? </p>
                             <input type="hidden" class="form-control" id="inputDelUsername" value="">
-                            <button class="btn btn-danger mb-4">Si</button>
+                            <button class="btn btn-danger mb-4" onclick="deleteUser()">Si</button>
                         </div>
                     </div>
                 </div>
@@ -93,6 +93,19 @@
                         window.location.href = "http://localhost:3100/profile";
                     })
                     .catch(error => console.log('Error updating the user', error));
+            }
+
+            async function deleteUser() { 
+                username = localStorage.getItem("username")
+
+                fetch(`http://localhost:3100/user/${username}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-type": "application/json",
+                        'Accept': 'application/json',
+                    }})
+                    .then(result => result.json()).then(res => {localStorage.clear(); window.location.href = "/"})
+                    .catch(error => console.log('Error deleting the user', error));
             }
         </script>
     </body>

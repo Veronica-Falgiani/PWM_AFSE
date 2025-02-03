@@ -271,7 +271,7 @@ app.delete("/user/:username", (req, res) => {
 })
 
 /* Deletes the current user */
-async function deleteUser() {
+async function deleteUser(req,res) {
     username = req.params.username;
 
     var filter = {
@@ -282,27 +282,22 @@ async function deleteUser() {
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
-    var item = await clientdb.db("AFSM").collection("Users").unset(filter);
-
     try {
-        res.redirect("/");
+        var item = await clientdb.db("AFSM").collection("Users").deleteOne(filter);
+        res.json(item);
     }
     catch(e) {
-        if(e.code == 11000) {
-            res.status(400).send("Utente già presente")
-            return
-        }
-        res.status(500).send(`Errore generico: ${e}`);
+        res.status(500).send(`Error when deleting a user: ${e}`);
     }
 }
 
 /* ---- GET CREDITS ---- */
 app.post("/credits", (req,res) =>{
-    getCredits(req,res);
+    removeCredits(req,res);
 })
 
 /* Updates db with incremented credits an then returns the value of credits */
-async function getCredits(req,res) {
+async function removeCredits(req,res) {
     let eur = req.body.euros;
     let username = req.body.username;
 
@@ -334,13 +329,13 @@ async function getCredits(req,res) {
 }
 
 /* ---- ADD CARDS TO PROFILE ---- */
-app.post("/packs", (req, res) => {
+app.post("/cards/:username", (req, res) => {
     addCards(req,res);
 })
 
 /* Updates credits and then inserts card info in the db of the user */
 async function addCards(req,res) {
-    username = req.body.username
+    username = req.params.username
     cards = req.body.cards
     credits = -Math.abs(Number(req.body.credits))
 
@@ -382,7 +377,7 @@ async function addCards(req,res) {
     }
 }
 
-/* GET CARDS FOR THE PAGE */
+/* GET CARDS OF THE USER */
 app.get("/cards/:username", (req,res) => {
     getCards(req,res);
 })

@@ -113,40 +113,6 @@ function setCards(num, cred) {
     localStorage.setItem("packCreds", cred)
 }
 
-/* Buys the cards, saves them in the user's db and then shows them */
-async function buyCards() {
-    cards = []
-    heroNum = []
-    numCards = localStorage.getItem("cards")
-    credits = localStorage.getItem("packCreds")
-    username = localStorage.getItem("username")
-
-    for(i = 0; i < numCards; i++){
-        
-        hero = await getRandomHero()
-        id = hero.id
-        name = hero.name
-        thumbnail = `${hero.thumbnail.path}.${hero.thumbnail.extension}`
-
-        cards.push({"id": id, "name": name, "thumbnail": thumbnail})
-    }
-    
-    await fetch("http://localhost:3100/packs", {
-        method: "POST",
-        headers: {
-            "Content-type": "application/json",
-            'Accept': 'application/json',
-        },
-        body: JSON.stringify({ "cards" : cards, 
-                               "username" : username,
-                               "credits" : credits})
-    })
-        .then(response => response.json()).then(res => localStorage.setItem("credits", res))
-        .catch(error => console.log('error', error));
-    
-    writeCards(cards)
-}
-
 /* return id, name and image of a randomly picked hero in the marvel api */
 async function getRandomHero() {
     maxHero = 1564;

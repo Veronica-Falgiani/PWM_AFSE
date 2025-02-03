@@ -58,6 +58,39 @@
             window.addEventListener("load", (event) => {
                 document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("credits")}`
             })
+
+            /* Buys the cards, saves them in the user's db and then shows them */
+            async function buyCards() {
+                cards = []
+                heroNum = []
+                numCards = localStorage.getItem("cards")
+                credits = localStorage.getItem("packCreds")
+                username = localStorage.getItem("username")
+
+                for(i = 0; i < numCards; i++){
+                    
+                    hero = await getRandomHero()
+                    id = hero.id
+                    name = hero.name
+                    thumbnail = `${hero.thumbnail.path}.${hero.thumbnail.extension}`
+
+                    cards.push({"id": id, "name": name, "thumbnail": thumbnail})
+                }
+                
+                await fetch(`http://localhost:3100/cards/${username}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ "cards" : cards,
+                                        "credits" : credits})
+                })
+                    .then(response => response.json()).then(res => localStorage.setItem("credits", res))
+                    .catch(error => console.log('error', error));
+                
+                writeCards(cards)
+            }
         </script>
     </body>
 </html>
