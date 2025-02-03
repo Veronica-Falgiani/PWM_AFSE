@@ -15,29 +15,89 @@
                 <h3> Profilo </h3>
                 <hr>
                 <img class="mb-3" src="../img/tmp.jpg" width="150px" height="150px">  
-                <p> Nome: </p>
-                <p> Mail: </p>
+                <p> Username: </p>
+                <p> Email: </p>
                 <p> Password: </p>
                 <p id="hero"> Eroe preferito: </p>
                 <p id="series"> Serie preferita: </p>
-                <button class="btn btn-primary">Modifica profilo</button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modifica profilo</button>
                 <hr>
-                <button class="btn btn-danger">Elimina profilo</button>
-            </div> 
-        </div>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Elimina profilo</button>
+            </div>
 
+            <!-- Modal to modify the profile -->
+            <div class="modal fade" id="modifyModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h3 class="modal-title fs-5" id="modalLabel">Modifica profilo</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/register" method="put">
+                                <p> Si può modificare anche un solo campo </p>
+                                <div class="mb-3">
+                                    <label for="inputEmail" class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Email">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="inputPassword" class="form-label">Password</label>
+                                    <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Password">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="inputImg" class="form-label">Foto profilo</label>
+                                    <input class="form-control" name="img" type="file" id="inputImg">
+                                </div>                          
+                                <button type="submitForm" class="btn btn-primary mb-4" onclick="modUser()">Modifica</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal to delete the profile -->
+            <div class="modal fade" id="deleteModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h3 class="modal-title fs-5" id="modalLabel">Scelta del pagamento</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h5 class="p-3" style="text-align:center" id="importo"> Importo: </h5>
+                            <div class="row p-3">
+                                <button class="btn btn-danger" onclick="addCredits()">
+                                    <h5>Carta di credito</h5>
+                                </button>                                        
+                            </div>
+                            <div class="row p-3">
+                                <button class="btn btn-danger" onclick="addCredits()">
+                                    <h5>PalPay</h5>
+                                </button>                                        
+                            </div>
+                            <div class="row p-3">
+                                <button class="btn btn-danger" onclick="addCredits()">
+                                    <h5>Bitcoin</h5>
+                                </button>                                        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <script src="js/menu.js"></script>
         <script src="js/html_lib.js"></script>
         <script>
             window.addEventListener("load", async (event) => {
-                userEmail = localStorage.getItem("userEmail")
+                username = localStorage.getItem("username")
                 await fetch("http://localhost:3100/profile", {
                     method: "POST",
                     headers: {
                         "Content-type": "application/json",
                         'Accept': 'application/json',
                     },
-                    body: JSON.stringify({ "email" : userEmail })
+                    body: JSON.stringify({ "username" : username })
                 })
                     .then(response => response.json()).then(res => writeProfile(res))
                     .catch(error => console.log('error', error));

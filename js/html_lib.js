@@ -44,9 +44,9 @@ function writeSelectSeries(seriesJson) {
     }
 }
 
-/* When the user send the fonts the locaStorage is updated */
+/* When the user send the form the locaStorage is updated */
 function sendForm() {
-    localStorage.setItem("userEmail", document.getElementById("inputEmail").value)
+    localStorage.setItem("username", document.getElementById("username").value)
     localStorage.removeItem("heroName")
     localStorage.removeItem("seriesName")
 }
@@ -56,7 +56,7 @@ function sendForm() {
 /* Prints the description of the user in the profile page */
 function writeProfile(userInfo) {
     console.log(userInfo.username)
-    localStorage.setItem("crediti", userInfo.credits)
+    localStorage.setItem("credits", userInfo.credits)
     getHero(userInfo.hero)
     getSeries(userInfo.series)
     const profilo = document.getElementById("profilo")
@@ -70,12 +70,13 @@ function writeProfile(userInfo) {
     <p> Password: ******</p>
     <p id="hero"> Eroe preferito: </p>
     <p id="series"> Serie preferita: </p>
-    <button class="btn btn-primary">Modifica profilo</button>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modifica profilo</button>
     <hr>
-    <button class="btn btn-danger">Elimina profilo</button>
+    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Elimina profilo</button>
     `
 }
 
+/* Function to get the hero from the api */
 async function getHero(hero) {
     const res = getFromMarvel(`characters/${hero}`).then(result => {
         heroJson = (JSON.stringify(result.data.results))
@@ -91,7 +92,7 @@ async function getHero(hero) {
     populateHero();
 }
 
-
+/* Function to get the series from the api */
 async function getSeries(series) {
     const res = getFromMarvel(`series/${series}`).then(result => {
         seriesJson = (JSON.stringify(result.data.results))
@@ -107,6 +108,33 @@ async function getSeries(series) {
     populateSeries();
 }
 
+/* Sends a request to modify the user */
+async function modUser() {
+    euros = localStorage.getItem("euros")
+    username = localStorage.getItem("username")
+
+    await fetch("http://localhost:3100/credits", {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ "euros" : euros, 
+                               "username" : username})
+    })
+        .then(response => response.json()).then(res => {
+            localStorage.removeItem("euros")
+            crediti = localStorage.setItem("credits", res)
+            document.getElementById("crediti").innerHTML = `Totale crediti: ${res}`
+        })
+        .catch(error => console.log('error', error));
+}
+
+/* Sends a request to delete the user */
+function delUser() {
+    console.log("delete")
+}
+
 
 /* CREDITS.HTML */
 /* Populates the euros field inside the modal and saves it in the localStorage*/
@@ -118,7 +146,7 @@ function setCredits(eur) {
 /* Takes the values from local storage and adds credits based on them */
 async function addCredits() {
     euros = localStorage.getItem("euros")
-    email = localStorage.getItem("userEmail")
+    username = localStorage.getItem("username")
 
     await fetch("http://localhost:3100/credits", {
         method: "POST",
@@ -127,11 +155,11 @@ async function addCredits() {
             'Accept': 'application/json',
         },
         body: JSON.stringify({ "euros" : euros, 
-                               "email" : email})
+                               "username" : username})
     })
         .then(response => response.json()).then(res => {
             localStorage.removeItem("euros")
-            crediti = localStorage.setItem("crediti", res)
+            crediti = localStorage.setItem("credits", res)
             document.getElementById("crediti").innerHTML = `Totale crediti: ${res}`
         })
         .catch(error => console.log('error', error));
@@ -151,11 +179,9 @@ async function buyCards() {
     heroNum = []
     numCards = localStorage.getItem("cards")
     credits = localStorage.getItem("packCreds")
-    email = localStorage.getItem("userEmail")
+    username = localStorage.getItem("username")
 
-    console.log("test")
-    for(i = 0; i < numCards; i++) {
-        heroInfo = {}
+    for(i = 0; i < numCards; i++){
         
         hero = await getRandomHero()
         id = hero.id
@@ -165,9 +191,6 @@ async function buyCards() {
         cards.push({"id": id, "name": name, "thumbnail": thumbnail})
     }
     
-    console.log(cards)
-
-    /* FINIRE INSERIMENTO NEL DB DELLE CARTE */
     await fetch("http://localhost:3100/packs", {
         method: "POST",
         headers: {
@@ -175,13 +198,13 @@ async function buyCards() {
             'Accept': 'application/json',
         },
         body: JSON.stringify({ "cards" : cards, 
-                               "email" : email,
+                               "username" : username,
                                "credits" : credits})
     })
-        .then(response => response.json()).then(res => {
-            console.log(res)
-        })
+        .then(response => response.json()).then(res => localStorage.setItem("credits", res))
         .catch(error => console.log('error', error));
+    
+    writeCards(cards)
 }
 
 /* return id, name and image of a randomly picked hero in the marvel api */
@@ -217,7 +240,7 @@ function writeCards(heroes) {
         bodyModal.innerHTML += 
         `
         <div class="col p-3 m-3 border rounded">
-            <img src="${heroes[i].thumbnail.path}.${heroes[i].thumbnail.extension}" width="100px" height="100px">
+            <img src="${heroes[i].thumbnail}" width="100px" height="100px">
             <br>
             ${heroes[i].name} 
         </div>

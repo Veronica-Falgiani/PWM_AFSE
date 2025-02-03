@@ -157,8 +157,8 @@ app.post("/login", async (req, res) => {
 async function loginUser(req, res) {
     let user = req.body;
 
-    if (user.email == undefined) {
-        res.status(400).send("Missing Email")
+    if (user.username == undefined) {
+        res.status(400).send("Missing Username")
         return
     }
     if (user.password == undefined) {
@@ -175,7 +175,7 @@ async function loginUser(req, res) {
 
     var filter = {
         $and: [
-            { "email": user.email },
+            { "username": user.username },
             { "password": user.password }
         ]
     }
@@ -200,13 +200,13 @@ app.post("/profile", async(req,res) => {
 
 /* Searches the info of the user in the database based on the email */
 async function getUserInfo(req,res) {
-    let email = req.body.email;
+    let username = req.body.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
     var filter = {
         $and: [
-            { "email": email },
+            { "username": username },
         ]
     }
 
@@ -221,6 +221,44 @@ async function getUserInfo(req,res) {
     }
 }
 
+/* ---- UPDATE USER ---- */
+app.put("/profile", (req, res) => {
+    updateUser(req,res)
+})
+
+/* Updates the current user */
+async function updateUser() {
+    let user = req.body;
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    if(user.password != null) {
+        user.password = hash(user.password);
+        var item = await clientdb.db("AFSM").collection("Users").insertOne(user);
+    }
+    
+    
+    try {
+        res.redirect("/profile");
+    }
+    catch(e) {
+        if(e.code == 11000) {
+            res.status(400).send("Utente già presente")
+            return
+        }
+        res.status(500).send(`Errore generico: ${e}`);
+    }
+}
+
+/* ---- DELETE USER ---- */
+app.delete("/profile", (req, res) => {
+    deleteUser(req,res);
+})
+
+/* Deletes the current user */
+function deleteUser() {
+
+}
 
 /* ---- GET CREDITS ---- */
 app.post("/credits", (req,res) =>{
@@ -230,13 +268,13 @@ app.post("/credits", (req,res) =>{
 /* Updates db with incremented credits an then returns the value of credits */
 async function getCredits(req,res) {
     let eur = req.body.euros;
-    let email = req.body.email;
+    let username = req.body.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
     var filter = {
         $and: [
-            { "email": email },
+            { "username": username },
         ]
     }
 
@@ -266,7 +304,7 @@ app.post("/packs", (req, res) => {
 
 /* Updates credits and then inserts card info in the db of the user */
 async function addCards(req,res) {
-    email = req.body.email
+    username = req.body.username
     cards = req.body.cards
     credits = -Math.abs(Number(req.body.credits))
 
@@ -274,7 +312,7 @@ async function addCards(req,res) {
 
     var filter = {
         $and: [
-            { "email": email },
+            { "username": username },
         ]
     }
 
@@ -314,13 +352,13 @@ app.post("/cards", (req,res) => {
 })
 
 async function getCards(req,res) {
-    email = req.body.email;
+    username = req.body.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
     var filter = {
         $and: [
-            { "email": email },
+            { "username": username },
         ]
     }
 

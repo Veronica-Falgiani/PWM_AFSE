@@ -1,5 +1,6 @@
 var sitename = location.pathname.substring(location.pathname.lastIndexOf("/") + 1);
 var credits = 300
+var username = localStorage.getItem("username")
 
 if (sitename == "index.html" || sitename == "login.html" || sitename == "register.html") {
     const menuElement = document.getElementById('menu');
@@ -43,7 +44,7 @@ else {
                     
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown">
-                            "NOME"
+                            ${username}
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/profile">Profilo</a></li>
