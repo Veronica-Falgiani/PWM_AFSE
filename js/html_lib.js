@@ -51,7 +51,6 @@ function sendForm() {
     localStorage.removeItem("seriesName")
 }
 
-
 /* PROFILE.HTML */
 /* Prints the description of the user in the profile page */
 function writeProfile(userInfo) {

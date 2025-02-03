@@ -239,8 +239,6 @@ async function updateUser() {
         ]
     }
 
-    console.log(form)
-
     var clientdb = await new mongoClient(mongodbURI).connect();
 
     if(email != null) {
@@ -272,8 +270,29 @@ app.delete("/profile", (req, res) => {
 })
 
 /* Deletes the current user */
-function deleteUser() {
+async function deleteUser() {
+    username = req.body.username;
 
+    var filter = {
+        $and: [
+            { "username": username },
+        ]
+    }
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var item = await clientdb.db("AFSM").collection("Users").unset(filter);
+
+    try {
+        res.redirect("/profile");
+    }
+    catch(e) {
+        if(e.code == 11000) {
+            res.status(400).send("Utente già presente")
+            return
+        }
+        res.status(500).send(`Errore generico: ${e}`);
+    }
 }
 
 /* ---- GET CREDITS ---- */
