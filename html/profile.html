@@ -30,12 +30,13 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                        <h3 class="modal-title fs-5" id="modalLabel">Modifica profilo</h3>
+                        <h3 class="modal-title fs-5" id="modalLabel">Modificare profilo</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <form action="/register" method="put">
                                 <p> Si può modificare anche un solo campo </p>
+                                <input type="hidden" name="username" class="form-control" id="inputModUsername" value="">
                                 <div class="mb-3">
                                     <label for="inputEmail" class="form-label">Email</label>
                                     <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Email">
@@ -60,26 +61,15 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                        <h3 class="modal-title fs-5" id="modalLabel">Scelta del pagamento</h3>
+                        <h3 class="modal-title fs-5" id="modalLabel">Eliminare profilo</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <h5 class="p-3" style="text-align:center" id="importo"> Importo: </h5>
-                            <div class="row p-3">
-                                <button class="btn btn-danger" onclick="addCredits()">
-                                    <h5>Carta di credito</h5>
-                                </button>                                        
-                            </div>
-                            <div class="row p-3">
-                                <button class="btn btn-danger" onclick="addCredits()">
-                                    <h5>PalPay</h5>
-                                </button>                                        
-                            </div>
-                            <div class="row p-3">
-                                <button class="btn btn-danger" onclick="addCredits()">
-                                    <h5>Bitcoin</h5>
-                                </button>                                        
-                            </div>
+                            <form action="/register" method="delete">
+                                <p> Vuoi veramente eliminare il profilo? </p>
+                                <input type="hidden" name="username" class="form-control" id="inputDelUsername" value="">
+                                <button type="submitForm" class="btn btn-danger mb-4" onclick="dekUser()">Si</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -91,6 +81,11 @@
         <script>
             window.addEventListener("load", async (event) => {
                 username = localStorage.getItem("username")
+                
+                /* Modifies the value of the forms to insert the username */
+                document.getElementById("inputModUsername").setAttribute('value', username)
+                document.getElementById("inputDelUsername").setAttribute('value', username)
+
                 await fetch("http://localhost:3100/profile", {
                     method: "POST",
                     headers: {
