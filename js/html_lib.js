@@ -13,6 +13,13 @@ function getFromMarvel(url, query="") {
     .catch(error => console.log('error', error));
 }
 
+/* MENU */
+/* Unsets all the localstorage items to "logout" user */
+function logoutUser() {
+    localStorage.clear();
+    window.location.href = "http://localhost:3100/";
+}
+
 /* REGISTER.HTML */
 /* creates a select menu with a list of heroes */
 function writeSelectHeroes(heroesJson) {
@@ -185,7 +192,6 @@ function writeCards(heroes) {
 /* Prints all the cards of the logged user */
 function populateCards(cards) {
     for(i = 0; i < cards.length; i++) {
-        /* TO DO GET CARDS AND THEN PRINT */
         const cardsRow = document.getElementById("cards");
         cardsRow.innerHTML += 
         `

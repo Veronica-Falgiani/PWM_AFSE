@@ -272,7 +272,7 @@ app.delete("/user/:username", (req, res) => {
 
 /* Deletes the current user */
 async function deleteUser() {
-    username = req.body.username;
+    username = req.params.username;
 
     var filter = {
         $and: [
@@ -285,7 +285,7 @@ async function deleteUser() {
     var item = await clientdb.db("AFSM").collection("Users").unset(filter);
 
     try {
-        res.redirect("/profile");
+        res.redirect("/");
     }
     catch(e) {
         if(e.code == 11000) {
