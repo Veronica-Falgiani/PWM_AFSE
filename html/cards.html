@@ -25,13 +25,12 @@
         <script>
             window.addEventListener("load", async (event) => {
                 username = localStorage.getItem("username")
-                await fetch("http://localhost:3100/cards", {
-                    method: "POST",
+                await fetch(`http://localhost:3100/cards/${username}`, {
+                    method: "GET",
                     headers: {
                         "Content-type": "application/json",
                         'Accept': 'application/json',
                     },
-                    body: JSON.stringify({ "username" : username })
                 })
                     .then(response => response.json()).then(res => populateCards(res))
                     .catch(error => console.log('error', error));

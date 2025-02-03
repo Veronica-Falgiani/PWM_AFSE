@@ -383,7 +383,7 @@ async function addCards(req,res) {
 }
 
 /* GET CARDS FOR THE PAGE */
-app.post("/cards/:username", (req,res) => {
+app.get("/cards/:username", (req,res) => {
     getCards(req,res);
 })
 
