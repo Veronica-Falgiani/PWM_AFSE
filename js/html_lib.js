@@ -44,69 +44,30 @@ function writeSelectSeries(seriesJson) {
     }
 }
 
-/* When the user send the form the locaStorage is updated */
-function sendForm() {
-    localStorage.setItem("username", document.getElementById("username").value)
-    localStorage.removeItem("heroName")
-    localStorage.removeItem("seriesName")
-}
-
 /* PROFILE.HTML */
 /* Prints the description of the user in the profile page */
-function writeProfile(userInfo) {
-    console.log(userInfo.username)
-    localStorage.setItem("credits", userInfo.credits)
-    getHero(userInfo.hero)
-    getSeries(userInfo.series)
+function writeProfile() {
+    username = localStorage.getItem("username") 
+    email = localStorage.getItem("email")
+    credits = localStorage.getItem("credits")
+    hero = localStorage.getItem("hero")
+    series = localStorage.getItem("series")
     const profilo = document.getElementById("profilo")
     profilo.innerHTML = 
     `
     <h3> Profilo </h3>
     <hr>
-    <img class="mb-3" src="../img/tmp.jpg" width="150px" height="150px">  
-    <p> Nome: ${userInfo.username}</p>
-    <p> Mail: ${userInfo.email}</p>
+    <p> Nome: ${username}</p>
+    <p> Mail: ${email}</p>
     <p> Password: ******</p>
-    <p id="hero"> Eroe preferito: </p>
-    <p id="series"> Serie preferita: </p>
+    <p> Crediti: ${credits} </p>
+    <p> Eroe preferito: ${hero} </p>
+    <p> Serie preferita: ${series} </p>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modifica profilo</button>
     <hr>
     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Elimina profilo</button>
     `
 }
-
-/* Function to get the hero from the api */
-async function getHero(hero) {
-    const res = getFromMarvel(`characters/${hero}`).then(result => {
-        heroJson = (JSON.stringify(result.data.results))
-        const heroInfo = JSON.parse(heroJson);
-        return heroInfo[0].name
-    })
-    
-    const populateHero = async () => {
-        const hero = await res;
-        document.getElementById("hero").innerHTML = `Eroe preferito: ${hero}`
-    };
-
-    populateHero();
-}
-
-/* Function to get the series from the api */
-async function getSeries(series) {
-    const res = getFromMarvel(`series/${series}`).then(result => {
-        seriesJson = (JSON.stringify(result.data.results))
-        const seriesInfo = JSON.parse(seriesJson);
-        return seriesInfo[0].title
-    })
-    
-    const populateSeries = async () => {
-        const series = await res;
-        document.getElementById("series").innerHTML = `Serie preferita: ${series}`
-    };
-
-    populateSeries();
-}
-
 
 /* CREDITS.HTML */
 /* Populates the euros field inside the modal and saves it in the localStorage*/

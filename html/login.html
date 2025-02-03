@@ -16,23 +16,51 @@
                 <div class="row align-items-center">
                     <h3>Log-In</h1>
                     <hr>
-                    <form action="/login" method="post">
-                        <div class="mb-3">
-                        <label for="inputUsername" class="form-label">Username</label>
-                        <input type="username" name="username" class="form-control" id="username" placeholder="Username">
-                        </div>
-                        <div class="mb-4">
-                        <label for="inputPassword" class="form-label">Password</label>
-                        <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Password">
-                        </div>
-                        <button type="submit" class="btn btn-primary mb-4" onclick="sendForm()">Login</button>
-                        <br>
-                        <a href="/register">Sei già registrato?</a>
-                    </form>
+                    <div class="mb-3">
+                    <label for="inputUsername" class="form-label">Username</label>
+                    <input type="username" name="username" class="form-control" id="username" placeholder="Username">
+                    </div>
+                    <div class="mb-4">
+                    <label for="inputPassword" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Password">
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-4" onclick="sendForm()">Login</button>
+                    <br>
+                    <a href="/register">Sei già registrato?</a>
                 </div>
             </div>
         </div>
         <script src="js/menu.js"></script>
         <script src="js/html_lib.js"></script>
+        <script>
+            async function sendForm() {
+                username = document.getElementById("username").value
+                password = document.getElementById("inputPassword").value
+                localStorage.removeItem("heroName")
+                localStorage.removeItem("seriesName")
+
+                fetch("http://localhost:3100/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ "username" : username, 
+                                           "password" : password })
+                    })
+                    .then(result => result.json()).then(res => {
+                        localStorage.setItem("username", res.username)
+                        localStorage.setItem("email", res.email)
+                        localStorage.setItem("credits", res.credits)
+                        getFromMarvel(`characters/${res.hero}`).then(result => localStorage.setItem("hero", result.data.results[0].name));
+                        getFromMarvel(`series/${res.series}`).then(result => localStorage.setItem("series", result.data.results[0].title));
+                        /* window.location.href doesn't wait for the function getFromMarvel to finish */
+                        setTimeout(function(){
+                            window.location.href = "http://localhost:3100/profile";
+                        }, 2000);
+                    })
+                    .catch(error => console.log('Error logging in the user', error));
+            }
+        </script>
     </body>
 </html>

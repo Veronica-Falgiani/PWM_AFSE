@@ -157,6 +157,8 @@ app.post("/login", async (req, res) => {
 async function loginUser(req, res) {
     let user = req.body;
 
+    console.log(user)
+
     if (user.username == undefined) {
         res.status(400).send("Missing Username")
         return
@@ -169,7 +171,6 @@ async function loginUser(req, res) {
     user.password = hash(user.password);
 
     console.log(user)
-    console.log(process.env.MONGODB_URI)
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
@@ -187,14 +188,13 @@ async function loginUser(req, res) {
     if (loggedUser == null) {
         res.status(401).send("Unauthorized")
     } else {
-        //res.json(loggedUser)
-        res.redirect("/profile")
+        res.json(loggedUser)
     }
 }
 
 
-/* ---- POPULATE PROFILE ---- */
-app.post("/profile", async(req,res) => {
+/* ---- GET USER INFO ---- */
+app.get("/user/:id", async(req,res) => {
     getUserInfo(req,res);
 })
 

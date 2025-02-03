@@ -14,10 +14,10 @@
             <div class="mx-auto p-5 border rounded" id="profilo"> 
                 <h3> Profilo </h3>
                 <hr>
-                <img class="mb-3" src="../img/tmp.jpg" width="150px" height="150px">  
                 <p> Username: </p>
                 <p> Email: </p>
                 <p> Password: </p>
+                <p> Crediti: </p>
                 <p id="hero"> Eroe preferito: </p>
                 <p id="series"> Serie preferita: </p>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modifica profilo</button>
@@ -80,22 +80,7 @@
         <script src="js/html_lib.js"></script>
         <script>
             window.addEventListener("load", async (event) => {
-                username = localStorage.getItem("username")
-                
-                /* Modifies the value of the forms to insert the username */
-                document.getElementById("inputModUsername").setAttribute('value', username)
-                document.getElementById("inputDelUsername").setAttribute('value', username)
-
-                await fetch("http://localhost:3100/profile", {
-                    method: "POST",
-                    headers: {
-                        "Content-type": "application/json",
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({ "username" : username })
-                })
-                    .then(response => response.json()).then(res => writeProfile(res))
-                    .catch(error => console.log('error', error));
+                writeProfile()
             })
         </script>
     </body>
