@@ -51,17 +51,17 @@
                             <div class="modal-body">
                                 <h5 class="p-3" style="text-align:center" id="importo"> Importo: </h5>
                                 <div class="row p-3">
-                                    <button class="btn btn-danger" onclick="addCredits()">
+                                    <button class="btn btn-danger" onclick="addCredits()" data-bs-toggle="modal" data-bs-target="#buyModal">
                                         <h5>Carta di credito</h5>
                                     </button>                                        
                                 </div>
                                 <div class="row p-3">
-                                    <button class="btn btn-danger" onclick="addCredits()">
+                                    <button class="btn btn-danger" onclick="addCredits()" data-bs-toggle="modal" data-bs-target="#buyModal">
                                         <h5>PalPay</h5>
                                     </button>                                        
                                 </div>
                                 <div class="row p-3">
-                                    <button class="btn btn-danger" onclick="addCredits()">
+                                    <button class="btn btn-danger" onclick="addCredits()" data-bs-toggle="modal" data-bs-target="#buyModal">
                                         <h5>Bitcoin</h5>
                                     </button>                                        
                                 </div>
@@ -76,7 +76,7 @@
         <script src="js/html_lib.js"></script>
         <script>
             window.addEventListener("load", (event) => {
-                document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("crediti")}`
+                document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("credits")}`
             })
         </script>
     </body>

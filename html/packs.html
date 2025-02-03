@@ -41,7 +41,7 @@
                     <h3 class="modal-title fs-5" id="modalLabel">Sei sicuro?</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body" id="bodyModal">
+                    <div class="modal-body">
                         <div class="row p-3" id="bodyModal">
                             <button class="btn btn-danger" onclick="buyCards()">
                                 <h5>Acquista</h5>
@@ -56,7 +56,7 @@
         <script src="js/html_lib.js"></script>
         <script>
             window.addEventListener("load", (event) => {
-                document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("crediti")}`
+                document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("credits")}`
             })
         </script>
     </body>
