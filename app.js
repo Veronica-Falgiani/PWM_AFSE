@@ -287,7 +287,19 @@ async function deleteUser(req,res) {
     }
 }
 
+
 /* ---- GET CREDITS ---- */
+app.get("/credits/:username", (req,res) => {
+    getCredits(req,res);
+})
+
+async function getCredits(req,res) {
+    //TODO
+}
+
+
+/* ---- UPDATE CREDITS ---- */
+/* add :username */
 app.post("/credits", (req,res) =>{
     removeCredits(req,res);
 })
@@ -321,6 +333,25 @@ async function removeCredits(req,res) {
         } else {
             res.json(userInfo.credits)
         } 
+    }
+}
+
+
+/* ---- GET ALL CARDS ---- */
+app.get("/cards", (req,res) => {
+    getCards(req,res);
+})
+
+/* Returns all the cards present in the db */
+async function getCards(req, res) {
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    try {
+        var result = await clientdb.db("AFSM").collection("Cards").find().toArray();
+        res.json(result)
+    }
+    catch (e) {
+        console.log(e)
     }
 }
 
@@ -397,12 +428,12 @@ async function addCards(req,res) {
     }
 }
 
-/* GET CARDS OF THE USER */
+/* ---- GET CARDS OF THE USER ---- */
 app.get("/cards/:username", (req,res) => {
-    getCards(req,res);
+    getUserCards(req,res);
 })
 
-async function getCards(req,res) {
+async function getUserCards(req,res) {
     username = req.params.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();

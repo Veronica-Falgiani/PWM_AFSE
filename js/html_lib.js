@@ -155,10 +155,18 @@ function writeCards(heroes) {
 }
 
 /* ALBUM.HTML*/
-/* Prints all the cards of the logged user */
-function populateCards(cards) {
-    for(i = 0; i < cards.length; i++) {
-        const cardsRow = document.getElementById("cards");
+/* Prints 50 cards for the current page */
+function populateCards(cards, page) {
+    /* Gets 50 cards based on the current page */
+    end = page * 50 // 100
+    start = end - 50 // 50
+
+    /* Clears the html to be repopulated */
+    const cardsRow = document.getElementById("cards");
+    cardsRow.innerHTML = ``
+
+    /* Populate with new cards */
+    for(i = start; i < end; i++) {
         cardsRow.innerHTML += 
         `
         <button class="col p-3 m-3 border rounded" onclick="getCard(${cards[i].id})">
