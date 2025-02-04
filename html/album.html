@@ -14,6 +14,21 @@
             <div class="mx-auto p-5 border rounded"> 
                 <h3> Album </h3>
                 <hr>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <button class="page-link" onclick="prev()">
+                                <span aria-hidden="true">&laquo;</span>
+                            </button>
+                        </li>                      
+                        <li class="page-item"><a class="page-link" id="currentPage">1/32</a></li>
+                        <li class="page-item">
+                            <button class="page-link" onclick="next()">
+                                <span aria-hidden="true">&raquo;</span>
+                            </button>
+                        </li>
+                    </ul>
+                </nav> 
                 <div class="row p-3" id="cards">
                     <!-- Gets populated with populateCards() -->
                 </div>     
