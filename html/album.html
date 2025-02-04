@@ -21,7 +21,7 @@
                                 <span aria-hidden="true">&laquo;</span>
                             </button>
                         </li>                      
-                        <li class="page-item"><a class="page-link" id="currentPage">1/32</a></li>
+                        <li class="page-item"><a class="page-link" id="currentPageUp">1/32</a></li>
                         <li class="page-item">
                             <button class="page-link" onclick="next()">
                                 <span aria-hidden="true">&raquo;</span>
@@ -29,6 +29,8 @@
                         </li>
                     </ul>
                 </nav> 
+                <div id="selectButton">
+                </div>
                 <div class="row p-3" id="cards">
                     <!-- Gets populated with populateCards() -->
                 </div>     
@@ -39,7 +41,7 @@
                                 <span aria-hidden="true">&laquo;</span>
                             </button>
                         </li>                      
-                        <li class="page-item"><a class="page-link" id="currentPage">1/32</a></li>
+                        <li class="page-item"><a class="page-link" id="currentPageDown">1/32</a></li>
                         <li class="page-item">
                             <button class="page-link" onclick="next()">
                                 <span aria-hidden="true">&raquo;</span>
@@ -53,10 +55,10 @@
         <script src="js/menu.js"></script>
         <script src="js/html_lib.js"></script>
         <script>
-            const pageMin = 1
-            const pageMax = 32
-            page = 1
-
+            pageMin = 1
+            pageMax = 32
+            page = 1  
+            
             window.addEventListener("load", async (event) => {
                 username = localStorage.getItem("username")
                 allCards = await fetch(`http://localhost:3100/cards`, {
@@ -79,25 +81,8 @@
                     .then(response => response.json()).then(res => {return res})
                     .catch(error => console.log('Cannot get cards of the user', error));
                 
-                populateCards(allCards, page)
+                populateCards(allCards, userCards, page)
             })
-
-            function prev() {
-                if (page > 1) {
-                    page = page - 1
-                    populateCards(allCards, page)
-                    document.getElementById("currentPage").innerHTML = `${page}/32`
-                }
-            }
-
-            function next() {
-                if (page < 1000) {
-                    page = page + 1
-                    populateCards(allCards, page)
-                    document.getElementById("currentPage").innerHTML = `${page}/32`
-                }
-
-            }
         </script>
     </body>
 </html>
