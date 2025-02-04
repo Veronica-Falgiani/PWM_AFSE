@@ -11,36 +11,30 @@
     <body>
         <div id="menu"></div>
         <div class="container d-flex justify-content-center align-items-center h-100">
-            <div class="mx-auto p-5 border rounded" id="album"> 
+            <div class="mx-auto p-5 border rounded" id="cards"> 
                 <h3> Album </h3>
                 <hr>
                 <div class="row p-3">
-                    <button class="col p-3 m-3 border rounded">
-                        <img class="mb-3" src="img/tmp.jpg" width="100px" height="100px">  
-                        <p> Nome: </p>
-                        <p> Carte: </p>
-                    </button>
-                    <button class="col p-3 m-3 border rounded">
-                        <img class="mb-3" src="img/tmp.jpg" width="100px" height="100px">  
-                        <p> Nome: </p>
-                        <p> Carte: </p>
-                    </button>
-                    <button class="col p-3 m-3 border rounded">
-                        <img  class="mb-3" src="img/tmp.jpg" width="100px" height="100px">  
-                        <p> Nome: </p>
-                        <p> Carte: </p>
-                    </button>
-                </div>
-                <div class="row p-3">
-                    <button class="d-grid gap-2 col-6 mx-auto p-3 m-3 border rounded">
-                        (+) Crea nuovo album
-                    </button>
-                </div>
-                
+                    <!-- Gets populated with populateCards() -->
+                </div>                
             </div> 
         </div>
 
         <script src="js/menu.js"></script>
         <script src="js/html_lib.js"></script>
+        <script>
+            window.addEventListener("load", async (event) => {
+                username = localStorage.getItem("username")
+                fetch(`http://localhost:3100/cards/${username}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-type": "application/json",
+                        'Accept': 'application/json',
+                    },
+                })
+                    .then(response => response.json()).then(res => populateCards(res))
+                    .catch(error => console.log('Cannot get cards of the user', error));
+            })
+        </script>
     </body>
 </html>

@@ -154,7 +154,7 @@ function writeCards(heroes) {
     }
 }
 
-/* CARDS.HTML*/
+/* ALBUM.HTML*/
 /* Prints all the cards of the logged user */
 function populateCards(cards) {
     for(i = 0; i < cards.length; i++) {

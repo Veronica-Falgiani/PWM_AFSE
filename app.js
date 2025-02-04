@@ -5,6 +5,7 @@ const mongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const url = require('url');   
 const crypto = require('crypto');
+const { maxHeaderSize } = require("http");
 require("dotenv").config();
 
 /* Mongodb setup */
@@ -82,10 +83,6 @@ app.get("/album", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/album.html"));
 })
 
-app.get("/cards", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/cards.html"));
-})
-
 app.get("/card", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/card.html"));
 })
@@ -125,7 +122,6 @@ async function addUser(req, res) {
 
     user.credits = 0
     user.cards = []
-    user.albums = []
 
     console.log(user);
 

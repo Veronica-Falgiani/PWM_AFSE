@@ -49,7 +49,6 @@ else {
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="/profile">Profilo</a></li>
                             <li><a class="dropdown-item" href="/album">Album</a></li>
-                            <li><a class="dropdown-item" href="/cards">Carte</a></li>
                             <li><hr></li>
                             <li><a class="dropdown-item text-danger" onclick="logoutUser()">Logout</a></li>
                         </ul>
