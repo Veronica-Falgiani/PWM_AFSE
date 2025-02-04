@@ -15,7 +15,7 @@
                 <h3> Album </h3>
                 <hr>
                 <nav aria-label="Page navigation example">
-                    <ul class="pagination">
+                    <ul class="pagination justify-content-center">
                         <li class="page-item">
                             <button class="page-link" onclick="prev()">
                                 <span aria-hidden="true">&laquo;</span>
@@ -29,13 +29,15 @@
                         </li>
                     </ul>
                 </nav> 
-                <div id="selectButton">
+                <div class="p-3" id="selectButton">
+                </div>
+                <div class="p-3" id="cardNumber">
                 </div>
                 <div class="row p-3" id="cards">
                     <!-- Gets populated with populateCards() -->
                 </div>     
                 <nav aria-label="Page navigation example">
-                    <ul class="pagination">
+                    <ul class="pagination justify-content-center">
                         <li class="page-item">
                             <button class="page-link" onclick="prev()">
                                 <span aria-hidden="true">&laquo;</span>
@@ -58,6 +60,7 @@
             pageMin = 1
             pageMax = 32
             page = 1  
+            mode = "all"
             
             window.addEventListener("load", async (event) => {
                 username = localStorage.getItem("username")
@@ -81,6 +84,7 @@
                     .then(response => response.json()).then(res => {return res})
                     .catch(error => console.log('Cannot get cards of the user', error));
                 
+                document.getElementById("cardNumber").innerHTML = `Carte ottenute (senza doppioni): ${userCards.length}/1564`
                 populateCards(allCards, userCards, page)
             })
         </script>

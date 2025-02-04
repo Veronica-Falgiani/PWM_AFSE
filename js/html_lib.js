@@ -160,6 +160,7 @@ function showUserCards() {
     pageMin = 1
     pageMax = Math.ceil(userCards.length / 50)
     page = 1
+    mode = "user"
 
     document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
         document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
@@ -172,6 +173,7 @@ function showCards() {
     pageMin = 1
     pageMax = 32
     page = 1
+    mode = "all"
 
     document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
         document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
@@ -256,7 +258,11 @@ function prev() {
         page = page - 1
         document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
         document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
-        populateCards(allCards, userCards, page)
+        if(mode == "all") {
+            populateCards(allCards, userCards, page)}
+        else {
+            populateUserCards(userCards, page)
+        }
     }
 }
 
@@ -266,7 +272,11 @@ function next() {
         page = page + 1
         document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
         document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
-        populateCards(allCards, userCards, page)
+        if(mode == "all") {
+            populateCards(allCards, userCards, page)}
+        else {
+            populateUserCards(userCards, page)
+        }
     }
 }
 
