@@ -74,7 +74,7 @@
                     name = hero.name
                     thumbnail = `${hero.thumbnail.path}.${hero.thumbnail.extension}`
 
-                    cards.push({"id": id, "name": name, "thumbnail": thumbnail})
+                    cards.push({"id": id, "name": name, "thumbnail": thumbnail, "number": 1})
                 }
                 
                 await fetch(`http://localhost:3100/cards/${username}`, {

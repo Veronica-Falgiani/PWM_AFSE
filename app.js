@@ -343,18 +343,42 @@ async function addCards(req,res) {
         ]
     }
 
+    var increment = { 
+        $inc : {"cards.$.number": 1}
+    }
+
     var removeCredits = { 
         $inc : {"credits": credits} 
     } 
 
     for(i = 0; i < cards.length; i++){
-        var addCards = { 
-            $push : {"cards": cards[i]} 
-        } 
-     
-        var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, addCards);
-        if (response.modifiedCount == 0) {
-            res.status(401).send("Failed to update cards")
+        var filterCards = {
+            $and: [
+                { "username": username,
+                    "cards" : { $elemMatch : { "id" : cards[i].id } } 
+                 },
+            ]
+        }
+
+        result = await clientdb.db("AFSM").collection("Users").findOne(filterCards);
+    
+        /* If the card si no present in the db it will add it to the user */
+        if(result == null){
+            var addCards = { 
+                $push : {"cards": cards[i]} 
+            } 
+
+            var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, addCards);
+            if (response.modifiedCount == 0) {
+                res.status(401).send("Failed to add cards")
+            }
+        }
+        /* If the card is present, it will update the number of cards obtained */
+        else {
+            var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, increment);
+            if (response.modifiedCount == 0) {
+                res.status(401).send("Failed to update cards")
+            }
         }
     }
 
