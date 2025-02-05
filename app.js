@@ -294,12 +294,28 @@ app.get("/credits/:username", (req,res) => {
 })
 
 async function getCredits(req,res) {
-    //TODO
+    let username = req.body.username;
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "username": username },
+        ]
+    }
+
+    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    if (userInfo == null) {
+        res.status(401).send("Unauthorized")
+    } else {
+        res.json(userInfo.credits)
+    } 
 }
 
 
 /* ---- UPDATE CREDITS ---- */
-/* add :username */
+/* add :username MODIFY TO INCREMENT AND DECREASE?? */
 app.post("/credits", (req,res) =>{
     removeCredits(req,res);
 })
