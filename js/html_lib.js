@@ -155,6 +155,19 @@ function writeCards(heroes) {
 }
 
 /* ALBUM.HTML*/
+/* Updates all the values to show all the cards */
+function showCards() {
+    pageMin = 1
+    pageMax = 32
+    page = 1
+    mode = "all"
+
+    document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
+    document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
+
+    populateCards(allCards, userCards, page)
+}
+
 /* Updates all the values to show the user cards */
 function showUserCards() {
     pageMin = 1
@@ -168,19 +181,6 @@ function showUserCards() {
     populateUserCards(userCards, page)
 }
 
-/* Updates all the values to show all the cards */
-function showCards() {
-    pageMin = 1
-    pageMax = 32
-    page = 1
-    mode = "all"
-
-    document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
-        document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
-
-    populateCards(allCards, userCards, page)
-}
-
 /* Prints 50 cards for the current page */
 function populateCards(allCards, userCards, page) {
     /* Gets 50 cards based on the current page */
@@ -189,7 +189,7 @@ function populateCards(allCards, userCards, page) {
     found = 0
     num = 0
 
-    document.getElementById("selectButton").innerHTML = `<button class="btn btn-primary" onclick="showUserCards()">Mostra carte utente</button>`
+    document.getElementById("selectAlbumButton").innerHTML = `<button class="btn btn-primary" onclick="showUserCards()">Mostra carte utente</button>`
 
     /* Clears the html to be repopulated */
     const cardsRow = document.getElementById("cards");
@@ -233,7 +233,7 @@ function populateUserCards(userCards, page) {
     end = page * 50 // 100
     start = end - 50 // 50
 
-    document.getElementById("selectButton").innerHTML = `<button class="btn btn-primary" onclick="showCards()">Mostra tutte le carte</button>`
+    document.getElementById("selectAlbumButton").innerHTML = `<button class="btn btn-primary" onclick="showCards()">Mostra tutte le carte</button>`
     // TODO ADD USER CARDS CLICKABEL AND THE OTHERS NOT
 
     /* Clears the html to be repopulated */
@@ -253,7 +253,7 @@ function populateUserCards(userCards, page) {
 }
 
 /* Function to go to next page and populate it */
-function prev() {
+function prevAlbum() {
     if (page > 1) {
         page = page - 1
         document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
@@ -267,7 +267,7 @@ function prev() {
 }
 
 /* Function to go to previous page and populate it */
-function next() {
+function nextAlbum() {
     if (page < pageMax) {
         page = page + 1
         document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
@@ -337,4 +337,165 @@ function writeHero(heroJson) {
     ${events}
     </ul>
     `
+}
+
+/* TRADES.HTML */
+/* Updates all the values to show all the trades */
+function showTrades() {
+    pageMin = 1
+    pageMax = Math.ceil(trades.length / 20)
+    page = 1
+    mode = "all"
+
+    document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
+    document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
+
+    populateTrades(username, trades, page)
+}
+
+/* Updates all the values to show all the user trades */
+function showUserTrades() {
+    pageMin = 1
+    pageMax = Math.ceil(trades.length / 20)
+    page = 1
+    mode = "user"
+
+    document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
+    document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
+
+    populateUserTrades(username, trades, page)
+}
+
+/* Writes all the trades in the page */
+function populateTrades(username, trades, page) {
+    /* Gets 50 trades based on the current page */
+    end = page * 20 
+    start = end - 20 
+
+    namesReceive = ""
+    namesSend = ""
+
+    document.getElementById("selectTradesButton").innerHTML = `<button class="btn btn-primary" onclick="showUserTrades()">Mostra gli scambi dell'utente</button>`
+
+    document.getElementById("addTradeButton").innerHTML = ``
+
+    console.log(start, end, trades)
+
+    /* Clears the html to be repopulated */
+    const tradesRow = document.getElementById("trades");
+    tradesRow.innerHTML = ``
+
+    /* Populate with new cards */
+    for(i = start; i < end; i++) {
+        if(trades[i].username != username) {
+            for(j = 0; j < trades[i].receive.length; j++) {
+                namesReceive += `${trades[i].receive[j].name}. `
+            }
+            for(j = 0; j < trades[i].send.length; j++) {
+                namesSend += `${trades[i].send[j].name}. `
+            }
+
+            tradesRow.innerHTML += 
+            `
+            <button class="row p-3 m-3 border rounded" style="text-align:left;" onclick='getTradeId("${trades[i]._id}")'>
+                <p> Nome: ${trades[i].name}</p>
+                <p> Utente: ${trades[i].username} </p>  
+                <p> Carte richieste: ${namesReceive}</p>
+                <p> Carte scambiate: ${namesSend}</p>
+            </button>
+            `;
+        }
+    }
+}
+
+function populateUserTrades(username, trades, page) {
+    /* Gets 50 trades based on the current page */
+    end = page * 20 
+    start = end - 20 
+
+    namesReceive = ""
+    namesSend = ""
+
+    console.log(start, end, trades)
+
+    document.getElementById("selectTradesButton").innerHTML = `<button class="btn btn-primary" onclick="showTrades()">Mostra tutti gli scambi</button>`
+
+    document.getElementById("addTradeButton").innerHTML = `<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tradeModal">(+) Aggiungi scambio</button>`
+
+    /* Clears the html to be repopulated */
+    const tradesRow = document.getElementById("trades");
+    tradesRow.innerHTML = ``
+
+    /* Populate with new cards */
+    for(i = start; i < end; i++) {
+        if(trades[i].username == username) {
+            for(j = 0; j < trades[i].receive.length; j++) {
+                namesReceive += `${trades[i].receive[j].name}. `
+            }
+            for(j = 0; j < trades[i].send.length; j++) {
+                namesSend += `${trades[i].send[j].name}. `
+            }
+
+            tradesRow.innerHTML += 
+            `
+            <div class="row p-3 m-3 border rounded">
+                <p> Nome: ${trades[i].name}</p>
+                <p> Utente: ${trades[i].username} </p>  
+                <p> Carte richieste: ${namesReceive}</p>
+                <p> Carte scambiate: ${namesSend}</p>
+            </div>
+            `;
+        }
+    }
+}
+
+/* Adds a trade in the db */
+async function addTrade() {
+
+}
+
+function getTradeId(id) {
+    localStorage.setItem("tradeId", id)  
+    window.location.href = "/trade";  
+}
+
+/* Gets the info of a trade */
+async function getTrade(trade) {
+    const tradePage = document.getElementById('trade');
+    tradePage.innerHTML =
+    `
+    <h3> ${trade.name} </h3>
+    <hr>
+    <p> Utente: ${trade.username}</p>
+    <p> carte richieste: ${trade.send}</p>
+    <p> carte proposte: ${trade.received}</p>
+    `
+}
+
+/* Function to go to previous page and populate it */
+function nextTrade() {
+    if (page < pageMax) {
+        page = page + 1
+        document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
+        document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
+        if(mode == "all") {
+            populateTrades(username, trades, page)}
+        else {
+            populateUserTrades(username, trades, page)
+        }
+    }
+}
+
+/* Function to go to next page and populate it */
+function prevTrade() {
+    if (page > 1) {
+        page = page - 1
+        document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
+        document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
+        if(mode == "all") {
+            populateTrades(username, trades, page)}
+        else {
+            populateUserTrades(username, trades, page)
+        }
+    }
 }

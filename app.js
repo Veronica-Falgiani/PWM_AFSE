@@ -6,6 +6,7 @@ const ObjectId = require('mongodb').ObjectId;
 const url = require('url');   
 const crypto = require('crypto');
 const { maxHeaderSize } = require("http");
+const { receiveMessageOnPort } = require("worker_threads");
 require("dotenv").config();
 
 /* Mongodb setup */
@@ -75,8 +76,8 @@ app.get("/packs", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/packs.html"));
 })
 
-app.get("/trade", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/trade.html"));
+app.get("/trades", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/trades.html"));
 })
 
 app.get("/album", (req,res) =>{
@@ -87,9 +88,12 @@ app.get("/card", (req,res) =>{
     res.sendFile(path.join(__dirname, "html/card.html"));
 })
 
+app.get("/trade", (req,res) =>{
+    res.sendFile(path.join(__dirname, "html/trade.html"));
+})
+
 /* ---- CREATE NEW USER ---- */
 app.post("/register", function (req, res) {
-    console.log("Ricevuto una richiesta POST");
     addUser(req, res);
 })
 
@@ -98,34 +102,34 @@ async function addUser(req, res) {
     let user = req.body;
 
     if (user.username == undefined) {
-        res.status(400).send("Missing Username")
+        res.status(400).send("Username mancante")
         return
     }
     if (user.email == undefined) {
-        res.status(400).send("Missing Surname")
+        res.status(400).send("Email mancante")
         return
     }
     if (user.password == undefined) {
-        res.status(400).send("Missing Email")
+        res.status(400).send("Password mancante")
         return
     }
     if (user.hero == undefined) {
-        res.status(400).send("Missing Password")
+        res.status(400).send("Eroe Mancante")
         return
     }
     if (user.series == undefined) {
-        res.status(400).send("Missing Series")
+        res.status(400).send("Serie mancante")
         return
     }
 
-    user.password = hash(user.password);
+    user.password = hash(user.password)
 
     user.credits = 0
     user.cards = []
 
-    console.log(user);
+    //console.log(user);
 
-    var clientdb = await new mongoClient(mongodbURI).connect();
+    var clientdb = await new mongoClient(mongodbURI).connect()
 
     var filter = {
         $and: [
@@ -133,17 +137,22 @@ async function addUser(req, res) {
         ]
     }
 
-    try {
-        var items = await clientdb.db("AFSM").collection("Users").insertOne(user);
-        var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
-        res.json(userInfo);
+    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter)
+
+    if (userInfo != null) {
+        res.status(400).send("Username già presente!")
+        return
     }
-    catch(e) {
-        if(e.code == 11000) {
-            res.status(400).send("Utente già presente")
+    else {
+        try {
+            var items = await clientdb.db("AFSM").collection("Users").insertOne(user)
+            var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter)
+            res.json(userInfo)
+        }
+        catch(e) {
+            res.status(500).send(`Errore generico: ${e}`)
             return
         }
-        res.status(500).send(`Errore generico: ${e}`);
     }
 }
 
@@ -154,25 +163,26 @@ app.post("/login", async (req, res) => {
 
 /* Compares the credentials given to the ones on the db and log ins the user */
 async function loginUser(req, res) {
-    let user = req.body;
+    let username = req.body.username;
+    let password = req.body.password
 
-    if (user.username == undefined) {
-        res.status(400).send("Missing Username")
+    if (username == undefined) {
+        res.status(400).send("Username mancante")
         return
     }
-    if (user.password == undefined) {
-        res.status(400).send("Missing Password")
+    if (password == undefined) {
+        res.status(400).send("Password mancante")
         return
     }
 
-    user.password = hash(user.password);
+    password = hash(password);
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
     var filter = {
         $and: [
-            { "username": user.username },
-            { "password": user.password }
+            { "username": username },
+            { "password": password }
         ]
     }
 
@@ -181,7 +191,7 @@ async function loginUser(req, res) {
     //console.log(loggedUser);
 
     if (loggedUser == null) {
-        res.status(401).send("Unauthorized")
+        res.status(400).send("Non è stato trovato un utente!")
     } else {
         res.json(loggedUser)
     }
@@ -468,3 +478,64 @@ async function getUserCards(req,res) {
         res.json(userInfo.cards)
     } 
 }
+
+/* ---- GET ALL TRADES ---- */
+app.get("/alltrades", (req,res) => {
+    getTrades(req,res);
+})
+
+async function getTrades(req,res) {
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    try {
+        var result = await clientdb.db("AFSM").collection("Trades").find().toArray();
+        //console.log(result)
+        res.json(result)
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+/* ---- GET A SINGLE TRADE ---- */
+app.get("/trade/:id", (req,res) => {
+    getTrade(req,res)
+})
+
+async function getTrade() {
+    const id = req.params.id
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "_id": ObjectId(id) },
+        ]
+    }
+
+    try {
+        var result = await clientdb.db("AFSM").collection("Trades").find(filter);
+        res.json(result)
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+/* ---- CREATE TRADES ---- */
+app.post("/trade/:username", (req,res) => {
+    createTrades(req,res)
+})
+
+async function createTrades(req,res) {
+    username = req.params.username
+    name = req.body.name
+    receive = req.body.receive
+    send = req.body.send
+
+
+}
+
+
+
+/* ---- DELETE TRADES ---- */

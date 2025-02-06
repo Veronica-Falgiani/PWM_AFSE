@@ -11,21 +11,27 @@
     <body>
         <div id="menu"></div>
         <div class="container d-flex justify-content-center align-items-center h-100">
-            <div class="mx-auto p-5 border rounded" id="registrati-form"> 
-                <h3> Scambi </h3>
-                <hr>
-                <img class="mb-3" src="img/tmp.jpg" width="150px" height="150px">  
-                <p> Nome: </p>
-                <p> Mail: </p>
-                <p> Password: </p>
-                <p> Eroe preferito: </p>
-                <p> Serie preferita: </p>
-                <button class="btn btn-primary">Modifica profilo</button>
-                <hr>
-                <button class="btn btn-danger">Elimina profilo</button>
+            <div class="mx-auto p-5 border rounded" id="trade"> 
+                <!-- It will be populated by the script with the trade info -->
             </div> 
         </div>
 
         <script src="js/menu.js"></script>
+        <script src="js/html_lib.js"></script>
+        <script>
+            window.addEventListener("load", async (event) => {
+                id = localStorage.getItem("tradeId");
+                await fetch(`http://localhost:3100/trade/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-type": "application/json",
+                        'Accept': 'application/json',
+                    },
+                })
+                    .then(response => response.json()).then(res => getTrade(res))
+                    .catch(error => console.log('Cannot get all the trades', error));
+                getTrade(id);
+            })
+        </script>
     </body>
 </html>

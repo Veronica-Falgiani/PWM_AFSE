@@ -12,81 +12,96 @@
         <div id="menu"></div>
         <div class="container d-flex justify-content-center align-items-center h-100">
             <div class="mx-auto p-5 border rounded"> 
-                <h3> Album </h3>
+                <h3> Scambi </h3>
                 <hr>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
                         <li class="page-item">
-                            <button class="page-link" onclick="prevAlbum()">
+                            <button class="page-link" onclick="prevTrade()">
                                 <span aria-hidden="true">&laquo;</span>
                             </button>
                         </li>                      
-                        <li class="page-item"><a class="page-link" id="currentPageUp">1/32</a></li>
+                        <li class="page-item"><a class="page-link" id="currentPageUp">1/1</a></li>
                         <li class="page-item">
-                            <button class="page-link" onclick="nextAlbum()">
+                            <button class="page-link" onclick="nextTrade()">
                                 <span aria-hidden="true">&raquo;</span>
                             </button>
                         </li>
                     </ul>
                 </nav> 
-                <div class="p-3" id="selectAlbumButton">
+                <div class="p-3" id="selectTradesButton">
                 </div>
-                <div class="p-3" id="cardNumber">
-                </div>
-                <div class="row p-3" id="cards">
-                    <!-- Gets populated with populateCards() -->
-                </div>     
+                <div class="row p-3" id="trades">
+                    <!-- Gets populated with populateTrades() -->
+                </div>  
+                <div class="p-3" id="addTradeButton">
+                </div>   
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
                         <li class="page-item">
-                            <button class="page-link" onclick="prevAlbum()">
+                            <button class="page-link" onclick="prevTrade()">
                                 <span aria-hidden="true">&laquo;</span>
                             </button>
                         </li>                      
-                        <li class="page-item"><a class="page-link" id="currentPageDown">1/32</a></li>
+                        <li class="page-item"><a class="page-link" id="currentPageDown">1/1</a></li>
                         <li class="page-item">
-                            <button class="page-link" onclick="nextAlbum()">
+                            <button class="page-link" onclick="nextTrade()">
                                 <span aria-hidden="true">&raquo;</span>
                             </button>
                         </li>
                     </ul>
                 </nav>           
-            </div> 
+            </div>
+
+            <!-- Modal to add a trade -->
+            <div class="modal fade" id="tradeModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h3 class="modal-title fs-5" id="modalLabel">Aggiunta scambio</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="inputName" class="form-label">Nome</label>
+                                <input type="name" class="form-control" id="inputName" placeholder="Nome">
+                            </div>                   
+                            <button class="btn btn-primary mb-4" onclick="addTrade()">Modifica</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
         </div>
 
         <script src="js/menu.js"></script>
         <script src="js/html_lib.js"></script>
         <script>
             pageMin = 1
-            pageMax = 32
-            page = 1  
-            mode = "all"
+            pageMax = 1
+            page = 1
+            mode = "all"  
             
             window.addEventListener("load", async (event) => {
                 username = localStorage.getItem("username")
-                allCards = await fetch(`http://localhost:3100/cards`, {
-                    method: "GET",
-                    headers: {
-                        "Content-type": "application/json",
-                        'Accept': 'application/json',
-                    },
-                })
-                    .then(response => response.json()).then(res => {return res})
-                    .catch(error => console.log('Cannot get all the cards', error));
-
-                userCards = await fetch(`http://localhost:3100/cards/${username}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-type": "application/json",
-                        'Accept': 'application/json',
-                    },
-                })
-                    .then(response => response.json()).then(res => {return res})
-                    .catch(error => console.log('Cannot get cards of the user', error));
                 
-                document.getElementById("cardNumber").innerHTML = `Carte ottenute (senza doppioni): ${userCards.length}/1564`
-                populateCards(allCards, userCards, page)
+                trades = await fetch(`http://localhost:3100/alltrades`, {
+                    method: "GET",
+                    headers: {
+                        "Content-type": "application/json",
+                        'Accept': 'application/json',
+                    },
+                })
+                    .then(response => response.json()).then(res => {return res})
+                    .catch(error => console.log('Cannot get all the trades', error));
+         
+                pageMax = Math.ceil(trades.length / 20)
+                document.getElementById("currentPageDown").innerHTML = `1/${pageMax}`
+
+                populateTrades(username, trades, page)
             })
+
+            
         </script>
     </body>
 </html>
