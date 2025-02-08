@@ -30,7 +30,6 @@
                 })
                     .then(response => response.json()).then(res => getTrade(res))
                     .catch(error => console.log('Cannot get all the trades', error));
-                getTrade(id);
             })
         </script>
     </body>

@@ -244,7 +244,7 @@ function populateUserCards(userCards, page) {
     for(i = start; i < end; i++) {
         cardsRow.innerHTML += 
         `
-        <button class="col p-3 m-3 border rounded" onclick="getCard(${allCards[i].id})">
+        <button class="col p-3 m-3 border rounded" onclick="getCard(${userCards[i].id})">
             <img class="mb-3" src="${userCards[i].thumbnail}" width="100px" height="100px">  
             <p> (${userCards[i].number}) ${userCards[i].name}</p>
         </button>
@@ -443,15 +443,64 @@ function populateUserTrades(username, trades, page) {
                 <p> Utente: ${trades[i].username} </p>  
                 <p> Carte richieste: ${namesReceive}</p>
                 <p> Carte scambiate: ${namesSend}</p>
+                <button class="btn btn-danger mb-4" onclick="deleteTrade()">Rimuovi scambio</button>
             </div>
             `;
         }
     }
 }
 
+/* Receives the info of the searched hero to receive and displays it */
+async function updateTradeRec(res) {
+    /* Populate the checkbox with cards to receive */
+    console.log(res)
+
+    var heroRecButtons = document.getElementById("heroRecButtons")
+    heroRecButtons.innerHTML = ``
+
+    for(i = 0; i < res.length; i++) {
+        id = res[i].id 
+        name = res[i].name
+        thumbnail = `${res[i].thumbnail.path}.${res[i].thumbnail.extension}`
+    
+        heroRecButtons.innerHTML += 
+        `
+        <button class="col p-3 m-3 border rounded" onclick='selectRecHero(${id}, "${thumbnail}", "${name}")'>
+            <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
+            <p>${name}</p>
+        </button>
+        `
+    }
+}
+
+async function selectRecHero(id, thumbnail, name) {
+    console.log("Eroe selezionato", id)
+    document.getElementById("savedRecButtons").innerHTML += 
+    `
+    <div class="col p-3 m-3 border rounded">
+        <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
+        <p>${name}</p>
+    </button>
+    `   
+}
+
+/* Receives the info of the searched hero to send and displays it */
+async function updateTradeSend(send) {
+    /* Populate the checkbox with cards to receive */
+    console.log(send)
+}
+
+
 /* Adds a trade in the db */
 async function addTrade() {
-
+    `
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+            <label class="form-check-label" for="flexCheckChecked">
+                Eroe 2
+            </label>
+        </div>`
+    console.log()
 }
 
 function getTradeId(id) {
@@ -468,8 +517,14 @@ async function getTrade(trade) {
     <hr>
     <p> Utente: ${trade.username}</p>
     <p> carte richieste: ${trade.send}</p>
-    <p> carte proposte: ${trade.received}</p>
+    <p> carte proposte: ${trade.receive}</p>
+    <button class="btn btn-primary" onclick="acceptTrade(trade)">Accetta lo scambio</button>
     `
+}
+
+/* Accepts a trade and updates the cards of the respective users */
+async function acceptTrade(trade) {
+    //TODO ________________________________________________
 }
 
 /* Function to go to previous page and populate it */

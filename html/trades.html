@@ -65,13 +65,32 @@
                             <div class="mb-3">
                                 <label for="inputName" class="form-label">Nome</label>
                                 <input type="name" class="form-control" id="inputName" placeholder="Nome">
-                            </div>                   
-                            <button class="btn btn-primary mb-4" onclick="addTrade()">Modifica</button>
+                            </div> 
+                            <div class="mb-3">
+                                <label for="inputName" class="form-label">Eroi da ricevere</label>
+                                <div class="form-text">Inserire le prime lettere dell'eroe per cercare</div>
+                                <div class="d-flex">
+                                    <input class="form-control" placeholder="Eroe" id="recHero">
+                                    <a type="submitHero" class="btn btn-outline-success" onclick="updateRecHero()">Cerca</a>
+                                </div>
+                                <div id="heroRecButtons"></div>  
+                                <div id="savedRecButtons"></div>
+                            </div>
+                            <div class="mb-3">                            
+                                <label for="inputName" class="form-label">Eroi da inviare</label>
+                                <div class="form-text">Inserire le prime lettere dell'eroe per cercare</div>
+                                <div class="d-flex">
+                                    <input class="form-control" placeholder="Eroe" id="sendHero">
+                                    <a type="submitHero" class="btn btn-outline-success" onclick="updateSendHero()">Cerca</a>
+                                </div>
+                                <div class="mb-3 row" id="heroSendButton"></div>  
+                            </div>                 
+                            </div>
+                            <button class="btn btn-primary mb-4" onclick="addTrade()">Aggiungi scambio</button>
                         </div>
                     </div>
                 </div>
-            </div>
-            
+            </div>  
         </div>
 
         <script src="js/menu.js"></script>
@@ -99,9 +118,19 @@
                 document.getElementById("currentPageDown").innerHTML = `1/${pageMax}`
 
                 populateTrades(username, trades, page)
-            })
+            })   
 
+            /* Functions to get hero send and hero receive */
             
+            function updateRecHero() {
+                recHero = document.getElementById("recHero").value
+                getFromMarvel("characters", `nameStartsWith=${recHero}`).then(result => updateTradeRec(result.data.results));
+            }  
+
+            function updateSendHero() {
+                sendHero = document.getElementById("sendHero").value
+                getFromMarvel("characters", `nameStartsWith=${sendHero}`).then(result => updateTradeSend(result.data.results));
+            }
         </script>
     </body>
 </html>

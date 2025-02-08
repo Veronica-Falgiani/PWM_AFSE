@@ -502,19 +502,20 @@ app.get("/trade/:id", (req,res) => {
     getTrade(req,res)
 })
 
-async function getTrade() {
-    const id = req.params.id
+async function getTrade(req, res) {
+    var id = req.params.id
+    id = new ObjectId(id)
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
     var filter = {
         $and: [
-            { "_id": ObjectId(id) },
+            { "_id": id },
         ]
     }
 
     try {
-        var result = await clientdb.db("AFSM").collection("Trades").find(filter);
+        var result = await clientdb.db("AFSM").collection("Trades").findOne(filter);
         res.json(result)
     }
     catch (e) {
@@ -533,9 +534,32 @@ async function createTrades(req,res) {
     receive = req.body.receive
     send = req.body.send
 
-
+    //TODO
 }
 
 
-
 /* ---- DELETE TRADES ---- */
+app.delete("/trade/:id", (req,res) => {
+    deleteTrade(req,res)
+})
+
+async function deleteTrade(req,res) {
+    id = req.params.id
+    id = ObjectId(id)
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "_id": id },
+        ]
+    }
+
+    try {
+        var result = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
+        res.json(result)
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
