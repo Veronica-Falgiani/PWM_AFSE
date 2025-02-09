@@ -59,9 +59,9 @@
                     <div class="modal-content">
                         <div class="modal-header">
                         <h3 class="modal-title fs-5" id="modalLabel">Aggiunta scambio</h3>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="clearModal()"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body" id="modalBody">
                             <div class="mb-3">
                                 <label for="inputName" class="form-label">Nome</label>
                                 <input type="name" class="form-control" id="inputName" placeholder="Nome">
@@ -86,7 +86,6 @@
                                 </div>
                                 <div id="heroSendButtons"></div>  
                             </div>                 
-                            </div>
                             <button class="btn btn-primary mb-4" onclick="addTrade()">Aggiungi scambio</button>
                         </div>
                     </div>
@@ -100,7 +99,9 @@
             pageMin = 1
             pageMax = 1
             page = 1
-            mode = "all"  
+            mode = "all" 
+            heroSend = []
+            heroReceive = []
             
             window.addEventListener("load", async (event) => {
                 username = localStorage.getItem("username")
@@ -120,38 +121,6 @@
 
                 populateTrades(username, trades, page)
             })   
-
-            /* Functions to get hero send and hero receive */
-            
-            function updateRecHero() {
-                recHero = document.getElementById("recHero").value
-                getFromMarvel("characters", `nameStartsWith=${recHero}`).then(result => updateTradeRec(result.data.results));
-            }  
-
-            async function updateSendHero() {
-                sendHero = document.getElementById("sendHero").value.toLowerCase()
-                username = localStorage.getItem("username")
-                heroes = []
-
-                userCards = await fetch(`http://localhost:3100/cards/${username}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-type": "application/json",
-                        'Accept': 'application/json',
-                    },
-                })
-                    .then(response => response.json()).then(res => {return res})
-                    .catch(error => console.log('Cannot get cards of the user', error));
-                
-                for(i = 0; i < userCards.length; i++) {
-                    name = userCards[i].name.toLowerCase()
-                    if(name.includes(sendHero)) {
-                        heroes.push(userCards[i])
-                    }
-                }
-
-                updateTradeSend(heroes)
-            }
         </script>
     </body>
 </html>

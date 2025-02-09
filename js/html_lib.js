@@ -372,14 +372,9 @@ function populateTrades(username, trades, page) {
     end = page * 20 
     start = end - 20 
 
-    namesReceive = ""
-    namesSend = ""
-
     document.getElementById("selectTradesButton").innerHTML = `<button class="btn btn-primary" onclick="showUserTrades()">Mostra gli scambi dell'utente</button>`
 
     document.getElementById("addTradeButton").innerHTML = ``
-
-    console.log(start, end, trades)
 
     /* Clears the html to be repopulated */
     const tradesRow = document.getElementById("trades");
@@ -388,6 +383,8 @@ function populateTrades(username, trades, page) {
     /* Populate with new cards */
     for(i = start; i < end; i++) {
         if(trades[i].username != username) {
+            namesReceive = ""
+            namesSend = ""
             for(j = 0; j < trades[i].receive.length; j++) {
                 namesReceive += `${trades[i].receive[j].name}. `
             }
@@ -413,11 +410,6 @@ function populateUserTrades(username, trades, page) {
     end = page * 20 
     start = end - 20 
 
-    namesReceive = ""
-    namesSend = ""
-
-    console.log(start, end, trades)
-
     document.getElementById("selectTradesButton").innerHTML = `<button class="btn btn-primary" onclick="showTrades()">Mostra tutti gli scambi</button>`
 
     document.getElementById("addTradeButton").innerHTML = `<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tradeModal">(+) Aggiungi scambio</button>`
@@ -429,6 +421,8 @@ function populateUserTrades(username, trades, page) {
     /* Populate with new cards */
     for(i = start; i < end; i++) {
         if(trades[i].username == username) {
+            namesReceive = ""
+            namesSend = ""
             for(j = 0; j < trades[i].receive.length; j++) {
                 namesReceive += `${trades[i].receive[j].name}. `
             }
@@ -443,18 +437,21 @@ function populateUserTrades(username, trades, page) {
                 <p> Utente: ${trades[i].username} </p>  
                 <p> Carte richieste: ${namesReceive}</p>
                 <p> Carte scambiate: ${namesSend}</p>
-                <button class="btn btn-danger mb-4" onclick="deleteTrade()">Rimuovi scambio</button>
+                <button class="btn btn-danger mb-4" onclick='deleteTrade("${trades[i]._id}")'>Rimuovi scambio</button>
             </div>
             `;
         }
     }
 }
 
+function updateRecHero() {
+    recHero = document.getElementById("recHero").value
+    getFromMarvel("characters", `nameStartsWith=${recHero}`).then(result => updateTradeRec(result.data.results));
+}  
+
 /* Receives the info of the searched hero to receive and displays it */
 async function updateTradeRec(rec) {
     /* Populate the checkbox with cards to receive */
-    console.log(rec)
-
     var heroRecButtons = document.getElementById("heroRecButtons")
     heroRecButtons.innerHTML = ``
 
@@ -474,7 +471,6 @@ async function updateTradeRec(rec) {
 }
 
 async function selectRecHero(id, thumbnail, name) {
-    console.log("Eroe selezionato", id)
     document.getElementById("savedRecButtons").innerHTML += 
     `
     <div class="col p-3 m-3 border rounded">
@@ -483,9 +479,37 @@ async function selectRecHero(id, thumbnail, name) {
     </button>
     `   
 
+    hero = {"id": id, "name": name, "thumbnail": thumbnail}
+    heroReceive.push(hero)
+
     /* Clearing the send interface */
     document.getElementById("heroRecButtons").innerHTML = ``
     document.getElementById("recHero").value = ``
+}
+
+async function updateSendHero() {
+    sendHero = document.getElementById("sendHero").value.toLowerCase()
+    username = localStorage.getItem("username")
+    heroes = []
+
+    userCards = await fetch(`http://localhost:3100/cards/${username}`, {
+        method: "GET",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+    })
+        .then(response => response.json()).then(res => {return res})
+        .catch(error => console.log('Cannot get cards of the user', error));
+    
+    for(i = 0; i < userCards.length; i++) {
+        name = userCards[i].name.toLowerCase()
+        if(name.includes(sendHero)) {
+            heroes.push(userCards[i])
+        }
+    }
+
+    updateTradeSend(heroes)
 }
 
 /* Receives the info of the searched hero to send and displays it */
@@ -519,8 +543,11 @@ async function selectSendHero(id, thumbnail, name) {
         <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
         <p>${name}</p>
     </button>
-    `   
+    ` 
     
+    hero = {"id": id, "name": name, "thumbnail": thumbnail}
+    heroSend.push(hero)
+
     /* Clearing the search interface */
     document.getElementById("heroSendButtons").innerHTML = ``
     document.getElementById("sendHero").value = ``
@@ -529,14 +556,23 @@ async function selectSendHero(id, thumbnail, name) {
 
 /* Adds a trade in the db */
 async function addTrade() {
-    `
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-                Eroe 2
-            </label>
-        </div>`
-    console.log()
+    console.log(heroSend, heroReceive)
+    name = document.getElementById("inputName").value
+
+    await fetch(`/trade/${username}`, {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({  "name": name,
+                                "heroSend": heroSend,
+                                "heroReceive": heroReceive })
+    })
+    .then(result => result.json()).then(res => console.log(res))
+    .catch(error => console.log('Scambio non eliminato correttamente', error));  
+
+    location.reload()
 }
 
 function getTradeId(id) {
@@ -558,9 +594,36 @@ async function getTrade(trade) {
     `
 }
 
+async function deleteTrade(id) {
+    await fetch(`/trade/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+    })
+        .then(result => result.json()).then(res => console.log(res))
+        .catch(error => console.log('Scambio non eliminato correttamente', error));  
+
+    location.reload()
+}
+
 /* Accepts a trade and updates the cards of the respective users */
 async function acceptTrade(trade) {
     //TODO ________________________________________________
+}
+
+/* When a user exits the modal everything is cancelled */
+function clearModal() {
+    document.getElementById("inputName").value = ``
+    document.getElementById("recHero").value = ``
+    document.getElementById("sendHero").value = ``
+    document.getElementById("savedRecButtons").innerHTML = ``
+    document.getElementById("heroRecButtons").innerHTML = ``
+    document.getElementById("savedSendButtons").innerHTML = ``
+    document.getElementById("heroSendButtons").innerHTML = ``
+    heroSend = {}
+    heroReceive = {}
 }
 
 /* Function to go to previous page and populate it */

@@ -526,16 +526,32 @@ async function getTrade(req, res) {
 
 /* ---- CREATE TRADES ---- */
 app.post("/trade/:username", (req,res) => {
-    createTrades(req,res)
+    createTrade(req,res)
 })
 
-async function createTrades(req,res) {
+async function createTrade(req,res) {
     username = req.params.username
     name = req.body.name
-    receive = req.body.receive
-    send = req.body.send
+    receive = req.body.heroReceive
+    send = req.body.heroSend
 
-    //TODO
+    var trade = {
+        "username": username,
+        "name": name,
+        "receive": receive,
+        "send": send
+    }
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    try {
+        var result = await clientdb.db("AFSM").collection("Trades").insertOne(trade)  
+        res.json(result);
+    }
+    catch(e) {
+        res.status(500).send(`Errore generico: ${e}`)
+        return
+    }
 }
 
 
@@ -544,10 +560,10 @@ app.delete("/trade/:id", (req,res) => {
     deleteTrade(req,res)
 })
 
-async function deleteTrade(req,res) {
-    id = req.params.id
-    id = ObjectId(id)
-
+async function deleteTrade(req,res) { 
+    var id = req.params.id
+    id = new ObjectId(id)
+  
     var clientdb = await new mongoClient(mongodbURI).connect();
 
     var filter = {
@@ -558,7 +574,7 @@ async function deleteTrade(req,res) {
 
     try {
         var result = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
-        res.json(result)
+        res.json(result);
     }
     catch (e) {
         console.log(e)
