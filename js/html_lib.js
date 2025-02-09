@@ -451,17 +451,17 @@ function populateUserTrades(username, trades, page) {
 }
 
 /* Receives the info of the searched hero to receive and displays it */
-async function updateTradeRec(res) {
+async function updateTradeRec(rec) {
     /* Populate the checkbox with cards to receive */
-    console.log(res)
+    console.log(rec)
 
     var heroRecButtons = document.getElementById("heroRecButtons")
     heroRecButtons.innerHTML = ``
 
-    for(i = 0; i < res.length; i++) {
-        id = res[i].id 
-        name = res[i].name
-        thumbnail = `${res[i].thumbnail.path}.${res[i].thumbnail.extension}`
+    for(i = 0; i < rec.length; i++) {
+        id = rec[i].id 
+        name = rec[i].name
+        thumbnail = `${rec[i].thumbnail.path}.${rec[i].thumbnail.extension}`
     
         heroRecButtons.innerHTML += 
         `
@@ -482,12 +482,48 @@ async function selectRecHero(id, thumbnail, name) {
         <p>${name}</p>
     </button>
     `   
+
+    /* Clearing the send interface */
+    document.getElementById("heroRecButtons").innerHTML = ``
+    document.getElementById("recHero").value = ``
 }
 
 /* Receives the info of the searched hero to send and displays it */
 async function updateTradeSend(send) {
-    /* Populate the checkbox with cards to receive */
+    /* Populate the checkbox with cards to send */
     console.log(send)
+
+    var heroSendButtons = document.getElementById("heroSendButtons")
+    heroSendButtons.innerHTML = ``
+
+    for(i = 0; i < send.length; i++) {
+        id = send[i].id 
+        name = send[i].name
+        thumbnail = `${send[i].thumbnail}`
+    
+        heroSendButtons.innerHTML += 
+        `
+        <button class="col p-3 m-3 border rounded" onclick='selectSendHero(${id}, "${thumbnail}", "${name}")'>
+            <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
+            <p>${name}</p>
+        </button>
+        `
+    }
+}
+
+async function selectSendHero(id, thumbnail, name) {
+    console.log("Eroe selezionato", id)
+    document.getElementById("savedSendButtons").innerHTML += 
+    `
+    <div class="col p-3 m-3 border rounded">
+        <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
+        <p>${name}</p>
+    </button>
+    `   
+    
+    /* Clearing the search interface */
+    document.getElementById("heroSendButtons").innerHTML = ``
+    document.getElementById("sendHero").value = ``
 }
 
 

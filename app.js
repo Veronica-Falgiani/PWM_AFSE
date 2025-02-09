@@ -479,6 +479,7 @@ async function getUserCards(req,res) {
     } 
 }
 
+
 /* ---- GET ALL TRADES ---- */
 app.get("/alltrades", (req,res) => {
     getTrades(req,res);

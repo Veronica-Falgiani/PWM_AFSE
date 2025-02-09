@@ -68,22 +68,23 @@
                             </div> 
                             <div class="mb-3">
                                 <label for="inputName" class="form-label">Eroi da ricevere</label>
+                                <div id="savedRecButtons"></div>
                                 <div class="form-text">Inserire le prime lettere dell'eroe per cercare</div>
                                 <div class="d-flex">
                                     <input class="form-control" placeholder="Eroe" id="recHero">
                                     <a type="submitHero" class="btn btn-outline-success" onclick="updateRecHero()">Cerca</a>
                                 </div>
                                 <div id="heroRecButtons"></div>  
-                                <div id="savedRecButtons"></div>
                             </div>
                             <div class="mb-3">                            
                                 <label for="inputName" class="form-label">Eroi da inviare</label>
+                                <div id="savedSendButtons"></div>
                                 <div class="form-text">Inserire le prime lettere dell'eroe per cercare</div>
                                 <div class="d-flex">
                                     <input class="form-control" placeholder="Eroe" id="sendHero">
                                     <a type="submitHero" class="btn btn-outline-success" onclick="updateSendHero()">Cerca</a>
                                 </div>
-                                <div class="mb-3 row" id="heroSendButton"></div>  
+                                <div id="heroSendButtons"></div>  
                             </div>                 
                             </div>
                             <button class="btn btn-primary mb-4" onclick="addTrade()">Aggiungi scambio</button>
@@ -127,9 +128,29 @@
                 getFromMarvel("characters", `nameStartsWith=${recHero}`).then(result => updateTradeRec(result.data.results));
             }  
 
-            function updateSendHero() {
-                sendHero = document.getElementById("sendHero").value
-                getFromMarvel("characters", `nameStartsWith=${sendHero}`).then(result => updateTradeSend(result.data.results));
+            async function updateSendHero() {
+                sendHero = document.getElementById("sendHero").value.toLowerCase()
+                username = localStorage.getItem("username")
+                heroes = []
+
+                userCards = await fetch(`http://localhost:3100/cards/${username}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-type": "application/json",
+                        'Accept': 'application/json',
+                    },
+                })
+                    .then(response => response.json()).then(res => {return res})
+                    .catch(error => console.log('Cannot get cards of the user', error));
+                
+                for(i = 0; i < userCards.length; i++) {
+                    name = userCards[i].name.toLowerCase()
+                    if(name.includes(sendHero)) {
+                        heroes.push(userCards[i])
+                    }
+                }
+
+                updateTradeSend(heroes)
             }
         </script>
     </body>
