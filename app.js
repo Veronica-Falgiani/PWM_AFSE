@@ -419,7 +419,7 @@ async function addCards(req,res) {
 
         result = await clientdb.db("AFSM").collection("Users").findOne(filterCards);
     
-        /* If the card si no present in the db it will add it to the user */
+        /* If the card is not present in the db it will add it to the user */
         if(result == null){
             var addCards = { 
                 $push : {"cards": cards[i]} 
@@ -479,6 +479,63 @@ async function getUserCards(req,res) {
     } 
 }
 
+/* ---- GET A SINGLE CARD ---- */
+app.get("/card/:id", (req,res) => {
+    getCard(req,res);
+})
+
+async function getCard(req,res) {
+    var id = req.params.id
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "id": id },
+        ]
+    }
+
+    var card = await clientdb.db("AFSM").collection("Cards").findOne(filter);
+
+    if (card == null) {
+        res.status(401).send("Unauthorized")
+    } else {
+        res.json(card)
+    } 
+}
+
+/* ---- UPDATE A CARD WHEN USED OR DELETED FROM A TRADE ---- */
+app.put("/card/:id", (req,res) => {
+    modifyTradeCard(req,res);
+})
+
+async function modifyTradeCard(req,res) {
+    var id = req.params.id
+    var username = req.body.username
+    
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "username": username }
+        ]
+    }
+
+    user = await clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    for(i = 0; i < user.cards.length; i++) {
+        if(user.cards[i].id == id) {
+            if(user.cards[i].inTrade == true) {
+                var result = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: false} });
+            }
+            else {
+                var result = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: true} });
+            }
+        }
+    }
+
+    res.json()
+}
 
 /* ---- GET ALL TRADES ---- */
 app.get("/alltrades", (req,res) => {
@@ -555,7 +612,7 @@ async function createTrade(req,res) {
 }
 
 
-/* ---- DELETE TRADES ---- */
+/* ---- DELETE TRADE AND SETS INTRADE TO FALSE ---- */
 app.delete("/trade/:id", (req,res) => {
     deleteTrade(req,res)
 })

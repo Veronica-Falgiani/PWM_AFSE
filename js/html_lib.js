@@ -504,7 +504,7 @@ async function updateSendHero() {
     
     for(i = 0; i < userCards.length; i++) {
         name = userCards[i].name.toLowerCase()
-        if(name.includes(sendHero)) {
+        if(userCards[i].inTrade == false && name.includes(sendHero)) {
             heroes.push(userCards[i])
         }
     }
@@ -514,9 +514,7 @@ async function updateSendHero() {
 
 /* Receives the info of the searched hero to send and displays it */
 async function updateTradeSend(send) {
-    /* Populate the checkbox with cards to send */
-    console.log(send)
-
+    /* Populate with cards to send */
     var heroSendButtons = document.getElementById("heroSendButtons")
     heroSendButtons.innerHTML = ``
 
@@ -570,7 +568,24 @@ async function addTrade() {
                                 "heroReceive": heroReceive })
     })
     .then(result => result.json()).then(res => console.log(res))
-    .catch(error => console.log('Scambio non eliminato correttamente', error));  
+    .catch(error => console.log('Scambio non aggiunto correttamente', error));  
+
+    username = localStorage.getItem("username")
+    
+    for(i = 0; i < heroSend.length; i++) {
+        await fetch(`/card/${heroSend[i].id}`, {
+            method: "PUT",
+            headers: {
+                "Content-type": "application/json",
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({  "username": username })
+        })
+        .then(result => result.json()).then(res => console.log(res))
+        .catch(error => console.log('Aggiornamento carte inTrade non andato', error));  
+    }
+
+    clearModal()
 
     location.reload()
 }
@@ -594,7 +609,36 @@ async function getTrade(trade) {
     `
 }
 
+/* It changes inTrade values and then deletes the trade */
 async function deleteTrade(id) {
+    username = localStorage.getItem("username")
+
+    /* gets all the info of the trade */
+    trade = await fetch(`/trade/${id}`, {
+        method: "GET",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        }
+    })
+    .then(result => result.json()).then(res => {return res})
+    .catch(error => console.log('Aggiornamento carte inTrade non andato', error));  
+
+    /* Updates to false the value inTrade of all the cards to send */
+    for(i = 0; i < trade.send.length; i++) {
+        await fetch(`/card/${trade.send[i].id}`, {
+            method: "PUT",
+            headers: {
+                "Content-type": "application/json",
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({  "username": username })
+        })
+        .then(result => result.json()).then(res => console.log(res))
+        .catch(error => console.log('Aggiornamento carte inTrade non andato', error));  
+    }
+
+    /* Deletes the trade */
     await fetch(`/trade/${id}`, {
         method: "DELETE",
         headers: {
