@@ -540,7 +540,7 @@ async function selectSendHero(id, thumbnail, name) {
     <div class="col p-3 m-3 border rounded">
         <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
         <p>${name}</p>
-    </button>
+    </div>
     ` 
     
     hero = {"id": id, "name": name, "thumbnail": thumbnail}
@@ -554,9 +554,31 @@ async function selectSendHero(id, thumbnail, name) {
 
 /* Adds a trade in the db */
 async function addTrade() {
-    console.log(heroSend, heroReceive)
+    console.log(heroReceive)
+    username = localStorage.getItem("username")
     name = document.getElementById("inputName").value
 
+    /* Verifies that the requested card is not present in the user cards */
+    userCards = await fetch(`/cards/${username}`, {
+        method: "GET",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        }})
+        .then(result => result.json()).then(res => { return res })
+
+    for(i = 0; i < userCards.length; i++) {
+        for(j = 0; j < heroReceive.length; j ++) {
+            if(userCards[i].id == heroReceive[j].id) {
+                alert("Carta richiesta già presente nell'album")
+                document.getElementById("savedRecButtons").innerHTML = ``
+                heroReceive = []
+                return
+            }
+        }
+    }
+
+    /* Inserts the trade in the db */
     await fetch(`/trade/${username}`, {
         method: "POST",
         headers: {
@@ -569,9 +591,8 @@ async function addTrade() {
     })
     .then(result => result.json()).then(res => console.log(res))
     .catch(error => console.log('Scambio non aggiunto correttamente', error));  
-
-    username = localStorage.getItem("username")
     
+    /* Updates the value of inTrade of the user cards */
     for(i = 0; i < heroSend.length; i++) {
         await fetch(`/card/${heroSend[i].id}`, {
             method: "PUT",
@@ -603,10 +624,42 @@ async function getTrade(trade) {
     <h3> ${trade.name} </h3>
     <hr>
     <p> Utente: ${trade.username}</p>
-    <p> carte richieste: ${trade.send}</p>
-    <p> carte proposte: ${trade.receive}</p>
-    <button class="btn btn-primary" onclick="acceptTrade(trade)">Accetta lo scambio</button>
+    <p> Carte richieste: </p>
+    <div class="row">
     `
+    for(i = 0; i < trade.receive.length; i++) {
+        tradePage.innerHTML += 
+        `
+        <div class="col p-3 m-3 border rounded">
+            <img class="mb-3" src="${trade.receive[i].thumbnail}" width="100px" height="100px">  
+            <p>${trade.receive[i].name}</p>
+        </div>
+        `
+    }
+    tradePage.innerHTML += `
+    </div>
+    <p> Carte proposte:</p>
+    <div class="row">
+    `
+    for(i = 0; i < trade.send.length; i++) {
+        tradePage.innerHTML += 
+        `
+        <div class="col p-3 m-3 border rounded">
+            <img class="mb-3" src="${trade.send[i].thumbnail}" width="100px" height="100px">  
+            <p>${trade.send[i].name}</p>
+        </div>
+        `
+    }
+    tradePage.innerHTML += 
+    `
+    </div>
+    <button class="btn btn-primary" onclick='acceptTrade("trade._id")'>Accetta lo scambio</button>
+    `
+}
+
+/* Accepts a trade and updates the cards of the respective users */
+async function acceptTrade(trade) {
+    //TODO ________________________________________________
 }
 
 /* It changes inTrade values and then deletes the trade */
@@ -652,11 +705,6 @@ async function deleteTrade(id) {
     location.reload()
 }
 
-/* Accepts a trade and updates the cards of the respective users */
-async function acceptTrade(trade) {
-    //TODO ________________________________________________
-}
-
 /* When a user exits the modal everything is cancelled */
 function clearModal() {
     document.getElementById("inputName").value = ``
@@ -666,8 +714,8 @@ function clearModal() {
     document.getElementById("heroRecButtons").innerHTML = ``
     document.getElementById("savedSendButtons").innerHTML = ``
     document.getElementById("heroSendButtons").innerHTML = ``
-    heroSend = {}
-    heroReceive = {}
+    heroSend = []
+    heroReceive = []
 }
 
 /* Function to go to previous page and populate it */

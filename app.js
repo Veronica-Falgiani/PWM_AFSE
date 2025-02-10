@@ -592,12 +592,29 @@ async function createTrade(req,res) {
     receive = req.body.heroReceive
     send = req.body.heroSend
 
+    if(name == undefined) {
+        res.status(400).send("Nome mancante")
+        return
+    }
+    
+    if(receive.length == 0) {
+        res.status(400).send("Carte da ricevere mancanti")
+        return
+    }
+    
+    if(send.length == 0) {
+        res.status(400).send("Carte da inviare mancanti")
+        return
+    }
+
     var trade = {
         "username": username,
         "name": name,
         "receive": receive,
         "send": send
     }
+
+    console.log(trade)
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
