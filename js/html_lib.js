@@ -397,8 +397,8 @@ function populateTrades(username, trades, page) {
             <button class="row p-3 m-3 border rounded" style="text-align:left;" onclick='getTradeId("${trades[i]._id}")'>
                 <p> Nome: ${trades[i].name}</p>
                 <p> Utente: ${trades[i].username} </p>  
+                <p> Carte proposte: ${namesSend}</p>
                 <p> Carte richieste: ${namesReceive}</p>
-                <p> Carte scambiate: ${namesSend}</p>
             </button>
             `;
         }
@@ -435,8 +435,8 @@ function populateUserTrades(username, trades, page) {
             <div class="row p-3 m-3 border rounded">
                 <p> Nome: ${trades[i].name}</p>
                 <p> Utente: ${trades[i].username} </p>  
-                <p> Carte richieste: ${namesReceive}</p>
-                <p> Carte scambiate: ${namesSend}</p>
+                <p> Carte proposte: ${namesReceive}</p>
+                <p> Carte richieste: ${namesSend}</p>
                 <button class="btn btn-danger mb-4" onclick='deleteTrade("${trades[i]._id}")'>Rimuovi scambio</button>
             </div>
             `;
@@ -624,20 +624,6 @@ async function getTrade(trade) {
     <h3> ${trade.name} </h3>
     <hr>
     <p> Utente: ${trade.username}</p>
-    <p> Carte richieste: </p>
-    <div class="row">
-    `
-    for(i = 0; i < trade.receive.length; i++) {
-        tradePage.innerHTML += 
-        `
-        <div class="col p-3 m-3 border rounded">
-            <img class="mb-3" src="${trade.receive[i].thumbnail}" width="100px" height="100px">  
-            <p>${trade.receive[i].name}</p>
-        </div>
-        `
-    }
-    tradePage.innerHTML += `
-    </div>
     <p> Carte proposte:</p>
     <div class="row">
     `
@@ -650,16 +636,42 @@ async function getTrade(trade) {
         </div>
         `
     }
+    tradePage.innerHTML +=
+    `
+    </div>
+    <p> Carte richieste: </p>
+    <div class="row">
+    `
+    for(i = 0; i < trade.receive.length; i++) {
+        tradePage.innerHTML += 
+        `
+        <div class="col p-3 m-3 border rounded">
+            <img class="mb-3" src="${trade.receive[i].thumbnail}" width="100px" height="100px">  
+            <p>${trade.receive[i].name}</p>
+        </div>
+        `
+    }
     tradePage.innerHTML += 
     `
     </div>
-    <button class="btn btn-primary" onclick='acceptTrade("trade._id")'>Accetta lo scambio</button>
+    <button class="btn btn-primary" onclick='acceptTrade("${trade._id}")'>Accetta lo scambio</button>
     `
 }
 
 /* Accepts a trade and updates the cards of the respective users */
-async function acceptTrade(trade) {
-    //TODO ________________________________________________
+async function acceptTrade(id) {
+    localStorage.getItem("username");
+
+    await fetch(`/acceptTrade/${id}`, {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ "username": username })
+    })
+    .then(result => result.json()).then(res => console.log(res))
+    .catch(error => console.log('Aggiornamento carte dello scambio non andato', error));  
 }
 
 /* It changes inTrade values and then deletes the trade */

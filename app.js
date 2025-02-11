@@ -654,3 +654,256 @@ async function deleteTrade(req,res) {
         console.log(e)
     }
 }
+
+app.post("/acceptTrade/:id", (req,res) => {
+    acceptTrade(req,res)
+})
+
+async function acceptTrade(req,res) {
+    var id = req.params.id
+    id = new ObjectId(id)
+    usernameRec = req.body.username
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "_id": id },
+        ]
+    }
+
+    /* Gets the trade info */
+    try {
+        var trade = await clientdb.db("AFSM").collection("Trades").findOne(filter);    
+    }
+    catch (e) {
+        console.log(e)
+    }
+
+    usernameSend = trade.username
+    cardsRec = trade.send
+    cardsSend = trade.receive
+    
+    var decrement = { 
+        $inc : {"cards.$.number": -1}
+    }
+
+    /* Updates the cards of the receive user */
+    var filterRec = {
+        $and: [
+            { "username": usernameRec },
+        ]
+    }
+
+    /* Updates the cards of the receive user */
+    var filterSend = {
+        $and: [
+            { "username": usernameSend },
+        ]
+    }
+
+    /* Updates the cards of the sender user */
+    for(i = 0; i < cardsRec.length; i++){
+        var card = await clientdb.db("AFSM").collection("Users").aggregate([{
+            "$unwind": "$cards"
+        },
+        {
+            "$match": {
+              "username": usernameSend,
+              "cards.id": cardsRec[i].id
+            }
+        },
+        {
+            "$project": {
+              "_id": 0,
+              "id": "$cards.id",
+              "name": "$cards.name",
+              "thumbnail": "$cards.thumbnail",
+              "number": "$cards.number",
+              "inTrade": "$cards.inTrade"
+            }
+        }]).toArray()
+
+        var cardUser = await clientdb.db("AFSM").collection("Users").aggregate([{
+            "$unwind": "$cards"
+        },
+        {
+            "$match": {
+              "username": usernameRec,
+              "cards.id": cardsRec[i].id
+            }
+        },
+        {
+            "$project": {
+              "_id": 0,
+              "id": "$cards.id",
+              "name": "$cards.name",
+              "thumbnail": "$cards.thumbnail",
+              "number": "$cards.number",
+              "inTrade": "$cards.inTrade"
+            }
+        }]).toArray()
+
+        if(cardUser.length != 0) {
+            console.log("carta già presente")
+            res.status(400).send("La carta è già in tuo possesso")
+            return
+        }   
+    
+        if(card[0].number == 1) {
+            try {
+                var removeCard = {
+                    $pull: {
+                        "cards": {
+                        "id": card[0].id
+                        }
+                    }
+                    
+                } 
+
+                var response = await clientdb.db("AFSM").collection("Users").updateOne(filterSend, removeCard);
+                console.log(usernameSend, card.name, response)
+            }
+            catch(e) {
+                console.log(e)
+            } 
+        }
+        else {
+            var filterCards = {
+                $and: [
+                    { "username": usernameSend,
+                      "cards.id" : card[0].id } 
+                ]
+            }
+
+            try {
+                var result = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, { $set : {"cards.$.inTrade": false} });
+
+                var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
+                console.log(usernameSend, card.name, result, response)
+            }
+            catch(e){
+                console.log(e)
+            }
+        }
+    }
+
+    /* Delete the card we need to send to the receiver */
+    for(i = 0; i < cardsSend.length; i++){
+        var card = await clientdb.db("AFSM").collection("Users").aggregate([{
+            "$unwind": "$cards"
+        },
+        {
+            "$match": {
+              "username": usernameRec,
+              "cards.id": cardsSend[i].id
+            }
+        },
+        {
+            "$project": {
+              "_id": 0,
+              "id": "$cards.id",
+              "name": "$cards.name",
+              "thumbnail": "$cards.thumbnail",
+              "number": "$cards.number",
+              "inTrade": "$cards.inTrade"
+            }
+        }]).toArray()
+
+        if(card[0].inTrade == true) {
+            res.status(400).send("Carta bloccata in un altro scambio")
+            return
+        }
+
+        if(card[0].number == 1) {
+            try {
+                var removeCard = {
+                    $pull: {
+                        "cards": {
+                        "id": card[0].id
+                        }
+                    }
+                    
+                } 
+
+                var response = await clientdb.db("AFSM").collection("Users").updateOne(filterRec, removeCard);
+                console.log(usernameRec, card.name, response)
+            }
+            catch(e) {
+                console.log(e)
+            } 
+        }
+        else {
+            var filterCards = {
+                $and: [
+                    { "username": usernameRec,
+                      "cards.id" : card[0].id } 
+                ]
+            }
+            try {
+                var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
+                console.log(usernameRec, card.name, response)
+            }
+            catch(e){
+                console.log(e)
+            }
+        }
+    }
+
+    /* Adds the card of the receiver to the db */ 
+    for(j = 0; j < cardsSend.length; j++) {
+        card = {
+            "id": cardsSend[j].id,
+            "name": cardsSend[j].name,
+            "thumbnail": cardsSend[j].thumbnail,
+            "number": 1,
+            "inTrade": false
+        }
+
+        var addCards = { 
+            $push : {"cards": card} 
+        }  
+        
+        var response = await clientdb.db("AFSM").collection("Users").updateOne(filterSend, addCards);
+        if (response.modifiedCount == 0) {
+            res.status(401).send("Failed to add cards")
+            return
+        }
+    }
+
+    /* Adds the card of the sender to the db */
+    for(j = 0; j < cardsRec.length; j++) {
+        card = {
+            "id": cardsRec[j].id,
+            "name": cardsRec[j].name,
+            "thumbnail": cardsRec[j].thumbnail,
+            "number": 1,
+            "inTrade": false
+        }
+
+        var addCards = { 
+            $push : {"cards": card} 
+        } 
+
+        var response = await clientdb.db("AFSM").collection("Users").updateOne(filterRec, addCards);
+        if (response.modifiedCount == 0) {
+            res.status(401).send("Failed to add cards")
+            return
+        }
+    }   
+
+    /* Deletes the trade */
+    var filter = {
+        $and: [
+            { "_id": id },
+        ]
+    }
+
+    try {
+        var result = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
+        res.redirect("/trades");
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
