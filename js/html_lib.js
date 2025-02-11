@@ -669,9 +669,7 @@ async function acceptTrade(id) {
             'Accept': 'application/json',
         },
         body: JSON.stringify({ "username": username })
-    })
-    .then(result => result.json()).then(res => console.log(res))
-    .catch(error => console.log('Aggiornamento carte dello scambio non andato', error));  
+    })  
 }
 
 /* It changes inTrade values and then deletes the trade */

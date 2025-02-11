@@ -788,6 +788,8 @@ async function acceptTrade(req,res) {
         }
     }
 
+    console.log("usernameSend updated")
+
     /* Delete the card we need to send to the receiver */
     for(i = 0; i < cardsSend.length; i++){
         var card = await clientdb.db("AFSM").collection("Users").aggregate([{
@@ -850,6 +852,8 @@ async function acceptTrade(req,res) {
         }
     }
 
+    console.log("usernameRec updated")
+
     /* Adds the card of the receiver to the db */ 
     for(j = 0; j < cardsSend.length; j++) {
         card = {
@@ -870,6 +874,8 @@ async function acceptTrade(req,res) {
             return
         }
     }
+
+    console.log("cardSend deleted")
 
     /* Adds the card of the sender to the db */
     for(j = 0; j < cardsRec.length; j++) {
@@ -892,6 +898,8 @@ async function acceptTrade(req,res) {
         }
     }   
 
+    console.log("cardRec deleted")
+
     /* Deletes the trade */
     var filter = {
         $and: [
@@ -901,6 +909,7 @@ async function acceptTrade(req,res) {
 
     try {
         var result = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
+        console.log("trade deleted")
         res.redirect("/trades");
     }
     catch (e) {
