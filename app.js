@@ -327,11 +327,11 @@ async function getCredits(req,res) {
 /* ---- UPDATE CREDITS ---- */
 /* add :username MODIFY TO INCREMENT AND DECREASE?? */
 app.post("/credits", (req,res) =>{
-    removeCredits(req,res);
+    addCredits(req,res);
 })
 
 /* Updates db with incremented credits an then returns the value of credits */
-async function removeCredits(req,res) {
+async function addCredits(req,res) {
     let creditsToAdd = req.body.creditsToAdd;
     let username = req.body.username;
 
@@ -535,6 +535,97 @@ async function modifyTradeCard(req,res) {
     }
 
     res.json()
+}
+
+/* ---- UPDATE A CARD WHEN USED OR DELETED FROM A TRADE ---- */
+app.delete("/card/:id", (req,res) => {
+    removeCard(req,res);
+})
+
+async function removeCard(req,res) {
+    var id = req.params.id
+    var username = req.body.username
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var decrement = { 
+        $inc : {"cards.$.number": -1}
+    }
+
+    /* Updates the cards of the receive user */
+    var filter = {
+        $and: [
+            { "username": username },
+        ]
+    }
+
+        var card = await clientdb.db("AFSM").collection("Users").aggregate([{
+            "$unwind": "$cards"
+        },
+        {
+            "$match": {
+            "username": username,
+            "cards.id": Number(id)
+            }
+        },
+        {
+            "$project": {
+            "_id": 0,
+            "id": "$cards.id",
+            "name": "$cards.name",
+            "thumbnail": "$cards.thumbnail",
+            "number": "$cards.number",
+            "inTrade": "$cards.inTrade"
+            }
+        }]).toArray()
+
+    console.log(card[0])
+    
+    if(card[0].inTrade == true) {
+        res.status(400).send("Carta bloccata in un altro scambio")
+        return
+    }
+
+    if(card[0].number == 1) {
+        try {
+            var removeCard = {
+                $pull: {
+                    "cards": {
+                    "id": card[0].id
+                    }
+                }
+                
+            } 
+
+            var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, removeCard);
+        }
+        catch(e) {
+            console.log(e)
+        } 
+    }
+    else {
+        var filterCards = {
+            $and: [
+                { "username": username,
+                  "cards.id" : card[0].id } 
+            ]
+        }
+        try {
+            var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
+        }
+        catch(e){
+            console.log(e)
+        }
+    }
+
+    var increment = { 
+        $inc : {"credits": 0.1} 
+    } 
+
+    
+    var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, increment);
+   
+    res.json(response)
 }
 
 /* ---- GET ALL TRADES ---- */

@@ -332,7 +332,7 @@ function writeHero(heroJson, status) {
 
     card.innerHTML =
     `
-    <h3> ${hero[0].name} </h3>
+    <h3>${hero[0].name} </h3>
     <hr>
     <img class="mb-3" src="${hero[0].thumbnail.path}.${hero[0].thumbnail.extension}" width="300px" height="300px">  
     <h4> Descrizione: </h4>
@@ -349,7 +349,27 @@ function writeHero(heroJson, status) {
     <ul>
     ${events}
     </ul>
+    <button class="btn btn-danger" onclick="sellCard()"> Vendi carta per 0.1 credito </button>
     `
+}
+
+async function sellCard() {
+    var id = localStorage.getItem("heroId")
+    var username = localStorage.getItem("username")
+
+    console.log(id, username)
+
+    await fetch(`http://localhost:3100/card/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ "username": username })
+    })
+    .then(window.location.href = "/album")
+    .catch(error => console.log('Cannot delete card of the user', error));
+    
 }
 
 /* TRADES.HTML */
