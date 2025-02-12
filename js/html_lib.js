@@ -367,8 +367,12 @@ async function sellCard() {
         },
         body: JSON.stringify({ "username": username })
     })
-    .then(window.location.href = "/album")
+    .then(response => response.json()).then(res => {
+        localStorage.setItem("credits", res);
+        window.location.href = "/album";
+    })
     .catch(error => console.log('Cannot delete card of the user', error));
+    
     
 }
 

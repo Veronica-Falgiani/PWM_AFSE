@@ -624,8 +624,9 @@ async function removeCard(req,res) {
 
     
     var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, increment);
-   
-    res.json(response)
+    var user = await clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    res.json(user.credits)
 }
 
 /* ---- GET ALL TRADES ---- */
