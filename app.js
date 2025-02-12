@@ -910,7 +910,7 @@ async function acceptTrade(req,res) {
     try {
         var result = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
         console.log("trade deleted")
-        res.redirect("/trades");
+        res.json(result);
     }
     catch (e) {
         console.log(e)

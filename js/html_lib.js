@@ -669,7 +669,9 @@ async function acceptTrade(id) {
             'Accept': 'application/json',
         },
         body: JSON.stringify({ "username": username })
-    })  
+    })
+    .then(response => response.json()).then(res => window.location.href = "/trades")  
+    .catch(error => console.log('Cannot get all the trades', error));
 }
 
 /* It changes inTrade values and then deletes the trade */
