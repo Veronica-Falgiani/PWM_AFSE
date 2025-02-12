@@ -207,17 +207,17 @@ function populateCards(allCards, userCards, page) {
         if (found == 0) {
             cardsRow.innerHTML += 
             `
-            <div class="col p-3 m-3 border rounded">
+            <button class="col p-3 m-3 border rounded" onclick="getCard(${allCards[i].id}, 'unobtained')">
                 <img class="mb-3" src="${allCards[i].thumbnail}" width="100px" height="100px" id="unobtained" style="filter: grayscale(100%)">  
                 <p> ${allCards[i].name}</p>
-            </div>
+            </button>
             `;
         }
         /* If the card is found in the user db it is clickable and shows the amount */
         else {
             cardsRow.innerHTML += 
             `
-            <button class="col btn-danger p-3 m-3 border rounded" onclick="getCard(${allCards[i].id})">
+            <button class="col btn btn-danger p-3 m-3 border rounded" onclick="getCard(${allCards[i].id}, 'obtained')">
                 <img class="mb-3" src="${allCards[i].thumbnail}" width="100px" height="100px">  
                 <p> (${num}) ${allCards[i].name}</p>
             </button>
@@ -244,7 +244,7 @@ function populateUserCards(userCards, page) {
     for(i = start; i < end; i++) {
         cardsRow.innerHTML += 
         `
-        <button class="col p-3 m-3 border rounded" onclick="getCard(${userCards[i].id})">
+        <button class="col p-3 m-3 border rounded" onclick="getCard(${userCards[i].id}, 'obtained')">
             <img class="mb-3" src="${userCards[i].thumbnail}" width="100px" height="100px">  
             <p> (${userCards[i].number}) ${userCards[i].name}</p>
         </button>
@@ -281,18 +281,31 @@ function nextAlbum() {
 }
 
 /* Gets the value id of the card and then redirects to /card */
-function getCard(id) {
+function getCard(id, status) {
     localStorage.setItem("heroId", id)  
+    localStorage.setItem("status", status)
     window.location.href = "/card";  
 }
 
 /* CARD.HTML */
 /* prints all the info about a character in an html format */
-function writeHero(heroJson) {
+function writeHero(heroJson, status) {
     heroJson = (JSON.stringify(heroJson));
     const hero = JSON.parse(heroJson);
 
-    console.log(hero)
+    const card = document.getElementById('card');
+
+    if(status == 'unobtained') {
+        card.innerHTML =
+        `
+        <h3> ${hero[0].name} </h3>
+        <hr>
+        <img class="mb-3" src="${hero[0].thumbnail.path}.${hero[0].thumbnail.extension}" width="300px" height="300px">  
+        <h4> Descrizione: </h4>
+        <p>${hero[0].description}</p>
+        `
+        return
+    }
 
     /* saving all the comics in a list */
     const lenComics = hero[0].comics.returned
@@ -316,7 +329,6 @@ function writeHero(heroJson) {
         events += `<li>${hero[0].events.items[i].name}</li>\n`
     }
 
-    const card = document.getElementById('card');
     card.innerHTML =
     `
     <h3> ${hero[0].name} </h3>

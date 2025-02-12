@@ -21,7 +21,8 @@
         <script>
             window.addEventListener("load", async (event) => {
                 id = localStorage.getItem("heroId");
-                getFromMarvel(`characters/${id}`).then(result => writeHero(result.data.results));
+                status = localStorage.getItem("status");
+                getFromMarvel(`characters/${id}`).then(result => writeHero(result.data.results, status));
             })
         </script>
     </body>
