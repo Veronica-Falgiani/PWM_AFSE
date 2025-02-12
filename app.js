@@ -332,7 +332,7 @@ app.post("/credits", (req,res) =>{
 
 /* Updates db with incremented credits an then returns the value of credits */
 async function removeCredits(req,res) {
-    let eur = req.body.euros;
+    let creditsToAdd = req.body.creditsToAdd;
     let username = req.body.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();
@@ -344,7 +344,7 @@ async function removeCredits(req,res) {
     }
 
     var increment = { 
-        $inc : {"credits": Number(eur)} 
+        $inc : {"credits": Number(creditsToAdd)} 
     } 
 
     /* findOneandUpdate did't work even with return original set to false */
