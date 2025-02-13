@@ -64,7 +64,7 @@
             
             window.addEventListener("load", async (event) => {
                 username = localStorage.getItem("username")
-                allCards = await fetch(`http://localhost:3100/cards`, {
+                allCards = await fetch(`/cards`, {
                     method: "GET",
                     headers: {
                         "Content-type": "application/json",
@@ -74,7 +74,7 @@
                     .then(response => response.json()).then(res => {return res})
                     .catch(error => console.log('Cannot get all the cards', error));
 
-                userCards = await fetch(`http://localhost:3100/cards/${username}`, {
+                userCards = await fetch(`/cards/${username}`, {
                     method: "GET",
                     headers: {
                         "Content-type": "application/json",

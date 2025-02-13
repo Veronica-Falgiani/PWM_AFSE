@@ -106,7 +106,7 @@
             window.addEventListener("load", async (event) => {
                 username = localStorage.getItem("username")
                 
-                trades = await fetch(`http://localhost:3100/alltrades`, {
+                trades = await fetch(`/alltrades`, {
                     method: "GET",
                     headers: {
                         "Content-type": "application/json",

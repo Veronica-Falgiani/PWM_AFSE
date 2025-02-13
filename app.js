@@ -375,7 +375,9 @@ async function addCredits(req,res) {
 
     /* findOneandUpdate did't work even with return original set to false */
     var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, increment);
+    console.log(response)
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
+    console.log(userInfo)
 
     if (response.modifiedCount == 0) {
         res.status(401).send("Failed to update credits")

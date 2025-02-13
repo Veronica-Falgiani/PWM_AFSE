@@ -22,7 +22,18 @@
             window.addEventListener("load", async (event) => {
                 id = localStorage.getItem("heroId");
                 status = localStorage.getItem("status");
-                getFromMarvel(`characters/${id}`).then(result => writeHero(result.data.results, status));
+                
+                await fetch("/marvelAPI", {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json",
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ "urlAPI" : `/characters/${id}`,
+                                        "query" : ""})
+                })
+                    .then(response => response.json()).then(result => writeHero(result[0], status))
+                    .catch(error => console.log('error', error));
             })
         </script>
     </body>

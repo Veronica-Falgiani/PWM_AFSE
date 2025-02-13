@@ -221,7 +221,7 @@ async function addCredits() {
         .then(response => response.json()).then(res => {
             localStorage.removeItem("euros")
             crediti = localStorage.setItem("credits", res)
-            document.getElementById("credits").innerHTML = `Totale crediti: ${res}`
+            document.getElementById("crediti").innerHTML = `Totale crediti: ${res}`
         })
         .catch(error => console.log('error', error));
 }
@@ -230,6 +230,12 @@ async function addCredits() {
 /* PACKS.HTML */
 /* Populates the euros field inside the modal and saves it in the localStorage*/
 function setCards(num, cred) {
+    document.getElementById("bodyModal").innerHTML = 
+    `
+    <button class="btn btn-danger" onclick="buyCards()">
+        <h5>Acquista</h5>
+    </button> 
+    `
     localStorage.setItem("cards", num)
     localStorage.setItem("packCreds", cred)
 }
@@ -252,6 +258,40 @@ async function getRandomHero() {
         .catch(error => console.log('error', error));
 
     return hero
+}
+
+
+/* Buys the cards, saves them in the user's db and then shows them */
+async function buyCards() {
+    cards = []
+    heroNum = []
+    numCards = localStorage.getItem("cards")
+    credits = localStorage.getItem("packCreds")
+    username = localStorage.getItem("username")
+
+    for(i = 0; i < numCards; i++){
+        
+        hero = await getRandomHero()
+        id = hero.id
+        name = hero.name
+        thumbnail = `${hero.thumbnail.path}.${hero.thumbnail.extension}`
+
+        cards.push({"id": id, "name": name, "thumbnail": thumbnail, "number": 1, "inTrade": false})
+    }
+
+    await fetch(`/cards/${username}`, {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ "cards" : cards,
+                            "credits" : credits})
+    })
+        .then(response => response.json()).then(res => localStorage.setItem("credits", res))
+        .catch(error => console.log("Errore nell'aggiornare i crediti", error));
+
+    writeCards(cards)
 }
 
 function writeCards(heroes) {
@@ -282,6 +322,8 @@ function writeCards(heroes) {
         </div>
         `
     }
+
+    document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("credits")}`
 }
 
 /* ALBUM.HTML*/
@@ -428,44 +470,44 @@ function writeHero(heroJson, status) {
     if(status == 'unobtained') {
         card.innerHTML =
         `
-        <h3> ${hero[0].name} </h3>
+        <h3> ${hero.name} </h3>
         <hr>
-        <img class="mb-3" src="${hero[0].thumbnail.path}.${hero[0].thumbnail.extension}" width="300px" height="300px">  
+        <img class="mb-3" src="${hero.thumbnail.path}.${hero.thumbnail.extension}" width="300px" height="300px">  
         <h4> Descrizione: </h4>
-        <p>${hero[0].description}</p>
+        <p>${hero.description}</p>
         `
         return
     }
 
     /* saving all the comics in a list */
-    const lenComics = hero[0].comics.returned
-    console.log(lenComics)
+    const lenComics = hero.comics.returned
+
     var comics = ``;
     for(let i = 0; i < lenComics; i++) {
-        comics += `<li>${hero[0].comics.items[i].name}</li>\n`
+        comics += `<li>${hero.comics.items[i].name}</li>\n`
     }
 
     /* saving all the series in a list */
-    const lenSeries = hero[0].series.returned
+    const lenSeries = hero.series.returned
     var series = ``;
     for(let i = 0; i < lenSeries; i++) {
-        series += `<li>${hero[0].series.items[i].name}</li>\n`
+        series += `<li>${hero.series.items[i].name}</li>\n`
     }
 
     /* saving all the events in a list */
-    const lenEvents = hero[0].events.returned
+    const lenEvents = hero.events.returned
     var events = ``;
     for(let i = 0; i < lenEvents; i++) {
-        events += `<li>${hero[0].events.items[i].name}</li>\n`
+        events += `<li>${hero.events.items[i].name}</li>\n`
     }
 
     card.innerHTML =
     `
-    <h3>${hero[0].name} </h3>
+    <h3>${hero.name} </h3>
     <hr>
-    <img class="mb-3" src="${hero[0].thumbnail.path}.${hero[0].thumbnail.extension}" width="300px" height="300px">  
+    <img class="mb-3" src="${hero.thumbnail.path}.${hero.thumbnail.extension}" width="300px" height="300px">  
     <h4> Descrizione: </h4>
-    <p>${hero[0].description}</p>
+    <p>${hero.description}</p>
     <h4> Fumetti: </h4>
     <ul>
     ${comics}
@@ -485,8 +527,6 @@ function writeHero(heroJson, status) {
 async function sellCard() {
     var id = localStorage.getItem("heroId")
     var username = localStorage.getItem("username")
-
-    console.log(id, username)
 
     await fetch(`/card/${id}`, {
         method: "DELETE",
@@ -622,7 +662,7 @@ async function updateRecHero() {
         body: JSON.stringify({ "urlAPI" : "/characters",
                             "query" : `nameStartsWith=${recHero}`})
     })
-        .then(response => response.json()).then(res => {updateTradeRec(res[0])})
+        .then(response => response.json()).then(res => {updateTradeRec(res)})
         .catch(error => console.log('error', error));
 }  
 
@@ -711,7 +751,6 @@ async function updateTradeSend(send) {
 }
 
 async function selectSendHero(id, thumbnail, name) {
-    console.log("Eroe selezionato", id)
     document.getElementById("savedSendButtons").innerHTML += 
     `
     <div class="col p-3 m-3 border rounded">
@@ -731,7 +770,6 @@ async function selectSendHero(id, thumbnail, name) {
 
 /* Adds a trade in the db */
 async function addTrade() {
-    console.log(heroReceive)
     username = localStorage.getItem("username")
     name = document.getElementById("inputName").value
 
