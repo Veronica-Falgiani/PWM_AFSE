@@ -15,7 +15,7 @@
 }
 
 body {
-    background-image:    url('../img/marvelbg.jpg');
+    background-image:    url('../../public/images/marvelbg.jpg');
     background-size:     cover;                      
     background-repeat:   no-repeat;
     background-position: center center;            

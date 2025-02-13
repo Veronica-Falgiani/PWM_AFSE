@@ -60,3 +60,9 @@ else {
     </nav>
     `;
 }
+
+/* Unsets all the localstorage items to "logout" user */
+function logoutUser() {
+    localStorage.clear();
+    window.location.href = "/";
+}

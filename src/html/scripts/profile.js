@@ -1,0 +1,60 @@
+/* PROFILE.HTML */
+/* Prints the description of the user in the profile page */
+function writeProfile() {
+    username = localStorage.getItem("username") 
+    email = localStorage.getItem("email")
+    credits = localStorage.getItem("credits")
+    hero = localStorage.getItem("hero")
+    series = localStorage.getItem("series")
+    const profilo = document.getElementById("profilo")
+    profilo.innerHTML = 
+    `
+    <h3> Profilo </h3>
+    <hr>
+    <p> Nome: ${username}</p>
+    <p> Mail: ${email}</p>
+    <p> Password: ******</p>
+    <p> Crediti: ${credits} </p>
+    <p> Eroe preferito: ${hero} </p>
+    <p> Serie preferita: ${series} </p>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modifica profilo</button>
+    <hr>
+    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Elimina profilo</button>
+    `
+}
+
+/* Modifies the info of the user */
+async function modifyUser() {
+    username = localStorage.getItem("username")
+    email = document.getElementById("inputEmail").value
+    password = document.getElementById("inputPassword").value
+
+    fetch(`/user/${username}`, {
+        method: "PUT",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ "email" : email, 
+                               "password" : password })
+        })
+        .then(result => result.json()).then(res => {
+            localStorage.setItem("email", res.email)
+            window.location.href = "/profile";
+        })
+        .catch(error => console.log('Error updating the user', error));
+}
+
+/* Deletes the current user */
+async function deleteUser() { 
+    username = localStorage.getItem("username")
+
+    fetch(`/user/${username}`, {
+        method: "DELETE",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        }})
+        .then(result => result.json()).then(res => {localStorage.clear(); window.location.href = "/"})
+        .catch(error => console.log('Error deleting the user', error));
+}

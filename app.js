@@ -33,10 +33,12 @@ app.listen(port, host, () => console.log("Server up on port 3100"));
 
 /* Serving static files in express so I can use them */
 app.use(express.static(__dirname));
-app.use(express.static(path.join(__dirname, "/css/")));
-app.use(express.static(path.join(__dirname, "/html/")));
-app.use(express.static(path.join(__dirname, "/js/")));
-app.use(express.static(path.join(__dirname, "/img/")));
+app.use(express.static(path.join(__dirname, "/public/")));
+app.use(express.static(path.join(__dirname, "/public/images")));
+app.use(express.static(path.join(__dirname, "/src/html/")));
+app.use(express.static(path.join(__dirname, "/src/html/scripts")));
+app.use(express.static(path.join(__dirname, "/src/css/")));
+app.use(express.static(path.join(__dirname, "/src/lib/")));
 
 
 /* Auth - NEED TO PUT IT IN A SEPARATE FILE */
@@ -53,43 +55,43 @@ function auth(req, res, next) {
 
 /* ---- GET OF VARIOUS PAGES ---- */
 app.get("/", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/index.html"));
+    res.sendFile(path.join(__dirname, "public/index.html"));
 })
 
 app.get("/register", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/register.html"));
+    res.sendFile(path.join(__dirname, "src/html/register.html"));
 })
 
 app.get("/login", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/login.html"));
+    res.sendFile(path.join(__dirname, "src/html/login.html"));
 })
 
 app.get("/profile", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/profile.html"));
+    res.sendFile(path.join(__dirname, "src/html/profile.html"));
 })
 
 app.get("/credits", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/credits.html"));
+    res.sendFile(path.join(__dirname, "src/html/credits.html"));
 })
 
 app.get("/packs", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/packs.html"));
+    res.sendFile(path.join(__dirname, "src/html/packs.html"));
 })
 
 app.get("/trades", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/trades.html"));
+    res.sendFile(path.join(__dirname, "src/html/trades.html"));
 })
 
 app.get("/album", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/album.html"));
+    res.sendFile(path.join(__dirname, "src/html/album.html"));
 })
 
 app.get("/card", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/card.html"));
+    res.sendFile(path.join(__dirname, "src/html/card.html"));
 })
 
 app.get("/trade", (req,res) =>{
-    res.sendFile(path.join(__dirname, "html/trade.html"));
+    res.sendFile(path.join(__dirname, "src/html/trade.html"));
 })
 
 /* ---- Communicate with the marvel API ---- */
