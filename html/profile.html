@@ -70,43 +70,10 @@
         <script src="js/menu.js"></script>
         <script src="js/html_lib.js"></script>
         <script>
+            /* Writes all the info of the profile when loading the page */
             window.addEventListener("load", async (event) => {
                 writeProfile()
             })
-
-            async function modifyUser() {
-                username = localStorage.getItem("username")
-                email = document.getElementById("inputEmail").value
-                password = document.getElementById("inputPassword").value
-
-                fetch(`http://localhost:3100/user/${username}`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-type": "application/json",
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({ "email" : email, 
-                                           "password" : password })
-                    })
-                    .then(result => result.json()).then(res => {
-                        localStorage.setItem("email", res.email)
-                        window.location.href = "http://localhost:3100/profile";
-                    })
-                    .catch(error => console.log('Error updating the user', error));
-            }
-
-            async function deleteUser() { 
-                username = localStorage.getItem("username")
-
-                fetch(`http://localhost:3100/user/${username}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-type": "application/json",
-                        'Accept': 'application/json',
-                    }})
-                    .then(result => result.json()).then(res => {localStorage.clear(); window.location.href = "/"})
-                    .catch(error => console.log('Error deleting the user', error));
-            }
         </script>
     </body>
 </html>

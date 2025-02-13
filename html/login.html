@@ -26,7 +26,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary mb-4" onclick="sendForm()">Login</button>
                     <br>
-                    <a href="/register">Sei già registrato?</a>
+                    <a href="/register">Non sei ancora registrato?</a>
                 </div>
             </div>
         </div>
@@ -39,7 +39,7 @@
                 localStorage.removeItem("heroName")
                 localStorage.removeItem("seriesName")
 
-                fetch("http://localhost:3100/login", {
+                fetch("/login", {
                     method: "POST",
                     headers: {
                         "Content-type": "application/json",
@@ -52,12 +52,37 @@
                         localStorage.setItem("username", res.username)
                         localStorage.setItem("email", res.email)
                         localStorage.setItem("credits", res.credits)
-                        getFromMarvel(`characters/${res.hero}`).then(result => localStorage.setItem("hero", result.data.results[0].name));
-                        getFromMarvel(`series/${res.series}`).then(result => localStorage.setItem("series", result.data.results[0].title));
+
+                        hero = fetch("/marvelAPI", {
+                            method: "POST",
+                            headers: {
+                                "Content-type": "application/json",
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({ "urlAPI" : `characters/${res.hero}`,
+                                                "query" : ""})
+                        })
+                            .then(response => response.json()).then(result => {localStorage.setItem("hero", result[0].name)})
+                            .catch(error => console.log('error', error));
+
+                        console.log(hero)
+
+                        series = fetch("/marvelAPI", {
+                            method: "POST",
+                            headers: {
+                                "Content-type": "application/json",
+                                'Accept': 'application/json',
+                            },
+                            body: JSON.stringify({ "urlAPI" : `series/${res.series}`,
+                                                "query" : ""})
+                        })
+                            .then(response => response.json()).then(result => {localStorage.setItem("series", result[0].title)})
+                            .catch(error => console.log('error', error));
+                
                         /* window.location.href doesn't wait for the function getFromMarvel to finish */
                         setTimeout(function(){
-                            window.location.href = "http://localhost:3100/profile";
-                        }, 2000);
+                            window.location.href = "/profile";
+                        }, 3000);
                     })
                     .catch(error => window.alert("Errore nel login dell'utente", error));
             }
