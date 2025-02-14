@@ -73,9 +73,7 @@ app.get("/login", (req,res) =>{
 
 app.get("/profile", (req,res) =>{
     /* Verifying cookies */
-    response = validateSession(req.cookies)
-    console.log(response, req.cookies)
-    if(!response) {
+    if(!validateSession(req.cookies)) {
         res.status(400).send("Unauthorized user")
         return
     }
