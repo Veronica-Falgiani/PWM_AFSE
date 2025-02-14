@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser');
 require("dotenv").config();
 
 /* Import  */
-const {generateSession, validateSession, refreshSession, logoutSession } = require('./src/lib/session')
+const { generateSession, validateSession, refreshSession, logoutSession } = require('./src/lib/session')
 
 /* Mongodb setup */
 const mongodbURI = process.env.MONGODB_URI;
