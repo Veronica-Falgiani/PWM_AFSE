@@ -17,9 +17,12 @@
   },
   "homepage": "https://github.com/Veronica-Falgiani/PWM_AFSE#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "nodemon": "^3.1.9",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.0.5"
   }
 }

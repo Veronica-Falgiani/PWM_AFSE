@@ -7,7 +7,11 @@ const url = require('url');
 const crypto = require('crypto');
 const { maxHeaderSize } = require("http");
 const { receiveMessageOnPort } = require("worker_threads");
+const cookieParser = require('cookie-parser');
 require("dotenv").config();
+
+/* Import  */
+const {generateSession, validateSession, refreshSession, logoutSession } = require('./src/lib/session')
 
 /* Mongodb setup */
 const mongodbURI = process.env.MONGODB_URI;
@@ -24,6 +28,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
+app.use(cookieParser());
 
 const port = process.env.PORT;
 const host = process.env.HOST;
@@ -67,30 +72,123 @@ app.get("/login", (req,res) =>{
 })
 
 app.get("/profile", (req,res) =>{
+    /* Verifying cookies */
+    response = validateSession(req.cookies)
+    console.log(response, req.cookies)
+    if(!response) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+    
     res.sendFile(path.join(__dirname, "src/html/profile.html"));
 })
 
 app.get("/credits", (req,res) =>{
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+    
     res.sendFile(path.join(__dirname, "src/html/credits.html"));
 })
 
 app.get("/packs", (req,res) =>{
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+    
     res.sendFile(path.join(__dirname, "src/html/packs.html"));
 })
 
 app.get("/trades", (req,res) =>{
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+    
     res.sendFile(path.join(__dirname, "src/html/trades.html"));
 })
 
 app.get("/album", (req,res) =>{
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+    
     res.sendFile(path.join(__dirname, "src/html/album.html"));
 })
 
 app.get("/card", (req,res) =>{
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+    
     res.sendFile(path.join(__dirname, "src/html/card.html"));
 })
 
 app.get("/trade", (req,res) =>{
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+    
     res.sendFile(path.join(__dirname, "src/html/trade.html"));
 })
 
@@ -186,6 +284,11 @@ async function addUser(req, res) {
         try {
             var items = await clientdb.db("AFSM").collection("Users").insertOne(user)
             var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter)
+            
+            /* Generate and sens a session token as a cookie */
+            token = generateSession(username)
+            res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+            
             res.status(200).json(userInfo)
         }
         catch(e) {
@@ -230,10 +333,25 @@ async function loginUser(req, res) {
     if (loggedUser == null) {
         res.status(400).send("Non è stato trovato un utente!")
     } else {
+        /* Generate and sens a session token as a cookie */
+        token = generateSession(username)
+        res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+        
         res.status(200).json(loggedUser)
     }
 }
 
+app.post("/logout", (req,res) => {
+    logout(req,res) 
+})
+
+function logout(req,res) {
+    if(!logoutSession(req.cookies)) {
+        res.status(400).json("Errore nel logout")
+        return
+    }
+    res.status(200).json("Logout effettuato con successo")
+}
 
 /* ---- GET USER INFO ---- */
 app.get("/user/:username", async(req,res) => {

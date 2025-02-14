@@ -62,7 +62,17 @@ else {
 }
 
 /* Unsets all the localstorage items to "logout" user */
-function logoutUser() {
-    localStorage.clear();
-    window.location.href = "/";
+async function logoutUser() {
+    await fetch("/logout", {
+        method: "POST",
+        headers: {
+            "Content-type": "application/json",
+            'Accept': 'application/json',
+        }
+    })
+    .then(response => response.json()).then(res => {
+        console.log(res)
+        localStorage.clear();
+        window.location.href = "/";
+    })
 }
