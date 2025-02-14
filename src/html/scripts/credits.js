@@ -11,14 +11,13 @@ async function addCredits() {
     creditsToAdd = localStorage.getItem("creditsToAdd")
     username = localStorage.getItem("username")
 
-    await fetch("/credits", {
+    await fetch(`/addCredits/${username}`, {
         method: "POST",
         headers: {
             "Content-type": "application/json",
             'Accept': 'application/json',
         },
-        body: JSON.stringify({ "creditsToAdd" : creditsToAdd, 
-                               "username" : username})
+        body: JSON.stringify({ "creditsToAdd" : creditsToAdd })
     })
         .then(response => response.json()).then(res => {
             localStorage.removeItem("euros")

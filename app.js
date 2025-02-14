@@ -31,7 +31,7 @@ const host = process.env.HOST;
 app.listen(port, host, () => console.log("Server up on port 3100"));
 
 
-/* Serving static files in express so I can use them */
+/* Serving static files in express */
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, "/public/")));
 app.use(express.static(path.join(__dirname, "/public/images")));
@@ -94,6 +94,7 @@ app.get("/trade", (req,res) =>{
     res.sendFile(path.join(__dirname, "src/html/trade.html"));
 })
 
+
 /* ---- Communicate with the marvel API ---- */
 app.post("/marvelAPI", (req,res) => {
     getFromMarvel(req,res);
@@ -133,6 +134,16 @@ app.post("/register", function (req, res) {
 async function addUser(req, res) {
     let user = req.body;
 
+    var clientdb = await new mongoClient(mongodbURI).connect()
+    var users = await clientdb.db("AFSM").collection("Users").find().toArray()
+
+    for(i = 0; i < users.length; i++) {
+        if(user.username == users[i].username) {
+            res.status(400).send("Username già presente")
+            return
+        }
+    }
+
     if (user.username == undefined) {
         res.status(400).send("Username mancante")
         return
@@ -158,8 +169,6 @@ async function addUser(req, res) {
 
     user.credits = 0
     user.cards = []
-
-    var clientdb = await new mongoClient(mongodbURI).connect()
 
     var filter = {
         $and: [
@@ -352,16 +361,15 @@ async function getCredits(req,res) {
 }
 
 
-/* ---- UPDATE CREDITS ---- */
-/* add :username MODIFY TO INCREMENT AND DECREASE?? */
-app.post("/credits", (req,res) =>{
+/* ---- INCREASE CREDITS ---- */
+app.post("/addCredits/:username", (req,res) =>{
     addCredits(req,res);
 })
 
 /* Updates db with incremented credits an then returns the value of credits */
 async function addCredits(req,res) {
     let creditsToAdd = req.body.creditsToAdd;
-    let username = req.body.username;
+    let username = req.params.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
@@ -377,9 +385,46 @@ async function addCredits(req,res) {
 
     /* findOneandUpdate did't work even with return original set to false */
     var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, increment);
-    console.log(response)
+
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
-    console.log(userInfo)
+
+    if (response.modifiedCount == 0) {
+        res.status(401).send("Failed to update credits")
+    } else {
+        if (userInfo == null) {
+            res.status(401).send("Unauthorized")
+        } else {
+            res.json(userInfo.credits)
+        } 
+    }
+}
+
+/* ---- DECREASE CREDITS ---- */
+app.post("/decreaseCredits/:username", (req,res) =>{
+    decreaseCredits(req,res);
+})
+
+/* Updates db with incremented credits an then returns the value of credits */
+async function decreaseCredits(req,res) {
+    let creditsToADecrease = req.body.creditsToDecrease;
+    let username = req.params.username;
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "username": username },
+        ]
+    }
+
+    var decrement = { 
+        $inc : {"credits": Number(creditsToDecrease)} 
+    } 
+
+    /* findOneandUpdate did't work even with return original set to false */
+    var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, decrement);
+
+    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
     if (response.modifiedCount == 0) {
         res.status(401).send("Failed to update credits")
@@ -409,6 +454,31 @@ async function getCards(req, res) {
     catch (e) {
         console.log(e)
     }
+}
+
+/* ---- GET CARDS OF THE USER ---- */
+app.get("/cards/:username", (req,res) => {
+    getUserCards(req,res);
+})
+
+async function getUserCards(req,res) {
+    username = req.params.username;
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "username": username },
+        ]
+    }
+
+    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
+
+    if (userInfo == null) {
+        res.status(401).send("Unauthorized")
+    } else {
+        res.json(userInfo.cards)
+    } 
 }
 
 /* ---- ADD CARDS TO PROFILE ---- */
@@ -484,31 +554,6 @@ async function addCards(req,res) {
     }
 }
 
-/* ---- GET CARDS OF THE USER ---- */
-app.get("/cards/:username", (req,res) => {
-    getUserCards(req,res);
-})
-
-async function getUserCards(req,res) {
-    username = req.params.username;
-
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var filter = {
-        $and: [
-            { "username": username },
-        ]
-    }
-
-    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
-
-    if (userInfo == null) {
-        res.status(401).send("Unauthorized")
-    } else {
-        res.json(userInfo.cards)
-    } 
-}
-
 /* ---- GET A SINGLE CARD ---- */
 app.get("/card/:id", (req,res) => {
     getCard(req,res);
@@ -526,6 +571,44 @@ async function getCard(req,res) {
     }
 
     var card = await clientdb.db("AFSM").collection("Cards").findOne(filter);
+
+    if (card == null) {
+        res.status(401).send("Unauthorized")
+    } else {
+        res.json(card)
+    } 
+}
+
+/* ---- GET A SINGLE USER CARD ---- */
+app.get("/card/:username", (req,res) => {
+    getCard(req,res);
+})
+
+async function getCard(req,res) {
+    var username = req-params.username
+    var id = req.body.id
+
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var card = await clientdb.db("AFSM").collection("Users").aggregate([{
+        "$unwind": "$cards"
+    },
+    {
+        "$match": {
+          "username": username,
+          "cards.id": id
+        }
+    },
+    {
+        "$project": {
+          "_id": 0,
+          "id": "$cards.id",
+          "name": "$cards.name",
+          "thumbnail": "$cards.thumbnail",
+          "number": "$cards.number",
+          "inTrade": "$cards.inTrade"
+        }
+    }]).toArray()
 
     if (card == null) {
         res.status(401).send("Unauthorized")
