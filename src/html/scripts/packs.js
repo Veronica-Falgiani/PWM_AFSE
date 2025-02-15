@@ -87,7 +87,7 @@ function writeCards(heroes) {
         const modalBody = document.getElementById("bodyModal");
         bodyModal.innerHTML += 
         `
-        <div class="col p-3 m-3 border rounded">
+        <div class="p-3 m-3 border rounded" id="card">
             <img src="${heroes[i].thumbnail}" width="100px" height="100px">
             <br>
             ${heroes[i].name} 

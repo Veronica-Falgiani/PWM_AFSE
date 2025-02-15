@@ -134,7 +134,7 @@ async function updateTradeRec(rec) {
     
         heroRecButtons.innerHTML += 
         `
-        <button class="col p-3 m-3 border rounded" onclick='selectRecHero(${id}, "${thumbnail}", "${name}")'>
+        <button class="p-3 m-3 border rounded" onclick='selectRecHero(${id}, "${thumbnail}", "${name}")' id="card">
             <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
             <p>${name}</p>
         </button>
@@ -146,7 +146,7 @@ async function updateTradeRec(rec) {
 async function selectRecHero(id, thumbnail, name) {
     document.getElementById("savedRecButtons").innerHTML += 
     `
-    <div class="col p-3 m-3 border rounded">
+    <div class="p-3 m-3 border rounded" id="card">
         <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
         <p>${name}</p>
     </button>
@@ -199,7 +199,7 @@ async function updateTradeSend(send) {
     
         heroSendButtons.innerHTML += 
         `
-        <button class="col p-3 m-3 border rounded" onclick='selectSendHero(${id}, "${thumbnail}", "${name}")'>
+        <button class="col p-3 m-3 border rounded" onclick='selectSendHero(${id}, "${thumbnail}", "${name}")' id="card">
             <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
             <p>${name}</p>
         </button>
@@ -211,7 +211,7 @@ async function updateTradeSend(send) {
 async function selectSendHero(id, thumbnail, name) {
     document.getElementById("savedSendButtons").innerHTML += 
     `
-    <div class="col p-3 m-3 border rounded">
+    <div class="col p-3 m-3 border rounded" id="card">
         <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
         <p>${name}</p>
     </div>

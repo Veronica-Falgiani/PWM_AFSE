@@ -3,7 +3,7 @@
 }
 
 #registrati-form {
-    width: 700px
+    width: 700px;
 }
 
 .container {
@@ -18,8 +18,38 @@ body {
     background-image:    url('../../public/images/marvelbg.jpg');
     background-size:     cover;                      
     background-repeat:   no-repeat;
-    background-position: center center;            
+    background-position: center center;          
 }
 
-/*#scrollHeroReceive { height: 100px; overflow-y: scroll;}
-#scrollHeroSend { height: 100px; overflow-y: scroll;}*/
+#mainContainer {
+    padding: 70px 0;
+}
+
+.border {
+    background: rgb(27, 27, 27);
+}
+
+.navbar {
+    background-color: rgb(27, 27, 27);
+}
+
+#card {
+    width: 150px;
+}
+
+#unobtained {
+    filter: grayscale(100%);
+}
+
+#creditButton {
+    width: 120px;
+}
+
+#packsButton {
+    width: 140px;
+}
+
+.btn-danger {
+    color-scheme: #F0131E;
+    color: black;
+}

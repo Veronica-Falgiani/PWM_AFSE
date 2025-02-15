@@ -10,34 +10,30 @@
     </head>
     <body>
         <div id="menu"></div>
-        <div class="container d-flex justify-content-center align-items-center h-100">
+        <div class="container d-flex justify-content-center align-items-center h-100" id="mainContainer">
             <div class="mx-auto p-5 border rounded" id="shop"> 
                 <h3> Acquisto crediti </h3>
                 <hr>
                 <h5 class="p-3" style="text-align:center" id="crediti"> Totale crediti: </h5>
                 <div class="row p-3">
                     <div class="col">
-                        <button class="btn btn-danger" onclick="setCredits(5)" data-bs-toggle="modal" data-bs-target="#buyModal">
-                            <img class="mb-3" src="public/images/tmp.jpg" height="150px" widtht="150px">
-                            <h3>1 credito: 5€</h3>
+                        <button class="btn btn-danger" onclick="setCredits(5)" data-bs-toggle="modal" data-bs-target="#buyModal" id="creditButton">
+                            <h5> 5€ <hr> 1 credito </h5>
                         </button>
                     </div>
                     <div class="col">
-                        <button class="btn btn-danger" onclick="setCredits(10)" data-bs-toggle="modal" data-bs-target="#buyModal">
-                            <img class="mb-3" src="public/images/tmp.jpg" height="150px" widtht="150px">
-                            <h3>2 crediti: 10€</h3>
+                        <button class="btn btn-danger" onclick="setCredits(10)" data-bs-toggle="modal" data-bs-target="#buyModal" id="creditButton">
+                            <h5> 10€ <hr> 2 crediti </h5>
                         </button>
                     </div>
                     <div class="col">
-                        <button class="btn btn-danger" onclick="setCredits(25)" data-bs-toggle="modal" data-bs-target="#buyModal">
-                            <img class="mb-3" src="public/images/tmp.jpg" height="150px" widtht="150px">
-                            <h3>5 crediti: 25€</h3>
+                        <button class="btn btn-danger" onclick="setCredits(25)" data-bs-toggle="modal" data-bs-target="#buyModal" id="creditButton">
+                            <h5> 25€ <hr> 5 crediti </h5>
                         </button>
                     </div>
                     <div class="col">
-                        <button class="btn btn-danger" onclick="setCredits(50)" data-bs-toggle="modal" data-bs-target="#buyModal">
-                            <img class="mb-3" src="public/images/tmp.jpg" height="150px" widtht="150px">
-                            <h3>10 crediti: 50€</h3>
+                        <button class="btn btn-danger" onclick="setCredits(50)" data-bs-toggle="modal" data-bs-target="#buyModal" id="creditButton">
+                            <h5> 50€ <hr> 10 crediti </h5>
                         </button>
                     </div>
 

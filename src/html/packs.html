@@ -10,25 +10,25 @@
     </head>
     <body>
         <div id="menu"></div>
-        <div class="container d-flex justify-content-center align-items-center h-100">
+        <div class="container d-flex justify-content-center align-items-center h-100" id="mainContainer">
             <div class="mx-auto p-5 border rounded" id="shop"> 
                 <h3> Acquisto pacchetti </h3>
                 <hr>
                 <h5 class="p-3" style="text-align:center" id="crediti"> Totale crediti: </h5>              
                 <div class="row p-3">
                     <div class="col">
-                        <button class="btn btn-danger" onclick="setCards(5, 1)" data-bs-toggle="modal" data-bs-target="#cardModal">
-                            1 pacchetto<br>(1 credito)
+                        <button class="btn btn-danger" onclick="setCards(5, 1)" data-bs-toggle="modal" data-bs-target="#cardModal" id="packsButton">
+                            <h5> 1 pacchetto <hr> 1 credito </h5>
                         </button>
                     </div>
                     <div class="col">
-                        <button class="btn btn-danger" onclick="setCards(15, 2)" data-bs-toggle="modal" data-bs-target="#cardModal">
-                            3 pacchetti<br>(2 crediti)
+                        <button class="btn btn-danger" onclick="setCards(15, 2)" data-bs-toggle="modal" data-bs-target="#cardModal" id="packsButton">
+                            <h5> 3 pacchetti <hr> 2 crediti </h5>
                         </button>
                     </div>
                     <div class="col">
-                        <button class="btn btn-danger" onclick="setCards(25, 3)" data-bs-toggle="modal" data-bs-target="#cardModal">
-                            5 pacchetti<br>(3 crediti)
+                        <button class="btn btn-danger" onclick="setCards(25, 3)" data-bs-toggle="modal" data-bs-target="#cardModal" id="packsButton">
+                            <h5> 5 pacchetti <hr> 3 crediti </h5>
                         </button>
                     </div>
                 </div>

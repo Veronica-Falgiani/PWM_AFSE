@@ -4,7 +4,7 @@ function writeHero(heroJson, status) {
     heroJson = (JSON.stringify(heroJson));
     const hero = JSON.parse(heroJson);
 
-    const card = document.getElementById('card');
+    const card = document.getElementById('cardInfo');
 
     if(status == 'unobtained') {
         card.innerHTML =

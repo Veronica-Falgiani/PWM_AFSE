@@ -51,8 +51,8 @@ function populateCards(allCards, userCards, page) {
         if (found == 0) {
             cardsRow.innerHTML += 
             `
-            <button class="col p-3 m-3 border rounded" onclick="getCard(${allCards[i].id}, 'unobtained')">
-                <img class="mb-3" src="${allCards[i].thumbnail}" width="100px" height="100px" id="unobtained" style="filter: grayscale(100%)">  
+            <button class="p-3 m-3 border rounded" onclick="getCard(${allCards[i].id}, 'unobtained')" id="card">
+                <img class="mb-3" src="${allCards[i].thumbnail}" width="100px" height="100px" id="unobtained">  
                 <p> ${allCards[i].name}</p>
             </button>
             `;
@@ -61,7 +61,7 @@ function populateCards(allCards, userCards, page) {
         else {
             cardsRow.innerHTML += 
             `
-            <button class="col btn btn-danger p-3 m-3 border rounded" onclick="getCard(${allCards[i].id}, 'obtained')">
+            <button class="btn btn-danger p-3 m-3 border rounded" onclick="getCard(${allCards[i].id}, 'obtained')" id="card">
                 <img class="mb-3" src="${allCards[i].thumbnail}" width="100px" height="100px">  
                 <p> (${num}) ${allCards[i].name}</p>
             </button>
@@ -88,7 +88,7 @@ function populateUserCards(userCards, page) {
     for(i = start; i < end; i++) {
         cardsRow.innerHTML += 
         `
-        <button class="col p-3 m-3 border rounded" onclick="getCard(${userCards[i].id}, 'obtained')">
+        <button class="p-3 m-3 border rounded" onclick="getCard(${userCards[i].id}, 'obtained')" id="card">
             <img class="mb-3" src="${userCards[i].thumbnail}" width="100px" height="100px">  
             <p> (${userCards[i].number}) ${userCards[i].name}</p>
         </button>
