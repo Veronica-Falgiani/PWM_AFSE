@@ -10,8 +10,10 @@ const { receiveMessageOnPort } = require("worker_threads");
 const cookieParser = require('cookie-parser');
 require("dotenv").config();
 
-/* Import  */
+/* Import my functions */
 const { generateSession, validateSession, refreshSession, logoutSession } = require('./src/lib/session')
+const { getCards, getUserCards, addCards, getCard, getCardUser, modifyTradeCard, removeCard } = require('./src/lib/cards')
+
 
 /* Mongodb setup */
 const mongodbURI = process.env.MONGODB_URI;
@@ -483,304 +485,36 @@ app.get("/cards", (req,res) => {
     getCards(req,res);
 })
 
-/* Returns all the cards present in the db */
-async function getCards(req, res) {
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    try {
-        var result = await clientdb.db("AFSM").collection("Cards").find().toArray();
-        res.json(result)
-    }
-    catch (e) {
-        console.log(e)
-    }
-}
 
 /* ---- GET CARDS OF THE USER ---- */
 app.get("/cards/:username", (req,res) => {
     getUserCards(req,res);
 })
 
-async function getUserCards(req,res) {
-    username = req.params.username;
-
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var filter = {
-        $and: [
-            { "username": username },
-        ]
-    }
-
-    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
-
-    if (userInfo == null) {
-        res.status(401).send("Unauthorized")
-    } else {
-        res.json(userInfo.cards)
-    } 
-}
-
 /* ---- ADD CARDS TO PROFILE ---- */
 app.post("/cards/:username", (req, res) => {
     addCards(req,res);
 })
-
-/* Updates credits and then inserts card info in the db of the user */
-async function addCards(req,res) {
-    username = req.params.username
-    cards = req.body.cards
-    credits = -Math.abs(Number(req.body.credits))
-
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var filter = {
-        $and: [
-            { "username": username },
-        ]
-    }
-
-    var increment = { 
-        $inc : {"cards.$.number": 1}
-    }
-
-    var removeCredits = { 
-        $inc : {"credits": credits} 
-    } 
-
-    for(i = 0; i < cards.length; i++){
-        var filterCards = {
-            $and: [
-                { "username": username,
-                    "cards" : { $elemMatch : { "id" : cards[i].id } } 
-                 },
-            ]
-        }
-
-        result = await clientdb.db("AFSM").collection("Users").findOne(filterCards);
-    
-        /* If the card is not present in the db it will add it to the user */
-        if(result == null){
-            var addCards = { 
-                $push : {"cards": cards[i]} 
-            } 
-
-            var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, addCards);
-            if (response.modifiedCount == 0) {
-                res.status(401).send("Failed to add cards")
-            }
-        }
-        /* If the card is present, it will update the number of cards obtained */
-        else {
-            var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, increment);
-            if (response.modifiedCount == 0) {
-                res.status(401).send("Failed to update cards")
-            }
-        }
-    }
-
-    var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, removeCredits);
-    
-    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
-
-    if (response.modifiedCount == 0) {
-        res.status(401).send("Failed to update cards")
-    } else {
-        if (userInfo == null) {
-            res.status(401).send("Unauthorized")
-        } else {
-            res.json(userInfo.credits)
-        } 
-    }
-}
 
 /* ---- GET A SINGLE CARD ---- */
 app.get("/card/:id", (req,res) => {
     getCard(req,res);
 })
 
-async function getCard(req,res) {
-    var id = req.params.id
-
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var filter = {
-        $and: [
-            { "id": id },
-        ]
-    }
-
-    var card = await clientdb.db("AFSM").collection("Cards").findOne(filter);
-
-    if (card == null) {
-        res.status(401).send("Unauthorized")
-    } else {
-        res.json(card)
-    } 
-}
-
 /* ---- GET A SINGLE USER CARD ---- */
 app.get("/card/:username", (req,res) => {
-    getCard(req,res);
+    getCardUser(req,res);
 })
-
-async function getCard(req,res) {
-    var username = req-params.username
-    var id = req.body.id
-
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var card = await clientdb.db("AFSM").collection("Users").aggregate([{
-        "$unwind": "$cards"
-    },
-    {
-        "$match": {
-          "username": username,
-          "cards.id": id
-        }
-    },
-    {
-        "$project": {
-          "_id": 0,
-          "id": "$cards.id",
-          "name": "$cards.name",
-          "thumbnail": "$cards.thumbnail",
-          "number": "$cards.number",
-          "inTrade": "$cards.inTrade"
-        }
-    }]).toArray()
-
-    if (card == null) {
-        res.status(401).send("Unauthorized")
-    } else {
-        res.json(card)
-    } 
-}
 
 /* ---- UPDATE A CARD WHEN USED OR DELETED FROM A TRADE ---- */
 app.put("/card/:id", (req,res) => {
     modifyTradeCard(req,res);
 })
 
-async function modifyTradeCard(req,res) {
-    var id = req.params.id
-    var username = req.body.username
-    
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var filter = {
-        $and: [
-            { "username": username }
-        ]
-    }
-
-    user = await clientdb.db("AFSM").collection("Users").findOne(filter);
-
-    for(i = 0; i < user.cards.length; i++) {
-        if(user.cards[i].id == id) {
-            if(user.cards[i].inTrade == true) {
-                var result = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: false} });
-            }
-            else {
-                var result = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: true} });
-            }
-        }
-    }
-
-    res.json()
-}
-
 /* ---- UPDATE A CARD WHEN USED OR DELETED FROM A TRADE ---- */
 app.delete("/card/:id", (req,res) => {
     removeCard(req,res);
 })
-
-async function removeCard(req,res) {
-    var id = req.params.id
-    var username = req.body.username
-
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var decrement = { 
-        $inc : {"cards.$.number": -1}
-    }
-
-    /* Updates the cards of the receive user */
-    var filter = {
-        $and: [
-            { "username": username },
-        ]
-    }
-
-        var card = await clientdb.db("AFSM").collection("Users").aggregate([{
-            "$unwind": "$cards"
-        },
-        {
-            "$match": {
-            "username": username,
-            "cards.id": Number(id)
-            }
-        },
-        {
-            "$project": {
-            "_id": 0,
-            "id": "$cards.id",
-            "name": "$cards.name",
-            "thumbnail": "$cards.thumbnail",
-            "number": "$cards.number",
-            "inTrade": "$cards.inTrade"
-            }
-        }]).toArray()
-
-    console.log(card[0])
-    
-    if(card[0].inTrade == true) {
-        res.status(400).send("Carta bloccata in un altro scambio")
-        return
-    }
-
-    if(card[0].number == 1) {
-        try {
-            var removeCard = {
-                $pull: {
-                    "cards": {
-                    "id": card[0].id
-                    }
-                }
-                
-            } 
-
-            var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, removeCard);
-        }
-        catch(e) {
-            console.log(e)
-        } 
-    }
-    else {
-        var filterCards = {
-            $and: [
-                { "username": username,
-                  "cards.id" : card[0].id } 
-            ]
-        }
-        try {
-            var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
-        }
-        catch(e){
-            console.log(e)
-        }
-    }
-
-    var increment = { 
-        $inc : {"credits": 0.1} 
-    } 
-
-    
-    var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, increment);
-    var user = await clientdb.db("AFSM").collection("Users").findOne(filter);
-
-    res.json(user.credits)
-}
 
 /* ---- GET ALL TRADES ---- */
 app.get("/alltrades", (req,res) => {

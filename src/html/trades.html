@@ -102,6 +102,9 @@
             mode = "all" 
             heroSend = []
             heroReceive = []
+
+            /* Declaring name as global because special characters are hard to parse*/
+            heroName = ""
             
             window.addEventListener("load", async (event) => {
                 username = localStorage.getItem("username")

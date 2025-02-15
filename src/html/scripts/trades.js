@@ -194,30 +194,30 @@ async function updateTradeSend(send) {
 
     for(i = 0; i < send.length; i++) {
         id = send[i].id 
-        name = send[i].name
+        heroName = send[i].name
         thumbnail = `${send[i].thumbnail}`
-    
+
         heroSendButtons.innerHTML += 
         `
-        <button class="col p-3 m-3 border rounded" onclick='selectSendHero(${id}, "${thumbnail}", "${name}")' id="card">
+        <button class="col p-3 m-3 border rounded" onclick='selectSendHero(${id}, "${thumbnail}")' id="card">
             <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
-            <p>${name}</p>
+            <p>${heroName}</p>
         </button>
         `
     }
 }
 
-/* Shows the selectable cards to send based on teh string given */
-async function selectSendHero(id, thumbnail, name) {
+/* Shows the selectable cards to send based on the string given */
+async function selectSendHero(id, thumbnail) {
     document.getElementById("savedSendButtons").innerHTML += 
     `
     <div class="col p-3 m-3 border rounded" id="card">
         <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
-        <p>${name}</p>
+        <p>${heroName}</p>
     </div>
     ` 
     
-    hero = {"id": id, "name": name, "thumbnail": thumbnail}
+    hero = {"id": id, "name": heroName, "thumbnail": thumbnail}
     heroSend.push(hero)
 
     /* Clearing the search interface */
