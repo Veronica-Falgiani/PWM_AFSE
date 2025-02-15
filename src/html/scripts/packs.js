@@ -6,13 +6,13 @@ function setCards(num, cred) {
     <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-        <h3 class="modal-title fs-5" id="modalLabel">SEI SICURO?</h3>
+        <h3 class="modal-title fs-5" id="modalLabel">ARE YOU SURE?</h3>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             <div class="row p-3" id="bodyModal">
                 <button class="btn btn-danger" onclick="buyCards()">
-                    <h5>Acquista</h5>   
+                    <h5>Buy</h5>   
                 </button>                                        
             </div>
         </div>
@@ -84,7 +84,7 @@ function writeCards(heroes) {
     <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-        <h3 class="modal-title fs-5" id="modalLabel">CARTE TROVATE</h3>
+        <h3 class="modal-title fs-5" id="modalLabel">CARDS FOUND</h3>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -106,5 +106,5 @@ function writeCards(heroes) {
         `
     }
 
-    document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("credits")}`
+    document.getElementById("crediti").innerHTML = `Total credits: ${localStorage.getItem("credits")}`
 }

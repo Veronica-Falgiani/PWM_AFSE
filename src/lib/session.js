@@ -193,6 +193,8 @@ const loginUser = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password
 
+    console.log(username, password)
+    
     if (username == undefined) {
         res.status(400).send("Username mancante")
         return

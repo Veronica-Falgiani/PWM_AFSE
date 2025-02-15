@@ -11,18 +11,18 @@
     <body>
         <div id="menu"></div>
         <div class="container d-flex justify-content-center align-items-center h-100" id="mainContainer">
-            <div class="mx-auto p-5 border rounded" id="profilo"> 
-                <h3> PROFILO </h3>
+            <div class="mx-auto p-5 border rounded" id="profile"> 
+                <h3> PROFILE </h3>
                 <hr>
                 <p> Username: </p>
                 <p> Email: </p>
                 <p> Password: </p>
-                <p> Crediti: </p>
-                <p id="hero"> Eroe preferito: </p>
-                <p id="series"> Serie preferita: </p>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modifica profilo</button>
+                <p> Credits: </p>
+                <p id="hero"> Favourite Hero: </p>
+                <p id="series"> Favourite Series: </p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modify Profile</button>
                 <hr>
-                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Elimina profilo</button>
+                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Profile</button>
             </div>
 
             <!-- Modal to modify the profile -->
@@ -30,11 +30,11 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                        <h3 class="modal-title fs-5" id="modalLabel">MODIFICA PROFILO</h3>
+                        <h3 class="modal-title fs-5" id="modalLabel">MODIFY PROFILE</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <p> Si può modificare anche un solo campo </p>
+                            <p>You can modify one or more fields</p>
                             <div class="mb-3">
                                 <label for="inputEmail" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="inputEmail" placeholder="Email">
@@ -43,7 +43,7 @@
                                 <label for="inputPassword" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="inputPassword" placeholder="Password">
                             </div>                       
-                            <button class="btn btn-primary mb-4" onclick="modifyUser()">Modifica</button>
+                            <button class="btn btn-primary mb-4" onclick="modifyUser()">Modify</button>
                         </div>
                     </div>
                 </div>
@@ -54,13 +54,13 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                        <h3 class="modal-title fs-5" id="modalLabel">ELIMINA PROFILO</h3>
+                        <h3 class="modal-title fs-5" id="modalLabel">DELETE PROFILE</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <p> Vuoi veramente eliminare il profilo? </p>
+                            <p>Do you really want to delete your profile?</p>
                             <input type="hidden" class="form-control" id="inputDelUsername" value="">
-                            <button class="btn btn-danger mb-4" onclick="deleteUser()">Si</button>
+                            <button class="btn btn-danger mb-4" onclick="deleteUser()">Yes</button>
                         </div>
                     </div>
                 </div>

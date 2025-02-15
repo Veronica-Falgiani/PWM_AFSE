@@ -125,5 +125,5 @@ async function sendForm() {
                 window.location.href = "/profile";
             }, 3000);
         })
-        .catch(error => console.log("Errore nella registrazione dell'utente", error));
+        .catch(error => console.log("Error signing up the user", error));
 }

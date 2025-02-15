@@ -14,7 +14,7 @@ function writeHero(heroJson, status) {
         <h3> ${name} </h3>
         <hr>
         <img class="mb-3" src="${hero.thumbnail.path}.${hero.thumbnail.extension}" width="300px" height="300px">  
-        <h4> Descrizione: </h4>
+        <h4> Description: </h4>
         <p>${hero.description}</p>
         `
         return
@@ -47,21 +47,21 @@ function writeHero(heroJson, status) {
     <h3>${name} </h3>
     <hr>
     <img class="mb-3" src="${hero.thumbnail.path}.${hero.thumbnail.extension}" width="300px" height="300px">  
-    <h4> Descrizione: </h4>
+    <h4> Description: </h4>
     <p>${hero.description}</p>
-    <h4> Fumetti: </h4>
+    <h4> Comics: </h4>
     <ul>
     ${comics}
     </ul>
-    <h4> Serie: </h4>
+    <h4> Series: </h4>
     <ul>
     ${series}
     </ul>
-    <h4> Eventi: </h4>
+    <h4> Events: </h4>
     <ul>
     ${events}
     </ul>
-    <button class="btn btn-danger" onclick="sellCard()"> Vendi carta per 0.1 credito </button>
+    <button class="btn btn-danger" onclick="sellCard()"> Sell card for 0.1 credits </button>
     `
 }
 

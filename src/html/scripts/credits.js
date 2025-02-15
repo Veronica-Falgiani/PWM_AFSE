@@ -22,7 +22,7 @@ async function addCredits() {
         .then(response => response.json()).then(res => {
             localStorage.removeItem("euros")
             crediti = localStorage.setItem("credits", res)
-            document.getElementById("crediti").innerHTML = `Totale crediti: ${res}`
+            document.getElementById("crediti").innerHTML = `Total credits: ${res}`
         })
         .catch(error => console.log('error', error));
 }

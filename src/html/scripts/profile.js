@@ -6,20 +6,20 @@ function writeProfile() {
     credits = localStorage.getItem("credits")
     hero = localStorage.getItem("hero")
     series = localStorage.getItem("series")
-    const profilo = document.getElementById("profilo")
+    const profilo = document.getElementById("profile")
     profilo.innerHTML = 
     `
-    <h3> PROFILO </h3>
+    <h3> PROFILE </h3>
     <hr>
-    <p> Nome: ${username}</p>
+    <p> Username: ${username}</p>
     <p> Mail: ${email}</p>
     <p> Password: ******</p>
-    <p> Crediti: ${credits} </p>
-    <p> Eroe preferito: ${hero} </p>
-    <p> Serie preferita: ${series} </p>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modifica profilo</button>
+    <p> Credits: ${credits} </p>
+    <p> Favourite Hero: ${hero} </p>
+    <p> Favourite Series: ${series} </p>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modify Profile</button>
     <hr>
-    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Elimina profilo</button>
+    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Profile</button>
     `
 }
 

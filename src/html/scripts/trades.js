@@ -31,7 +31,7 @@ function populateTrades(username, trades, page) {
     end = page * 20 
     start = end - 20 
 
-    document.getElementById("selectTradesButton").innerHTML = `<button class="btn btn-primary" onclick="showUserTrades()">Mostra gli scambi dell'utente</button>`
+    document.getElementById("selectTradesButton").innerHTML = `<button class="btn btn-primary" onclick="showUserTrades()">Show user's trades</button>`
 
     document.getElementById("addTradeButton").innerHTML = ``
 
@@ -54,10 +54,10 @@ function populateTrades(username, trades, page) {
             tradesRow.innerHTML += 
             `
             <button class="btn row p-3 m-3 border rounded" style="text-align:left;" onclick='getTradeId("${trades[i]._id}")'>
-                <p> Nome: ${trades[i].name}</p>
-                <p> Utente: ${trades[i].username} </p>  
-                <p> Carte proposte: ${namesSend}</p>
-                <p> Carte richieste: ${namesReceive}</p>
+                <p> Title: ${trades[i].name}</p>
+                <p> Username: ${trades[i].username} </p>  
+                <p> Proposed cards: ${namesSend}</p>
+                <p> Requested cards: ${namesReceive}</p>
             </button>
             `;
         }
@@ -70,9 +70,9 @@ function populateUserTrades(username, trades, page) {
     end = page * 20 
     start = end - 20 
 
-    document.getElementById("selectTradesButton").innerHTML = `<button class="btn btn-primary" onclick="showTrades()">Mostra tutti gli scambi</button>`
+    document.getElementById("selectTradesButton").innerHTML = `<button class="btn btn-primary" onclick="showTrades()">Show all trades</button>`
 
-    document.getElementById("addTradeButton").innerHTML = `<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tradeModal">(+) Aggiungi scambio</button>`
+    document.getElementById("addTradeButton").innerHTML = `<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tradeModal">(+) Add trade</button>`
 
     /* Clears the html to be repopulated */
     const tradesRow = document.getElementById("trades");
@@ -93,11 +93,11 @@ function populateUserTrades(username, trades, page) {
             tradesRow.innerHTML += 
             `
             <div class="row p-3 m-3 border rounded">
-                <p> Nome: ${trades[i].name}</p>
-                <p> Utente: ${trades[i].username} </p>  
-                <p> Carte richieste: ${namesReceive}</p>
-                <p> Carte proposte: ${namesSend}</p>
-                <button class="btn btn-danger mb-4" onclick='deleteTrade("${trades[i]._id}")'>Rimuovi scambio</button>
+                <p> Title: ${trades[i].name}</p>
+                <p> Username: ${trades[i].username} </p>  
+                <p> Requested cards: ${namesReceive}</p>
+                <p> Proposed cards: ${namesSend}</p>
+                <button class="btn btn-danger mb-4" onclick='deleteTrade("${trades[i]._id}")'>Delete trade</button>
             </div>
             `;
         }

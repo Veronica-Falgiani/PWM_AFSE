@@ -42,13 +42,13 @@ else {
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href=${navbarSites.trades}>Scambi</a>
+                        <a class="nav-link" href=${navbarSites.trades}>Trades</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href=${navbarSites.credits}>Crediti</a>
+                        <a class="nav-link" href=${navbarSites.credits}>Credits</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href=${navbarSites.packs}>Pacchetti</a>
+                        <a class="nav-link" href=${navbarSites.packs}>Packs</a>
                     </li>
                     
                     <li class="nav-item dropdown">
@@ -56,10 +56,10 @@ else {
                             ${username}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href=${navbarSites.profile}>Profilo</a></li>
+                            <li><a class="dropdown-item" href=${navbarSites.profile}>Profile</a></li>
                             <li><a class="dropdown-item" href=${navbarSites.album}>Album</a></li>
                             <li><hr></li>
-                            <li><a class="dropdown-item text-danger" onclick="logoutUser()">Logout</a></li>
+                            <li><a class="dropdown-item text-danger" onclick="logoutUser()">Log out</a></li>
                         </ul>
                     </li>
                 </ul>

@@ -12,28 +12,28 @@
         <div id="menu"></div>
         <div class="container d-flex justify-content-center align-items-center h-100" id="mainContainer">
             <div class="mx-auto p-5 border rounded" id="shop"> 
-                <h3> ACQUISTO CREDITI </h3>
+                <h3> BUY CREDITS </h3>
                 <hr>
-                <h5 class="p-3" style="text-align:center" id="crediti"> Totale crediti: </h5>
+                <h5 class="p-3" style="text-align:center" id="crediti"> Total credits: </h5>
                 <div class="row p-3">
                     <div class="col">
                         <button class="btn btn-danger" onclick="setCredits(5)" data-bs-toggle="modal" data-bs-target="#buyModal" id="creditButton">
-                            <h5> 5€ <hr> 1 credito </h5>
+                            <h5> 5€ <hr> 1 credit </h5>
                         </button>
                     </div>
                     <div class="col">
                         <button class="btn btn-danger" onclick="setCredits(10)" data-bs-toggle="modal" data-bs-target="#buyModal" id="creditButton">
-                            <h5> 10€ <hr> 2 crediti </h5>
+                            <h5> 10€ <hr> 2 credits </h5>
                         </button>
                     </div>
                     <div class="col">
                         <button class="btn btn-danger" onclick="setCredits(25)" data-bs-toggle="modal" data-bs-target="#buyModal" id="creditButton">
-                            <h5> 25€ <hr> 5 crediti </h5>
+                            <h5> 25€ <hr> 5 credits </h5>
                         </button>
                     </div>
                     <div class="col">
                         <button class="btn btn-danger" onclick="setCredits(50)" data-bs-toggle="modal" data-bs-target="#buyModal" id="creditButton">
-                            <h5> 50€ <hr> 10 crediti </h5>
+                            <h5> 50€ <hr> 10 credits </h5>
                         </button>
                     </div>
 
@@ -41,14 +41,14 @@
                         <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                            <h3 class="modal-title fs-5" id="modalLabel">SCELTA DEL PAGAMENTO</h3>
+                            <h3 class="modal-title fs-5" id="modalLabel"> PAYMENT METHOD </h3>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <h5 class="p-3" style="text-align:center" id="importo"> Importo: </h5>
+                                <h5 class="p-3" style="text-align:center" id="importo"> Amount: </h5>
                                 <div class="row p-3">
                                     <button class="btn btn-danger" onclick="addCredits()" data-bs-toggle="modal" data-bs-target="#buyModal">
-                                        <h5>Carta di credito</h5>
+                                        <h5>Credit Card</h5>
                                     </button>                                        
                                 </div>
                                 <div class="row p-3">
@@ -71,7 +71,7 @@
         <script src="src/html/scripts/credits.js"></script>
         <script>
             window.addEventListener("load", (event) => {
-                document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("credits")}`
+                document.getElementById("crediti").innerHTML = `Total credits: ${localStorage.getItem("credits")}`
             })
         </script>
     </body>

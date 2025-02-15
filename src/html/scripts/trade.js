@@ -9,8 +9,8 @@ async function getTrade(trade) {
     `
     <h3> ${name} </h3>
     <hr>
-    <p> Utente: ${trade.username}</p>
-    <p> Carte proposte:</p>
+    <p> Username: ${trade.username}</p>
+    <p> Proposed cards:</p>
     <div class="row">
     `
     
@@ -26,7 +26,7 @@ async function getTrade(trade) {
     renderHTML +=
     `
     </div>
-    <p> Carte richieste: </p>
+    <p> Requested cards: </p>
     <div class="row">
     `
     for(i = 0; i < trade.receive.length; i++) {
@@ -41,7 +41,7 @@ async function getTrade(trade) {
     renderHTML += 
     `
     </div>
-    <button class="btn btn-primary" onclick='acceptTrade("${trade._id}")'>Accetta lo scambio</button>
+    <button class="btn btn-primary" onclick='acceptTrade("${trade._id}")'>Accept trade</button>
     `
 
     tradePage.innerHTML = renderHTML

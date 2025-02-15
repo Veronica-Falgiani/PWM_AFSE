@@ -4,7 +4,7 @@ const mongodbURI = process.env.MONGODB_URI;
 
 
 /* Searches the info of the user in the database based on the email */
-const getUserInfo= async (req,res) => {
+const getUserInfo = async (req,res) => {
     let username = req.params.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();
@@ -17,10 +17,8 @@ const getUserInfo= async (req,res) => {
 
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
-    console.log(userInfo);
-
     if (userInfo == null) {
-        res.status(401).send("Unauthorized")
+        res.status(400).send("Utente non trovato")
     } else {
         res.json(userInfo)
     }

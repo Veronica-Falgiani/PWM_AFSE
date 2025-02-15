@@ -12,39 +12,39 @@
         <div id="menu"></div>
         <div class="container d-flex justify-content-center align-items-center h-100" id="mainContainer">
             <div class="mx-auto p-5 border rounded" id="shop"> 
-                <h3> ACQUISTO PACCHETTI </h3>
+                <h3> BUY PACKS </h3>
                 <hr>
-                <h5 class="p-3" style="text-align:center" id="crediti"> Totale crediti: </h5>              
+                <h5 class="p-3" style="text-align:center" id="crediti"> Total credits: </h5>              
                 <div class="row p-3">
                     <div class="col">
                         <button class="btn btn-danger" onclick="setCards(5, 1)" data-bs-toggle="modal" data-bs-target="#cardModal" id="packsButton">
-                            <h5> 1 pacchetto <hr> 1 credito </h5>
+                            <h5> 1 pack <hr> 1 credit </h5>
                         </button>
                     </div>
                     <div class="col">
                         <button class="btn btn-danger" onclick="setCards(15, 2)" data-bs-toggle="modal" data-bs-target="#cardModal" id="packsButton">
-                            <h5> 3 pacchetti <hr> 2 crediti </h5>
+                            <h5> 3 packs <hr> 2 credits </h5>
                         </button>
                     </div>
                     <div class="col">
                         <button class="btn btn-danger" onclick="setCards(25, 3)" data-bs-toggle="modal" data-bs-target="#cardModal" id="packsButton">
-                            <h5> 5 pacchetti <hr> 3 crediti </h5>
+                            <h5> 5 packs <hr> 3 credits </h5>
                         </button>
                     </div>
                 </div>
-                <p style="text-align:center; color: gray;">(Ogni pacchetto contiene 5 carte)</p>
+                <p style="text-align:center; color: gray;">(A packet contains 5 random cards)</p>
             </div>
             <div class="modal fade" id="cardModal">
                 <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h3 class="modal-title fs-5" id="modalLabel">SEI SICURO?</h3>
+                    <h3 class="modal-title fs-5" id="modalLabel">ARE YOU SURE?</h3>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row p-3" id="bodyModal">
                             <button class="btn btn-danger" onclick="buyCards()">
-                                <h5>Acquista</h5>   
+                                <h5>Buy</h5>   
                             </button>                                        
                         </div>
                     </div>
@@ -56,7 +56,7 @@
         <script src="src/html/scripts/packs.js"></script>
         <script>
             window.addEventListener("load", (event) => {
-                document.getElementById("crediti").innerHTML = `Totale crediti: ${localStorage.getItem("credits")}`
+                document.getElementById("crediti").innerHTML = `Total credits: ${localStorage.getItem("credits")}`
             })
         </script>
     </body>

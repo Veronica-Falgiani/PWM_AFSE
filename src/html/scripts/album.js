@@ -33,7 +33,7 @@ function populateCards(allCards, userCards, page) {
     found = 0
     num = 0
 
-    document.getElementById("selectAlbumButton").innerHTML = `<button class="btn btn-primary" onclick="showUserCards()">Mostra carte utente</button>`
+    document.getElementById("selectAlbumButton").innerHTML = `<button class="btn btn-primary" onclick="showUserCards()">Show user's cards</button>`
 
     /* Clears the html to be repopulated */
     const cardsRow = document.getElementById("cards");
@@ -77,7 +77,7 @@ function populateUserCards(userCards, page) {
     end = page * 50 // 100
     start = end - 50 // 50
 
-    document.getElementById("selectAlbumButton").innerHTML = `<button class="btn btn-primary" onclick="showCards()">Mostra tutte le carte</button>`
+    document.getElementById("selectAlbumButton").innerHTML = `<button class="btn btn-primary" onclick="showCards()">Show all the cards</button>`
     // TODO ADD USER CARDS CLICKABEL AND THE OTHERS NOT
 
     /* Clears the html to be repopulated */

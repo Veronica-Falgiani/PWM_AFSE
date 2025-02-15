@@ -12,7 +12,7 @@
         <div id="menu"></div>
         <div class="container d-flex justify-content-center align-items-center h-100" id="mainContainer">
             <div class="mx-auto p-5 border rounded"> 
-                <h3> SCAMBI </h3>
+                <h3> TRADES </h3>
                 <hr>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
@@ -58,35 +58,35 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                        <h3 class="modal-title fs-5" id="modalLabel">AGGIUNTA SCAMBIO</h3>
+                        <h3 class="modal-title fs-5" id="modalLabel">ADD TRADE</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="clearModal()"></button>
                         </div>
                         <div class="modal-body" id="modalBody">
                             <div class="mb-3">
-                                <label for="inputName" class="form-label">Nome</label>
-                                <input type="name" class="form-control" id="inputName" placeholder="Nome">
+                                <label for="inputName" class="form-label">Title</label>
+                                <input type="name" class="form-control" id="inputName" placeholder="Title">
                             </div> 
                             <div class="mb-3">
-                                <label for="inputName" class="form-label">Eroi da ricevere</label>
+                                <label for="inputName" class="form-label">Heroes to receive</label>
                                 <div id="savedRecButtons"></div>
-                                <div class="form-text">Inserire le prime lettere dell'eroe per cercare</div>
+                                <div class="form-text">Enter the first letters of the hero to search</div>
                                 <div class="d-flex">
-                                    <input class="form-control" placeholder="Eroe" id="recHero">
-                                    <a type="submitHero" class="btn btn-outline-success" onclick="updateRecHero()">Cerca</a>
+                                    <input class="form-control" placeholder="Hero" id="recHero">
+                                    <a type="submitHero" class="btn btn-outline-success" onclick="updateRecHero()">Find</a>
                                 </div>
                                 <div id="heroRecButtons"></div>  
                             </div>
                             <div class="mb-3">                            
-                                <label for="inputName" class="form-label">Eroi da inviare</label>
+                                <label for="inputName" class="form-label">Heroes to send</label>
                                 <div id="savedSendButtons"></div>
-                                <div class="form-text">Inserire le prime lettere dell'eroe per cercare</div>
+                                <div class="form-text">Enter the first letters of the hero to search</div>
                                 <div class="d-flex">
-                                    <input class="form-control" placeholder="Eroe" id="sendHero">
-                                    <a type="submitHero" class="btn btn-outline-success" onclick="updateSendHero()">Cerca</a>
+                                    <input class="form-control" placeholder="Hero" id="sendHero">
+                                    <a type="submitHero" class="btn btn-outline-success" onclick="updateSendHero()">Find</a>
                                 </div>
                                 <div id="heroSendButtons"></div>  
                             </div>                 
-                            <button class="btn btn-primary mb-4" onclick="addTrade()">Aggiungi scambio</button>
+                            <button class="btn btn-primary mb-4" onclick="addTrade()">Add trade</button>
                         </div>
                     </div>
                 </div>

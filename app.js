@@ -1,7 +1,9 @@
 const express = require("express");
-var cors = require('cors');
+const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const swaggerUI = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
 require("dotenv").config();
 
 /* Import my functions */
@@ -12,15 +14,14 @@ const { getUserInfo, updateUser, deleteUser } = require('./src/lib/user')
 const { getTrades, getTrade, createTrade, deleteTrade, acceptTrade } = require('./src/lib/trades')
 const { getFromMarvel } = require('./src/lib/marvel')
 
-/* Mongodb setup */
-const mongodbURI = process.env.MONGODB_URI;
-
 /* Start server */
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
+/* Swagger setup */
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
 const port = process.env.PORT;
 const host = process.env.HOST;
@@ -36,18 +37,6 @@ app.use(express.static(path.join(__dirname, "/src/html/")));
 app.use(express.static(path.join(__dirname, "/src/html/scripts")));
 app.use(express.static(path.join(__dirname, "/src/css/")));
 app.use(express.static(path.join(__dirname, "/src/lib/")));
-
-
-/* Auth - NEED TO PUT IT IN A SEPARATE FILE */
-const apiKey = process.env.AUTH_KEY
-function auth(req, res, next) {
-    if (req.query.apikey != apiKey) {
-        res.status(401)
-        return res.json({ message: "Invalid API key" })
-    }
-  
-    next()
-}
 
 
 /* ---- GET OF VARIOUS PAGES ---- */
@@ -183,7 +172,7 @@ app.get("/trade", (req,res) =>{
 })
 
 
-/* ---- Communicate with the marvel API ---- */
+/* ---- COMMUNICATE WITH THE MARVEL API ---- */
 app.post("/marvelAPI", (req,res) => {
     getFromMarvel(req,res);
 })
@@ -198,6 +187,7 @@ app.post("/login", async (req, res) => {
     loginUser(req, res);
 })
 
+/* ---- LOGOUT THE USER ---- */
 app.post("/logout", (req,res) => {
     logout(req,res) 
 })
