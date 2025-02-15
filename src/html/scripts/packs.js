@@ -1,11 +1,22 @@
 /* PACKS.HTML */
 /* Populates the euros field inside the modal and saves it in the localStorage*/
 function setCards(num, cred) {
-    document.getElementById("bodyModal").innerHTML = 
+    document.getElementById("cardModal").innerHTML = 
     `
-    <button class="btn btn-danger" onclick="buyCards()">
-        <h5>Acquista</h5>
-    </button> 
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h3 class="modal-title fs-5" id="modalLabel">SEI SICURO?</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row p-3" id="bodyModal">
+                <button class="btn btn-danger" onclick="buyCards()">
+                    <h5>Acquista</h5>   
+                </button>                                        
+            </div>
+        </div>
+    </div>
     `
     localStorage.setItem("cards", num)
     localStorage.setItem("packCreds", cred)
@@ -73,7 +84,7 @@ function writeCards(heroes) {
     <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-        <h3 class="modal-title fs-5" id="modalLabel">Carte trovate</h3>
+        <h3 class="modal-title fs-5" id="modalLabel">CARTE TROVATE</h3>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">

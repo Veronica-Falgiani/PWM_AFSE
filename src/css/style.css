@@ -39,7 +39,7 @@ body {
     padding: 70px 0;
 }
 
-.btn, .navbar-nav {
+.btn, .navbar-nav, h5 {
     font-family: "MarvelText";  
     font-size: large; 
     font-weight: bold;  
@@ -75,10 +75,22 @@ body {
     width: 600px
 }
 
-h3, .navbar-brand {
+.navbar-brand {
     font-family: "MarvelLogo";
     font-weight: bold;
     font-size: xx-large;
     letter-spacing: 2px;
     color: #F0131E;
+}
+
+h1, h3 {
+    font-family: "MarvelLogo";
+    font-weight: bold;
+    font-size: 45px;
+    letter-spacing: 2px;
+    color: #F0131E;
+}
+
+#indexList {
+    margin-left: 20px
 }

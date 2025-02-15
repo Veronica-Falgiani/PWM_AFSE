@@ -837,7 +837,7 @@ async function createTrade(req,res) {
     receive = req.body.heroReceive
     send = req.body.heroSend
 
-    if(name == undefined) {
+    if(name == '') {
         res.status(400).send("Nome mancante")
         return
     }

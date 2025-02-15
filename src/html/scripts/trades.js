@@ -53,7 +53,7 @@ function populateTrades(username, trades, page) {
 
             tradesRow.innerHTML += 
             `
-            <button class="row p-3 m-3 border rounded" style="text-align:left;" onclick='getTradeId("${trades[i]._id}")'>
+            <button class="btn row p-3 m-3 border rounded" style="text-align:left;" onclick='getTradeId("${trades[i]._id}")'>
                 <p> Nome: ${trades[i].name}</p>
                 <p> Utente: ${trades[i].username} </p>  
                 <p> Carte proposte: ${namesSend}</p>
@@ -95,8 +95,8 @@ function populateUserTrades(username, trades, page) {
             <div class="row p-3 m-3 border rounded">
                 <p> Nome: ${trades[i].name}</p>
                 <p> Utente: ${trades[i].username} </p>  
-                <p> Carte proposte: ${namesReceive}</p>
-                <p> Carte richieste: ${namesSend}</p>
+                <p> Carte richieste: ${namesReceive}</p>
+                <p> Carte proposte: ${namesSend}</p>
                 <button class="btn btn-danger mb-4" onclick='deleteTrade("${trades[i]._id}")'>Rimuovi scambio</button>
             </div>
             `;
@@ -230,6 +230,8 @@ async function selectSendHero(id, thumbnail, name) {
 async function addTrade() {
     username = localStorage.getItem("username")
     name = document.getElementById("inputName").value
+
+    console.log(name)
 
     userCards = await fetch(`/cards/${username}`, {
         method: "GET",
