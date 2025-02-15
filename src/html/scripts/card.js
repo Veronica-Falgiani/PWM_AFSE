@@ -6,10 +6,12 @@ function writeHero(heroJson, status) {
 
     const card = document.getElementById('cardInfo');
 
+    name = hero.name.toUpperCase()
+
     if(status == 'unobtained') {
         card.innerHTML =
         `
-        <h3> ${hero.name} </h3>
+        <h3> ${name} </h3>
         <hr>
         <img class="mb-3" src="${hero.thumbnail.path}.${hero.thumbnail.extension}" width="300px" height="300px">  
         <h4> Descrizione: </h4>
@@ -42,7 +44,7 @@ function writeHero(heroJson, status) {
 
     card.innerHTML =
     `
-    <h3>${hero.name} </h3>
+    <h3>${name} </h3>
     <hr>
     <img class="mb-3" src="${hero.thumbnail.path}.${hero.thumbnail.extension}" width="300px" height="300px">  
     <h4> Descrizione: </h4>

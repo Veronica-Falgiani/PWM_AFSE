@@ -1,3 +1,14 @@
+/* Defining fonts */
+@font-face {
+    font-family: "MarvelLogo";
+    src: url("../../public/fonts/Marvel-Logo-font/MarvelRegular-Dj83.ttf");
+}
+
+@font-face {
+    font-family: "MarvelText";
+    src: url("../../public/fonts/Marvel-text-font/Marvel-Regular.ttf");
+}
+
 #login-form {
     width: 500px;
 }
@@ -18,19 +29,25 @@ body {
     background-image:    url('../../public/images/marvelbg.jpg');
     background-size:     cover;                      
     background-repeat:   no-repeat;
-    background-position: center center;          
+    background-position: center center;  
+    font-family: "MarvelText";  
+    font-weight: bold;
+    font-size: larger;      
 }
 
 #mainContainer {
     padding: 70px 0;
 }
 
-.border {
-    background: rgb(27, 27, 27);
+.btn, .navbar-nav {
+    font-family: "MarvelText";  
+    font-size: large; 
+    font-weight: bold;  
 }
 
-.navbar {
-    background-color: rgb(27, 27, 27);
+/* Background color of panels */
+.border, .navbar, .modal-content, .dropdown-menu {
+    background: rgb(20, 20, 20);
 }
 
 #card {
@@ -50,6 +67,18 @@ body {
 }
 
 .btn-danger {
-    color-scheme: #F0131E;
-    color: black;
+    background-color: #F0131E;
+    color:#212529
+}
+
+#trade {
+    width: 600px
+}
+
+h3, .navbar-brand {
+    font-family: "MarvelLogo";
+    font-weight: bold;
+    font-size: xx-large;
+    letter-spacing: 2px;
+    color: #F0131E;
 }

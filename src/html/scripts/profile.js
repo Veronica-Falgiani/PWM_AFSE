@@ -9,7 +9,7 @@ function writeProfile() {
     const profilo = document.getElementById("profilo")
     profilo.innerHTML = 
     `
-    <h3> Profilo </h3>
+    <h3> PROFILO </h3>
     <hr>
     <p> Nome: ${username}</p>
     <p> Mail: ${email}</p>

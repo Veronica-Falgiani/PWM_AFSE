@@ -178,7 +178,7 @@ async function updateSendHero() {
     
     for(i = 0; i < userCards.length; i++) {
         name = userCards[i].name.toLowerCase()
-        if(userCards[i].inTrade == false && name.includes(sendHero)) {
+        if(userCards[i].inTrade == false && userCards[i].number > 1 && name.includes(sendHero)) {
             heroes.push(userCards[i])
         }
     }
@@ -231,7 +231,6 @@ async function addTrade() {
     username = localStorage.getItem("username")
     name = document.getElementById("inputName").value
 
-    /* Verifies that the requested card is not present in the user cards */
     userCards = await fetch(`/cards/${username}`, {
         method: "GET",
         headers: {
@@ -240,6 +239,8 @@ async function addTrade() {
         }})
         .then(result => result.json()).then(res => { return res })
 
+    
+    /* Verifies that the requested card is not present in the user cards */
     for(i = 0; i < userCards.length; i++) {
         for(j = 0; j < heroReceive.length; j ++) {
             if(userCards[i].id == heroReceive[j].id) {
@@ -247,6 +248,20 @@ async function addTrade() {
                 document.getElementById("savedRecButtons").innerHTML = ``
                 heroReceive = []
                 return
+            }
+        }
+    }
+
+    /* Verifies that the sent cards are not duplicates */
+    if(heroSend.length > 1) {
+        for(i = 0; i <= heroSend.length-1; i++) {
+            for(j = i+1; j < heroSend.length; j++) {
+                if(heroSend[i].id == heroSend[j].id) {
+                alert("Le carte da mandare sono uguali")
+                document.getElementById("savedSendButtons").innerHTML = ``
+                heroSend = []
+                return
+                }
             }
         }
     }
