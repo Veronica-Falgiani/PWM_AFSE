@@ -28,7 +28,7 @@ class Session {
 /* We save locally all the session tokens */
 const sessions = {}
 
-const generateSession = (username) => {
+function generateSession(username) {
     /* Crating a session token that lasts 30 minutes */
     const sessionToken = uuidv4()
     const now = new Date()
@@ -102,7 +102,7 @@ const refreshSession = (cookies) => {
 }
 
 /* Verifies that the cookie is valid and then deletes it */
-const logoutSession = (cookies) => {
+function logoutSession (cookies) {
     /* Various checks to see that the cookie is present and valid */
     if (!cookies) {
         return false
@@ -235,4 +235,4 @@ const logout = (req,res) => {
     res.status(200).json("Logout effettuato con successo")
 }
 
-module.exports = { generateSession, validateSession, refreshSession, logoutSession, addUser, loginUser, logout }
+module.exports = { validateSession, refreshSession, addUser, loginUser, logout }

@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 require("dotenv").config();
 
 /* Import my functions */
-const { generateSession, validateSession, refreshSession, logoutSession, addUser, loginUser, logout } = require('./src/lib/session')
+const { validateSession, refreshSession, addUser, loginUser, logout } = require('./src/lib/session')
 const { getCards, getUserCards, addCards, getCard, getCardUser, modifyTradeCard, removeCard } = require('./src/lib/cards')
 const { getCredits, addCredits, decreaseCredits } = require('./src/lib/credits')
 const { getUserInfo, updateUser, deleteUser } = require('./src/lib/user')
