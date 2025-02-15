@@ -13,7 +13,7 @@ require("dotenv").config();
 /* Import my functions */
 const { generateSession, validateSession, refreshSession, logoutSession } = require('./src/lib/session')
 const { getCards, getUserCards, addCards, getCard, getCardUser, modifyTradeCard, removeCard } = require('./src/lib/cards')
-
+const { getCredits, addCredits, decreaseCredits } = require('./src/lib/credits')
 
 /* Mongodb setup */
 const mongodbURI = process.env.MONGODB_URI;
@@ -382,103 +382,15 @@ app.get("/credits/:username", (req,res) => {
     getCredits(req,res);
 })
 
-async function getCredits(req,res) {
-    let username = req.body.username;
-
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var filter = {
-        $and: [
-            { "username": username },
-        ]
-    }
-
-    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
-
-    if (userInfo == null) {
-        res.status(401).send("Unauthorized")
-    } else {
-        res.json(userInfo.credits)
-    } 
-}
-
-
 /* ---- INCREASE CREDITS ---- */
 app.post("/addCredits/:username", (req,res) =>{
     addCredits(req,res);
 })
 
-/* Updates db with incremented credits an then returns the value of credits */
-async function addCredits(req,res) {
-    let creditsToAdd = req.body.creditsToAdd;
-    let username = req.params.username;
-
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var filter = {
-        $and: [
-            { "username": username },
-        ]
-    }
-
-    var increment = { 
-        $inc : {"credits": Number(creditsToAdd)} 
-    } 
-
-    /* findOneandUpdate did't work even with return original set to false */
-    var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, increment);
-
-    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
-
-    if (response.modifiedCount == 0) {
-        res.status(401).send("Failed to update credits")
-    } else {
-        if (userInfo == null) {
-            res.status(401).send("Unauthorized")
-        } else {
-            res.json(userInfo.credits)
-        } 
-    }
-}
-
 /* ---- DECREASE CREDITS ---- */
 app.post("/decreaseCredits/:username", (req,res) =>{
     decreaseCredits(req,res);
 })
-
-/* Updates db with incremented credits an then returns the value of credits */
-async function decreaseCredits(req,res) {
-    let creditsToADecrease = req.body.creditsToDecrease;
-    let username = req.params.username;
-
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var filter = {
-        $and: [
-            { "username": username },
-        ]
-    }
-
-    var decrement = { 
-        $inc : {"credits": Number(creditsToDecrease)} 
-    } 
-
-    /* findOneandUpdate did't work even with return original set to false */
-    var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, decrement);
-
-    var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
-
-    if (response.modifiedCount == 0) {
-        res.status(401).send("Failed to update credits")
-    } else {
-        if (userInfo == null) {
-            res.status(401).send("Unauthorized")
-        } else {
-            res.json(userInfo.credits)
-        } 
-    }
-}
-
 
 /* ---- GET ALL CARDS ---- */
 app.get("/cards", (req,res) => {
