@@ -87,3 +87,22 @@ async function logoutUser() {
         window.location.href = "/";
     })
 }
+
+/* Updates the alert div when the server sends a message */
+function successAlert(message) {
+    document.getElementById("alert").innerHTML = 
+    `
+    <div class="alert alert-success" role="alert">
+        <h5 class="alert-heading">${message}</h5>
+    </div>
+    `
+}
+
+function dangerAlert(message) {
+    document.getElementById("alert").innerHTML = 
+    `
+    <div class="alert alert-danger" role="alert">
+        <h5 class="alert-heading">${message}</h5>
+    </div>
+    `
+}

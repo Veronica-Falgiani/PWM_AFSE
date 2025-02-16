@@ -14,7 +14,7 @@ async function searchHero() {
                             "query" : `nameStartsWith=${name}`})
     })
         .then(response => response.json()).then(result => writeSelectHeroes(result))
-        .catch(error => console.log('error', error));
+        .catch(error => alert("Failed to search hero"));
 }  
 
 /* Same as above but with series */
@@ -32,7 +32,7 @@ async function searchSeries() {
                             "query" : `titleStartsWith=${title}`})
     })
         .then(response => response.json()).then(result => writeSelectSeries(result))
-        .catch(error => console.log('error', error));
+        .catch(error => alert("Failed to search series"));
 }
 
 /* creates a select menu with a list of heroes */
@@ -91,39 +91,51 @@ async function sendForm() {
                                "hero" : hero,
                                "series" : series })
         })
-        .then(result => result.json()).then(res => {
-            localStorage.setItem("username", res.username)
-            localStorage.setItem("email", res.email)
-            localStorage.setItem("credits", res.credits)
+        .then(result => {
+            if(result.ok) {
+                result.json().then(res => {
+                    console.log(res)
+                    localStorage.setItem("username", res.username)
+                    localStorage.setItem("email", res.email)
+                    localStorage.setItem("credits", res.credits)
 
-            hero = fetch("/marvelAPI", {
-                method: "POST",
-                headers: {
-                    "Content-type": "application/json",
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({ "urlAPI" : `characters/${res.hero}`,
-                                    "query" : ""})
-            })
-                .then(response => response.json()).then(result => {localStorage.setItem("hero", result[0].name)})
-                .catch(error => console.log('error', error));
+                    hero = fetch("/marvelAPI", {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/json",
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ "urlAPI" : `characters/${res.hero}`,
+                                            "query" : ""})
+                    })
+                        .then(response => response.json()).then(result => {localStorage.setItem("hero", result[0].name)})
+                        .catch(error => alert("Failed to fetch hero"));
 
-            series = fetch("/marvelAPI", {
-                method: "POST",
-                headers: {
-                    "Content-type": "application/json",
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({ "urlAPI" : `series/${res.series}`,
-                                    "query" : ""})
-            })
-                .then(response => response.json()).then(result => {localStorage.setItem("series", result[0].title)})
-                .catch(error => console.log('error', error));
-    
-            /* window.location.href doesn't wait for the function to finish */
-            setTimeout(function(){
-                window.location.href = "/profile";
-            }, 3000);
+                    series = fetch("/marvelAPI", {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/json",
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ "urlAPI" : `series/${res.series}`,
+                                            "query" : ""})
+                    })
+                        .then(response => response.json()).then(result => {localStorage.setItem("series", result[0].title)})
+                        .catch(error => alert("Failed to fetch series"));
+            
+                    successAlert("User signed up     successfully")
+
+                    /* window.location.href doesn't wait for the function to finish */
+                    setTimeout(function(){
+                        window.location.href = "/profile";
+                    }, 4000);
+                })
+            }
+            else {
+                result.json().then(res => {
+                    dangerAlert(res)
+                    return
+                })
+            }
         })
-        .catch(error => console.log("Error signing up the user", error));
 }

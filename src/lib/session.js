@@ -127,29 +127,29 @@ const addUser = async (req, res) => {
 
     for(i = 0; i < users.length; i++) {
         if(user.username == users[i].username) {
-            res.status(400).send("Username già presente")
+            res.status(400).json("Username già presente")
             return
         }
     }
 
-    if (user.username == undefined) {
-        res.status(400).send("Username mancante")
+    if (user.username == "") {
+        res.status(400).json("Missing username")
         return
     }
-    if (user.email == undefined) {
-        res.status(400).send("Email mancante")
+    if (user.email == "") {
+        res.status(400).json("Missing email")
         return
     }
-    if (user.password == undefined) {
-        res.status(400).send("Password mancante")
+    if (user.password == "") {
+        res.status(400).json("Missing password")
         return
     }
-    if (user.hero == undefined) {
-        res.status(400).send("Eroe Mancante")
+    if (user.hero == "") {
+        res.status(400).json("Missing hero")
         return
     }
-    if (user.series == undefined) {
-        res.status(400).send("Serie mancante")
+    if (user.series == "") {
+        res.status(400).json("Missing series")
         return
     }
 
@@ -167,24 +167,29 @@ const addUser = async (req, res) => {
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter)
 
     if (userInfo != null) {
-        res.status(400).send("Username già presente!")
+        res.status(400).json("Username is already in use")
         return
     }
     else {
-        try {
-            var items = await clientdb.db("AFSM").collection("Users").insertOne(user)
-            var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter)
-            
-            /* Generate and sens a session token as a cookie */
-            token = generateSession(username)
-            res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
-            
-            res.status(200).json(userInfo)
-        }
-        catch(e) {
-            res.status(500).send(`Errore generico: ${e}`)
+        var response = await clientdb.db("AFSM").collection("Users").insertOne(user)
+
+        if(response.modifiedCount == 0) {
+            res.status(500).json("Server error, retry")
             return
         }
+
+        var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter)
+        
+        if(userInfo == null) {
+            res.status(500).json("Server error, retry")
+            return
+        }
+
+        /* Generate and sens a session token as a cookie */
+        token = generateSession(user.username)
+        res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+
+        res.status(200).json(userInfo)
     }
 }
 
@@ -192,15 +197,13 @@ const addUser = async (req, res) => {
 const loginUser = async (req, res) => {
     let username = req.body.username;
     let password = req.body.password
-
-    console.log(username, password)
     
-    if (username == undefined) {
-        res.status(400).send("Username mancante")
+    if (username == "") {
+        res.status(400).json("Missing username")
         return
     }
-    if (password == undefined) {
-        res.status(400).send("Password mancante")
+    if (password == "") {
+        res.status(400).json("Missing password")
         return
     }
 
@@ -218,7 +221,7 @@ const loginUser = async (req, res) => {
     var loggedUser = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
     if (loggedUser == null) {
-        res.status(400).send("Non è stato trovato un utente!")
+        res.status(400).json("User not found")
     } else {
         /* Generate and sens a session token as a cookie */
         token = generateSession(username)
@@ -231,10 +234,10 @@ const loginUser = async (req, res) => {
 /* Logs out the user by deleting the session cookie */
 const logout = (req,res) => {
     if(!logoutSession(req.cookies)) {
-        res.status(400).json("Errore nel logout")
+        res.status(400).json("Error logging out")
         return
     }
-    res.status(200).json("Logout effettuato con successo")
+    res.status(200).json("Logged out successfully")
 }
 
 module.exports = { validateSession, refreshSession, addUser, loginUser, logout }

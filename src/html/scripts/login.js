@@ -33,7 +33,7 @@ async function sendForm() {
                                             "query" : ""})
                     })
                         .then(response => response.json()).then(result => {localStorage.setItem("hero", result[0].name)})
-                        .catch(error => alert("Error receiving a reponse from the Marvel API"));
+                        .catch(error => alert("Failed to fetch hero"));
         
                     series = fetch("/marvelAPI", {
                         method: "POST",
@@ -45,7 +45,7 @@ async function sendForm() {
                                             "query" : ""})
                     })
                         .then(response => response.json()).then(result => {localStorage.setItem("series", result[0].title)})
-                        .catch(error => "Error receiving a reponse from the Marvel API");
+                        .catch(error => "Failed to fetch series");
             
                     successAlert("User logged in successfully")
                     /* We wait for the API calls to be fulfilled */
@@ -56,7 +56,7 @@ async function sendForm() {
         )}
         else {
             result.json().then(res => {
-                dangerAlert(res.message)
+                dangerAlert(res)
                 return
             })
         }
