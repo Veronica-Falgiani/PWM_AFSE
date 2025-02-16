@@ -75,7 +75,6 @@ async function deleteUser() {
             if(result.ok) {
                 result.json().then(res => {
                     localStorage.clear(); 
-                    window.location.href = "/";
                 })
             }
         
@@ -87,7 +86,7 @@ async function deleteUser() {
             }
         })
 
-        successAlert("alertModal","User deleted successfully");
+        successAlert("alertModal2","User deleted successfully");
 
         setTimeout(function(){
             window.location.href = "/";
