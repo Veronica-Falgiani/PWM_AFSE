@@ -70,7 +70,7 @@ async function buyCards() {
         body: JSON.stringify({ "cards" : cards,
                             "credits" : credits})
     })
-        .then(response => response.json()).then(res => localStorage.setItem("credits", res))
+        .then(response => response.json()).then(res => localStorage.setItem("credits", res.credits))
         .catch(error => console.log("Errore nell'aggiornare i crediti", error));
 
     writeCards(cards)

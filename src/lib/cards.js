@@ -2,20 +2,23 @@
 const mongoClient = require('mongodb').MongoClient;
 const mongodbURI = process.env.MONGODB_URI;
 
-
+/* GET - /cards */
 /* Returns all the cards present in the db */
 const getCards = async (req,res) => {
     var clientdb = await new mongoClient(mongodbURI).connect();
 
-    try {
-        var result = await clientdb.db("AFSM").collection("Cards").find().toArray();
-        res.json(result)
+    var result = await clientdb.db("AFSM").collection("Cards").find().toArray();
+    
+    if(result == null) {
+        res.status(500).json("Server error: failed to fetch cards")
     }
-    catch (e) {
-        console.log(e)
-    }
+    else {
+        console.log(result)
+        res.status(200).json(result)
+    }   
 }
 
+/* GET - /cards/:username */
 /* Returns all the cards collected by the user */
 const getUserCards = async (req,res) => {
     username = req.params.username;
@@ -31,12 +34,13 @@ const getUserCards = async (req,res) => {
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
     if (userInfo == null) {
-        res.status(401).send("Unauthorized")
+        res.status(500).json("Server error: failed to fetch user cards")
     } else {
-        res.json(userInfo.cards)
+        res.status(200).json(userInfo.cards)
     } 
 }
 
+/* POST - /cards/:username */
 /* Updates credits and then inserts card info in the db of the user */
 const addCards = async (req,res) => {
     username = req.params.username
@@ -100,11 +104,12 @@ const addCards = async (req,res) => {
         if (userInfo == null) {
             res.status(401).send("Unauthorized")
         } else {
-            res.json(userInfo.credits)
+            res.status(200).json(userInfo)
         } 
     }
 }
 
+/* GET - /card/:id */
 /* Returns a single card of the db */
 const getCard = async (req,res) => {
     var id = req.params.id
@@ -126,9 +131,10 @@ const getCard = async (req,res) => {
     } 
 }
 
+/* GET - /card/:username */
 /* Returns a single card of the user */
 const getCardUser = async (req,res) => {
-    var username = req-params.username
+    var username = req.params.username
     var id = req.body.id
 
     var clientdb = await new mongoClient(mongodbURI).connect();
@@ -160,10 +166,11 @@ const getCardUser = async (req,res) => {
     } 
 }
 
+/* PUT - /card/:username */
 /* Updates trade value of a card of the user */
 const modifyTradeCard = async (req,res) => {
-    var id = req.params.id
-    var username = req.body.username
+    var username = req.params.username
+    var id = req.body.id
     
     var clientdb = await new mongoClient(mongodbURI).connect();
 
@@ -189,10 +196,11 @@ const modifyTradeCard = async (req,res) => {
     res.json()
 }
 
+/* DELETE - /card/:username */
 /* Removes a card from the collection of the user and updates its values */
 const removeCard = async (req,res) => {
-    var id = req.params.id
-    var username = req.body.username
+    var username = req.params.username
+    var id = req.body.id
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 

@@ -9,7 +9,7 @@ require("dotenv").config();
 /* Import my functions */
 const { validateSession, refreshSession, addUser, loginUser, logout } = require('./src/lib/session')
 const { getCards, getUserCards, addCards, getCard, getCardUser, modifyTradeCard, removeCard } = require('./src/lib/cards')
-const { getCredits, addCredits, decreaseCredits } = require('./src/lib/credits')
+const { getCredits, changeCredits } = require('./src/lib/credits')
 const { getUserInfo, updateUser, deleteUser } = require('./src/lib/user')
 const { getTrades, getTrade, createTrade, deleteTrade, acceptTrade } = require('./src/lib/trades')
 const { getFromMarvel } = require('./src/lib/marvel')
@@ -173,112 +173,137 @@ app.get("/trade", (req,res) =>{
 
 
 /* ---- COMMUNICATE WITH THE MARVEL API ---- */
+/* Inside: MARVEL.JS */
 app.post("/marvelAPI", (req,res) => {
     getFromMarvel(req,res);
 })
 
+
+
 /* ---- CREATE NEW USER ---- */
+/* Inside: SESSION.JS */
 app.post("/register", function (req, res) {
     addUser(req, res);
 })
 
 /* ---- LOGIN AS USER ---- */
+/* Inside: SESSSION.JS */
 app.post("/login", async (req, res) => {
     loginUser(req, res);
 })
 
 /* ---- LOGOUT THE USER ---- */
+/* Inside: SESSION.JS */
 app.post("/logout", (req,res) => {
     logout(req,res) 
 })
 
+
+
 /* ---- GET USER INFO ---- */
+/* Inside: USER.JS */
 app.get("/user/:username", async(req,res) => {
     getUserInfo(req,res);
 })
 
 /* ---- UPDATE USER ---- */
+/* Inside: USER.JS */
 app.put("/user/:username", (req, res) => {
     updateUser(req,res);
 })
 
 /* ---- DELETE USER ---- */
+/* Inside: USER.JS */
 app.delete("/user/:username", (req, res) => {
     deleteUser(req,res);
 })
 
+
+
 /* ---- GET CREDITS ---- */
+/* Inside: CREDITS.JS */
 app.get("/credits/:username", (req,res) => {
     getCredits(req,res);
 })
 
-/* ---- INCREASE CREDITS ---- */
-app.post("/addCredits/:username", (req,res) =>{
-    addCredits(req,res);
+/* ---- CHANGE CREDITS ---- */
+/* Inside: CREDITS.JS */
+app.post("/credits/:username", (req,res) =>{
+    changeCredits(req,res);
 })
 
-/* ---- DECREASE CREDITS ---- */
-app.post("/decreaseCredits/:username", (req,res) =>{
-    decreaseCredits(req,res);
-})
+
 
 /* ---- GET ALL CARDS ---- */
+/* Inside: CARDS.JS */
 app.get("/cards", (req,res) => {
     getCards(req,res);
 })
 
-
 /* ---- GET CARDS OF THE USER ---- */
+/* Inside: CARDS.JS */
 app.get("/cards/:username", (req,res) => {
     getUserCards(req,res);
 })
 
 /* ---- ADD CARDS TO PROFILE ---- */
+/* Inside: CARDS.JS */
 app.post("/cards/:username", (req, res) => {
     addCards(req,res);
 })
 
 /* ---- GET A SINGLE CARD ---- */
+/* Inside: CARDS.JS */
 app.get("/card/:id", (req,res) => {
     getCard(req,res);
 })
 
 /* ---- GET A SINGLE USER CARD ---- */
+/* Inside: CARDS.JS */
 app.get("/card/:username", (req,res) => {
     getCardUser(req,res);
 })
 
 /* ---- UPDATE A CARD WHEN USED OR DELETED FROM A TRADE ---- */
-app.put("/card/:id", (req,res) => {
+/* Inside: CARDS.JS */
+app.put("/card/:username", (req,res) => {
     modifyTradeCard(req,res);
 })
 
 /* ---- UPDATE A CARD WHEN USED OR DELETED FROM A TRADE ---- */
-app.delete("/card/:id", (req,res) => {
+/* Inside: CARDS.JS */
+app.delete("/card/:username", (req,res) => {
     removeCard(req,res);
 })
 
+
+
 /* ---- GET ALL TRADES ---- */
+/* Inside: TRADES.JS */
 app.get("/alltrades", (req,res) => {
     getTrades(req,res);
 })
 
 /* ---- GET A SINGLE TRADE ---- */
+/* Inside: TRADES.JS */
 app.get("/trade/:id", (req,res) => {
     getTrade(req,res)
 })
 
 /* ---- CREATE TRADES ---- */
+/* Inside: TRADES.JS */
 app.post("/trade/:username", (req,res) => {
     createTrade(req,res)
 })
 
 /* ---- DELETE TRADE AND SETS INTRADE TO FALSE ---- */
+/* Inside: TRADES.JS */
 app.delete("/trade/:id", (req,res) => {
     deleteTrade(req,res)
 })
 
 /* ---- ACCEPTS THE TRADE BETWEEN THE USERS ---- */
+/* Inside: TRADES.JS */
 app.post("/acceptTrade/:id", (req,res) => {
     acceptTrade(req,res)
 })

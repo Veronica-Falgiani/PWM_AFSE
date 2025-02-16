@@ -14,6 +14,7 @@
             <div class="mx-auto p-5 border rounded"> 
                 <h3> ALBUM </h3>
                 <hr>
+                <div id="alert"></div>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
                         <li class="page-item">
@@ -72,7 +73,7 @@
                     },
                 })
                     .then(response => response.json()).then(res => {return res})
-                    .catch(error => console.log('Cannot get all the cards', error));
+                    .catch(error => alert("Failed to fetch cards"));
 
                 userCards = await fetch(`/cards/${username}`, {
                     method: "GET",
@@ -82,7 +83,7 @@
                     },
                 })
                     .then(response => response.json()).then(res => {return res})
-                    .catch(error => console.log('Cannot get cards of the user', error));
+                    .catch(error => alert("Failed to fetch user cards"));
                 
                 document.getElementById("cardNumber").innerHTML = `Obtained cards (without doubles): ${userCards.length}/1564`
                 populateCards(allCards, userCards, page)

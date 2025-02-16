@@ -1,3 +1,4 @@
+/* GET - /marvelAPI */
 /* Main function to talk to the marvel API */
 const getFromMarvel = async (req,res) => {
     urlAPI = req.body.urlAPI

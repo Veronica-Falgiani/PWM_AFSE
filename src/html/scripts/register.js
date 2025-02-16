@@ -94,7 +94,6 @@ async function sendForm() {
         .then(result => {
             if(result.ok) {
                 result.json().then(res => {
-                    console.log(res)
                     localStorage.setItem("username", res.username)
                     localStorage.setItem("email", res.email)
                     localStorage.setItem("credits", res.credits)

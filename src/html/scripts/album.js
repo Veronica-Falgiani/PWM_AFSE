@@ -20,7 +20,7 @@ function showUserCards() {
     mode = "user"
 
     document.getElementById("currentPageUp").innerHTML = `${page}/${pageMax}`
-        document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
+    document.getElementById("currentPageDown").innerHTML = `${page}/${pageMax}`
 
     populateUserCards(userCards, page)
 }

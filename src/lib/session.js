@@ -118,19 +118,12 @@ function logoutSession (cookies) {
     return true
 }
 
+/* POST - /register */
 /* Verifies that fields are filled and registers a new user on the db */
 const addUser = async (req, res) => {
     let user = req.body;
 
     var clientdb = await new mongoClient(mongodbURI).connect()
-    var users = await clientdb.db("AFSM").collection("Users").find().toArray()
-
-    for(i = 0; i < users.length; i++) {
-        if(user.username == users[i].username) {
-            res.status(400).json("Username già presente")
-            return
-        }
-    }
 
     if (user.username == "") {
         res.status(400).json("Missing username")
@@ -174,14 +167,14 @@ const addUser = async (req, res) => {
         var response = await clientdb.db("AFSM").collection("Users").insertOne(user)
 
         if(response.modifiedCount == 0) {
-            res.status(500).json("Server error, retry")
+            res.status(500).json("Server error: failed to add user")
             return
         }
 
         var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter)
         
         if(userInfo == null) {
-            res.status(500).json("Server error, retry")
+            res.status(500).json("Server error: failed to fetch user")
             return
         }
 
@@ -193,6 +186,7 @@ const addUser = async (req, res) => {
     }
 }
 
+/* POST - /login */
 /* Compares the credentials given to the ones on the db and log ins the user */
 const loginUser = async (req, res) => {
     let username = req.body.username;
@@ -231,6 +225,7 @@ const loginUser = async (req, res) => {
     }
 }
 
+/* POST - /logout */
 /* Logs out the user by deleting the session cookie */
 const logout = (req,res) => {
     if(!logoutSession(req.cookies)) {

@@ -9,6 +9,7 @@ async function getTrade(trade) {
     `
     <h3> ${name} </h3>
     <hr>
+    <div id="alert"></div>
     <p> Username: ${trade.username}</p>
     <p> Proposed cards:</p>
     <div class="row">

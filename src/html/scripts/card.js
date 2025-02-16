@@ -13,6 +13,7 @@ function writeHero(heroJson, status) {
         `
         <h3> ${name} </h3>
         <hr>
+        <div id="alert"></div>
         <img class="mb-3" src="${hero.thumbnail.path}.${hero.thumbnail.extension}" width="300px" height="300px">  
         <h4> Description: </h4>
         <p>${hero.description}</p>

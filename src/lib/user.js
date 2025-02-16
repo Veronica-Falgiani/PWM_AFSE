@@ -2,7 +2,7 @@
 const mongoClient = require('mongodb').MongoClient;
 const mongodbURI = process.env.MONGODB_URI;
 
-
+/* GET - /user/:username */
 /* Searches the info of the user in the database based on the email */
 const getUserInfo = async (req,res) => {
     let username = req.params.username;
@@ -24,6 +24,7 @@ const getUserInfo = async (req,res) => {
     }
 }
 
+/* PUT - /user/:username */
 /* Updates the current user */
 const updateUser = async (req, res) => {
     username = req.params.username;
@@ -64,6 +65,7 @@ const updateUser = async (req, res) => {
     }
 }
 
+/* DELETE - /user/:username */
 /* Deletes the current user */
 const deleteUser = async (req,res) => {
     username = req.params.username;

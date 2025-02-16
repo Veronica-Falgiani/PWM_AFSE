@@ -81,10 +81,24 @@ async function logoutUser() {
             'Accept': 'application/json',
         }
     })
-    .then(response => response.json()).then(res => {
-        console.log(res)
-        localStorage.clear();
-        window.location.href = "/";
+    .then(result => {
+        if(result.ok) {
+            result.json().then(res => {
+                successAlert(res);
+
+                setTimeout(function(){
+                    console.log(res)
+                    localStorage.clear();   
+                    window.location.href = "/";
+                }, 4000);
+            }
+        )}
+        else {
+            result.json().then(res => {
+                dangerAlert(res)
+                return
+            })
+        }
     })
 }
 

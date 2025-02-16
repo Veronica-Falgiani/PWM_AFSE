@@ -3,6 +3,7 @@ const mongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const mongodbURI = process.env.MONGODB_URI;
 
+/* GET - /alltrades */
 /* Returns all the trades in the db */
 const getTrades = async (req,res) => {
     var clientdb = await new mongoClient(mongodbURI).connect();
@@ -17,6 +18,7 @@ const getTrades = async (req,res) => {
     }
 }
 
+/* GET - /trade/:id */
 /* Returns a single trade */
 const getTrade = async (req, res) => {
     var id = req.params.id
@@ -39,6 +41,7 @@ const getTrade = async (req, res) => {
     }
 }
 
+/* POST - /trade/:username */
 /* Given the trade info creates a trade in the db */
 const createTrade = async (req,res) => {
     username = req.params.username
@@ -82,6 +85,7 @@ const createTrade = async (req,res) => {
     }
 }
 
+/* DELETE - /trade/:id */
 /* Deletes a trade from the db */
 const deleteTrade = async (req,res) => { 
     var id = req.params.id
@@ -104,6 +108,7 @@ const deleteTrade = async (req,res) => {
     }
 }
 
+/* POST - /acceptTrade/:id */
 /* Accepts the trade by:
 * - Adding the cards to the sender and receiver
 * - Deleting or updating the number of the cards of the receiver and sender */

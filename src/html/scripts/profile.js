@@ -11,6 +11,7 @@ function writeProfile() {
     `
     <h3> PROFILE </h3>
     <hr>
+    <div id="alert"></div>
     <p> Username: ${username}</p>
     <p> Mail: ${email}</p>
     <p> Password: ******</p>
