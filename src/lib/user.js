@@ -18,9 +18,9 @@ const getUserInfo = async (req,res) => {
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
     if (userInfo == null) {
-        res.status(400).send("Utente non trovato")
+        res.status(400).json("User not found")
     } else {
-        res.json(userInfo)
+        res.status(200).json(userInfo)
     }
 }
 
@@ -42,26 +42,29 @@ const updateUser = async (req, res) => {
     var clientdb = await new mongoClient(mongodbURI).connect();
 
     if(email != "") {
-        var item = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"email":email}});
+        var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"email":email}});
+        if(response.modifiedCount == 0) {
+            res.status(500).json("Server error: failed to update email")
+            return
+        }
     }
+
     if(password != "") {
         password = hash(password);
-        var item = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"password":password}});
+        var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, {$set: {"password":password}});
+        if(response.modifiedCount == 0) {
+            res.status(500).json("Server error: failed to update password")
+            return
+        }
     }
     
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
-    console.log(userInfo)
-
-    try {
-        res.json(userInfo);
+    if (userInfo == null) {
+        res.status(500).json("Server error: failed to fetch user")
     }
-    catch(e) {
-        if(e.code == 11000) {
-            res.status(400).send("Utente già presente")
-            return
-        }
-        res.status(500).send(`Errore generico: ${e}`);
+    else {
+        res.status(200).json(userInfo)
     }
 }
 
@@ -78,12 +81,14 @@ const deleteUser = async (req,res) => {
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
-    try {
-        var item = await clientdb.db("AFSM").collection("Users").deleteOne(filter);
-        res.json(item);
+    var response = await clientdb.db("AFSM").collection("Users").deleteOne(filter);
+    
+    if(response.deletedCount == 0) {
+        res.status(500).json("Server error: failed to delete user")
+        return
     }
-    catch(e) {
-        res.status(500).send(`Error when deleting a user: ${e}`);
+    else {
+        res.status(200).json("User deleted")
     }
 }
 

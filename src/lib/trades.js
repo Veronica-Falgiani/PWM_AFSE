@@ -8,13 +8,13 @@ const mongodbURI = process.env.MONGODB_URI;
 const getTrades = async (req,res) => {
     var clientdb = await new mongoClient(mongodbURI).connect();
 
-    try {
-        var result = await clientdb.db("AFSM").collection("Trades").find().toArray();
-        //console.log(result)
-        res.json(result)
+    var trades = await clientdb.db("AFSM").collection("Trades").find().toArray();
+    
+    if(trades == null) {
+        res.status(500).json("Server error: failed to fetch trades")
     }
-    catch (e) {
-        console.log(e)
+    else {
+        res.status(200).json(trades)
     }
 }
 
@@ -32,12 +32,12 @@ const getTrade = async (req, res) => {
         ]
     }
 
-    try {
-        var result = await clientdb.db("AFSM").collection("Trades").findOne(filter);
-        res.json(result)
+    var trade = await clientdb.db("AFSM").collection("Trades").findOne(filter);
+    if(trade == null) {
+        res.status(500).json("Server error: failed to fetch trade")
     }
-    catch (e) {
-        console.log(e)
+    else {
+        res.status(200).json(trade)
     }
 }
 
@@ -50,17 +50,17 @@ const createTrade = async (req,res) => {
     send = req.body.heroSend
 
     if(name == '') {
-        res.status(400).send("Nome mancante")
+        res.status(400).json("Missing title")
         return
     }
     
     if(receive.length == 0) {
-        res.status(400).send("Carte da ricevere mancanti")
+        res.status(400).json("Missing cards to receive")
         return
     }
     
     if(send.length == 0) {
-        res.status(400).send("Carte da inviare mancanti")
+        res.status(400).json("Missing cards to send")
         return
     }
 
@@ -71,17 +71,14 @@ const createTrade = async (req,res) => {
         "send": send
     }
 
-    console.log(trade)
-
     var clientdb = await new mongoClient(mongodbURI).connect();
 
-    try {
-        var result = await clientdb.db("AFSM").collection("Trades").insertOne(trade)  
-        res.json(result);
+    var response = await clientdb.db("AFSM").collection("Trades").insertOne(trade) 
+    if(response.acknowledged == false) {
+        res.status(500).json("Server error: failed to create trade")
     }
-    catch(e) {
-        res.status(500).send(`Errore generico: ${e}`)
-        return
+    else {
+        res.status(200).json("Trade created successfully")
     }
 }
 
@@ -99,12 +96,12 @@ const deleteTrade = async (req,res) => {
         ]
     }
 
-    try {
-        var result = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
-        res.json(result);
+    var response = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
+    if(response.deletedCount == 0) {
+        res.status(500).json("Server error: failed to delete the trade")
     }
-    catch (e) {
-        console.log(e)
+    else {
+        res.status(200).json("Trade deleted successfully")
     }
 }
 
@@ -126,11 +123,10 @@ const acceptTrade = async (req,res) => {
     }
 
     /* Gets the trade info */
-    try {
-        var trade = await clientdb.db("AFSM").collection("Trades").findOne(filter);    
-    }
-    catch (e) {
-        console.log(e)
+    var trade = await clientdb.db("AFSM").collection("Trades").findOne(filter);    
+    if(trade == null) {
+        res.status(500).json("Server error: failed to fetch the trade")
+        return
     }
 
     usernameSend = trade.username
@@ -141,14 +137,12 @@ const acceptTrade = async (req,res) => {
         $inc : {"cards.$.number": -1}
     }
 
-    /* Updates the cards of the receive user */
     var filterRec = {
         $and: [
             { "username": usernameRec },
         ]
     }
 
-    /* Updates the cards of the receive user */
     var filterSend = {
         $and: [
             { "username": usernameSend },
@@ -198,28 +192,25 @@ const acceptTrade = async (req,res) => {
         }]).toArray()
 
         if(cardUser.length != 0) {
-            console.log("carta già presente")
-            res.status(400).send("La carta è già in tuo possesso")
+            res.status(400).json("You already have that card")
             return
         }   
     
         if(card[0].number == 1) {
-            try {
-                var removeCard = {
-                    $pull: {
-                        "cards": {
-                        "id": card[0].id
-                        }
+            var removeCard = {
+                $pull: {
+                    "cards": {
+                    "id": card[0].id
                     }
-                    
-                } 
-
-                var response = await clientdb.db("AFSM").collection("Users").updateOne(filterSend, removeCard);
-                console.log(usernameSend, card.name, response)
-            }
-            catch(e) {
-                console.log(e)
+                }
+                
             } 
+
+            var response = await clientdb.db("AFSM").collection("Users").updateOne(filterSend, removeCard);
+            if(response.modifiedCount == 0) {
+                res.status(500).json("Server error: failed to remove the card of the sender")
+                return
+            }
         }
         else {
             var filterCards = {
@@ -229,21 +220,23 @@ const acceptTrade = async (req,res) => {
                 ]
             }
 
-            try {
-                var result = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, { $set : {"cards.$.inTrade": false} });
-
-                var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
-                console.log(usernameSend, card.name, result, response)
+            var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, { $set : {"cards.$.inTrade": false} });
+            if(response.modifiedCount == 0) {
+                res.status(500).json("Server error: failed to update the sender card")
+                return
             }
-            catch(e){
-                console.log(e)
+
+            var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
+            if(response.modifiedCount == 0) {
+                res.status(500).json("Server error: failed to decrement the number of the sender card")
+                return
             }
         }
     }
 
     console.log("usernameSend updated")
 
-    /* Delete the card we need to send to the receiver */
+    /* Deletes or updates the card we need to send to the receiver */
     for(i = 0; i < cardsSend.length; i++){
         var card = await clientdb.db("AFSM").collection("Users").aggregate([{
             "$unwind": "$cards"
@@ -266,12 +259,11 @@ const acceptTrade = async (req,res) => {
         }]).toArray()
 
         if(card[0].inTrade == true) {
-            res.status(400).send("Carta bloccata in un altro scambio")
+            res.status(400).json("The card is being used in another trade")
             return
         }
 
         if(card[0].number == 1) {
-            try {
                 var removeCard = {
                     $pull: {
                         "cards": {
@@ -282,11 +274,10 @@ const acceptTrade = async (req,res) => {
                 } 
 
                 var response = await clientdb.db("AFSM").collection("Users").updateOne(filterRec, removeCard);
-                console.log(usernameRec, card.name, response)
-            }
-            catch(e) {
-                console.log(e)
-            } 
+                if(response.modifiedCount == 0) {
+                    res.status(500).json("Server error: failed to remove the cards of the receiver")
+                    return
+                }
         }
         else {
             var filterCards = {
@@ -295,12 +286,11 @@ const acceptTrade = async (req,res) => {
                       "cards.id" : card[0].id } 
                 ]
             }
-            try {
-                var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
-                console.log(usernameRec, card.name, response)
-            }
-            catch(e){
-                console.log(e)
+
+            var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
+            if(response.modifiedCount == 0) {
+                res.status(500).json("Server error: failed to update the number of the cards of the receiver")
+                return
             }
         }
     }
@@ -323,7 +313,7 @@ const acceptTrade = async (req,res) => {
         
         var response = await clientdb.db("AFSM").collection("Users").updateOne(filterSend, addCards);
         if (response.modifiedCount == 0) {
-            res.status(401).send("Failed to add cards")
+            res.status(500).json("Server error: failed to add cards")
             return
         }
     }
@@ -346,7 +336,7 @@ const acceptTrade = async (req,res) => {
 
         var response = await clientdb.db("AFSM").collection("Users").updateOne(filterRec, addCards);
         if (response.modifiedCount == 0) {
-            res.status(401).send("Failed to add cards")
+            res.status(500).json("Server error: failed to add cards")
             return
         }
     }   
@@ -360,13 +350,14 @@ const acceptTrade = async (req,res) => {
         ]
     }
 
-    try {
-        var result = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
-        console.log("trade deleted")
-        res.json(result);
+    var response = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
+    if(response.deletedCount == 0) {
+        res.status(500).json("Server error: failed to remove the trade")
+        return
     }
-    catch (e) {
-        console.log(e)
+    else {
+        console.log("trade deleted")
+        res.status(200).json("Trade deleted successfully");
     }
 }
 

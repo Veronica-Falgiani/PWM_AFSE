@@ -52,122 +52,44 @@ app.get("/login", (req,res) =>{
     res.sendFile(path.join(__dirname, "src/html/login.html"));
 })
 
-app.get("/profile", (req,res) =>{
-    /* Verifying cookies */ 
-    if(!validateSession(req.cookies)) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    /* Refresh cookies session */ 
-    token = refreshSession(req.cookies)
-    if (!token) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
-    
+/* Verifying cookies 
+if(!validateSession(req.cookies)) {
+    res.status(400).send("Unauthorized user")
+    return
+}
+/* Refresh cookies session 
+token = refreshSession(req.cookies)
+if (!token) {
+    res.status(400).send("Unauthorized user")
+    return
+}
+res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })*/
+
+app.get("/profile", (req,res) =>{    
     res.sendFile(path.join(__dirname, "src/html/profile.html"));
 })
 
-app.get("/credits", (req,res) =>{
-    /* Verifying cookies */ 
-    if(!validateSession(req.cookies)) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    /* Refresh cookies session */ 
-    token = refreshSession(req.cookies)
-    if (!token) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
-       
+app.get("/credits", (req,res) =>{       
     res.sendFile(path.join(__dirname, "src/html/credits.html"));
 })
 
-app.get("/packs", (req,res) => {
-    /* Verifying cookies */ 
-    if(!validateSession(req.cookies)) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    /* Refresh cookies session */ 
-    token = refreshSession(req.cookies)
-    if (!token) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
-        
+app.get("/packs", (req,res) => {        
     res.sendFile(path.join(__dirname, "src/html/packs.html"));
 })
 
-app.get("/trades", (req,res) =>{
-    /* Verifying cookies */ 
-    if(!validateSession(req.cookies)) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    /* Refresh cookies session */ 
-    token = refreshSession(req.cookies)
-    if (!token) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
-        
+app.get("/trades", (req,res) =>{        
     res.sendFile(path.join(__dirname, "src/html/trades.html"));
 })
 
 app.get("/album", (req,res) =>{
-    /* Verifying cookies */ 
-    if(!validateSession(req.cookies)) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    /* Refresh cookies session */ 
-    token = refreshSession(req.cookies)
-    if (!token) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
-        
     res.sendFile(path.join(__dirname, "src/html/album.html"));
 })
 
-app.get("/card", (req,res) =>{
-    /* Verifying cookies */ 
-    if(!validateSession(req.cookies)) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    /* Refresh cookies session */ 
-    token = refreshSession(req.cookies)
-    if (!token) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
-        
+app.get("/card", (req,res) =>{    
     res.sendFile(path.join(__dirname, "src/html/card.html"));
 })
 
-app.get("/trade", (req,res) =>{
-    /* Verifying cookies */ 
-    if(!validateSession(req.cookies)) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    /* Refresh cookies session */ 
-    token = refreshSession(req.cookies)
-    if (!token) {
-        res.status(400).send("Unauthorized user")
-        return
-    }
-    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
-        
+app.get("/trade", (req,res) =>{   
     res.sendFile(path.join(__dirname, "src/html/trade.html"));
 })
 

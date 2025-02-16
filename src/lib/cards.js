@@ -7,14 +7,13 @@ const mongodbURI = process.env.MONGODB_URI;
 const getCards = async (req,res) => {
     var clientdb = await new mongoClient(mongodbURI).connect();
 
-    var result = await clientdb.db("AFSM").collection("Cards").find().toArray();
+    var cards = await clientdb.db("AFSM").collection("Cards").find().toArray();
     
-    if(result == null) {
+    if(cards == null) {
         res.status(500).json("Server error: failed to fetch cards")
     }
     else {
-        console.log(result)
-        res.status(200).json(result)
+        res.status(200).json(cards)
     }   
 }
 
@@ -82,31 +81,32 @@ const addCards = async (req,res) => {
 
             var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, addCards);
             if (response.modifiedCount == 0) {
-                res.status(401).send("Failed to add cards")
+                res.status(500).json("Server error: failed to add the card")
             }
         }
         /* If the card is present, it will update the number of cards obtained */
         else {
             var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, increment);
             if (response.modifiedCount == 0) {
-                res.status(401).send("Failed to update cards")
+                res.status(500).json("Server error: failed to update number of card")
             }
         }
     }
 
     var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, removeCredits);
     
+    if (response.modifiedCount == 0) {
+        res.status(500).json("Server error: failed to remove credits")
+        return
+    }
+
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
-    if (response.modifiedCount == 0) {
-        res.status(401).send("Failed to update cards")
+    if (userInfo == null) {
+        res.status(500).json("Server error: failed to fetch user info")
     } else {
-        if (userInfo == null) {
-            res.status(401).send("Unauthorized")
-        } else {
-            res.status(200).json(userInfo)
-        } 
-    }
+        res.status(200).json(userInfo)
+    } 
 }
 
 /* GET - /card/:id */
@@ -125,9 +125,9 @@ const getCard = async (req,res) => {
     var card = await clientdb.db("AFSM").collection("Cards").findOne(filter);
 
     if (card == null) {
-        res.status(401).send("Unauthorized")
+        res.status(500).json("Server error: failed to fetch card")
     } else {
-        res.json(card)
+        res.status(200).json(card)
     } 
 }
 
@@ -160,9 +160,9 @@ const getCardUser = async (req,res) => {
     }]).toArray()
 
     if (card == null) {
-        res.status(401).send("Unauthorized")
+        res.status(500).json("Server error: failed to fetch card of the user")
     } else {
-        res.json(card)
+        res.status(200).json(card)
     } 
 }
 
@@ -185,15 +185,23 @@ const modifyTradeCard = async (req,res) => {
     for(i = 0; i < user.cards.length; i++) {
         if(user.cards[i].id == id) {
             if(user.cards[i].inTrade == true) {
-                var result = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: false} });
+                var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: false} });
+                if (response.modifiedCount == 0) {
+                    res.status(500).json("Server error: failed to update trade status of card")
+                    return
+                }
             }
             else {
-                var result = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: true} });
+                var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: true} });
+                if (response.modifiedCount == 0) {
+                    res.status(500).json("Server error: failed to update trade status of card")
+                    return
+                }
             }
         }
     }
 
-    res.json()
+    res.status(200).json("Updated card successfully")
 }
 
 /* DELETE - /card/:username */
@@ -235,28 +243,30 @@ const removeCard = async (req,res) => {
             }
         }]).toArray()
     
+    /* Only cards not in trade can be deleted */
     if(card[0].inTrade == true) {
-        res.status(400).send("Carta bloccata in un altro scambio")
+        res.status(400).json("Carta bloccata in un altro scambio")
         return
     }
 
+    /* Deletes the card from the collection of the user */
     if(card[0].number == 1) {
-        try {
-            var removeCard = {
-                $pull: {
-                    "cards": {
-                    "id": card[0].id
-                    }
+        var removeCard = {
+            $pull: {
+                "cards": {
+                "id": card[0].id
                 }
-                
-            } 
-
-            var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, removeCard);
-        }
-        catch(e) {
-            console.log(e)
+            }
+            
         } 
+
+        var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, removeCard);
+        if(response.modifiedCount == 0) {
+            res.status(500).json("Server error: failed to remove a card")
+            return
+        }
     }
+    /* Or decreases the value of the number of cards if there are many */
     else {
         var filterCards = {
             $and: [
@@ -264,11 +274,11 @@ const removeCard = async (req,res) => {
                   "cards.id" : card[0].id } 
             ]
         }
-        try {
-            var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
-        }
-        catch(e){
-            console.log(e)
+        
+        var response = await clientdb.db("AFSM").collection("Users").updateOne(filterCards, decrement);
+        if(response.modifiedCount == 0) {
+            res.status(500).json("Server error: failed to update number of card")
+            return
         }
     }
 
@@ -278,9 +288,18 @@ const removeCard = async (req,res) => {
 
     
     var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, increment);
-    var user = await clientdb.db("AFSM").collection("Users").findOne(filter);
+    if(response.modifiedCount == 0) {
+        res.status(500).json("Server error: failed to increment credits")
+        return
+    }
 
-    res.json(user.credits)
+    var user = await clientdb.db("AFSM").collection("Users").findOne(filter);
+    if(user == null) {
+        res.status(500).json("Server error: failed to fetch user")
+    }
+    else {
+        res.status(200).json(user.credits)
+    }
 }
 
 module.exports = { getCards, getUserCards, addCards, getCard, getCardUser, modifyTradeCard, removeCard }

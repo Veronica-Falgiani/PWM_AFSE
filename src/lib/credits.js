@@ -18,9 +18,9 @@ const getCredits = async (req,res) => {
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
     if (userInfo == null) {
-        res.status(401).send("Unauthorized")
+        res.status(500).json("Server error: failed to find user")
     } else {
-        res.json(userInfo.credits)
+        res.status(200).json(userInfo.credits)
     } 
 }
 
@@ -42,20 +42,22 @@ const changeCredits = async (req,res) => {
         $inc : {"credits": Number(changeCredits)} 
     } 
 
-    /* findOneandUpdate did't work even with return original set to false */
+   
     var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, increment);
+
+    if (response.modifiedCount == 0) {
+        res.status(500).json("Server error: failed to update user")
+        return
+    } 
 
     var userInfo = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
-    if (response.modifiedCount == 0) {
-        res.status(401).send("Failed to update credits")
-    } else {
-        if (userInfo == null) {
-            res.status(401).send("Unauthorized")
-        } else {
-            res.json(userInfo.credits)
-        } 
-    }
+    if (userInfo == null) {
+        res.status(500).json("Server error: failed to find user")
+    } 
+    else {
+        res.status(200).json(userInfo.credits)
+    } 
 }
 
 module.exports = { getCredits, changeCredits }

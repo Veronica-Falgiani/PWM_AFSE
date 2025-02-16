@@ -17,7 +17,7 @@ const getFromMarvel = async (req,res) => {
     .catch(error => console.log('error', error));
 
     if(response == undefined) {
-        res.status(500).send("Errore con le API marvel")
+        res.status(500).send("Server error: cannot request Marvel API")
     }
     else {
         res.status(200).json(response.data.results) 
