@@ -39,11 +39,26 @@ async function modifyUser() {
         body: JSON.stringify({ "email" : email, 
                                "password" : password })
         })
-        .then(result => result.json()).then(res => {
-            localStorage.setItem("email", res.email)
-            window.location.href = "/profile";
+        .then(result => {
+            if(result.ok) {
+                result.json().then(res => {
+                    localStorage.setItem("email", res.email);
+                })
+            }
+        
+            else {
+                result.json().then(res => {
+                    dangerAlert("alertModal", res)
+                    return
+                })
+            }
         })
-        .catch(error => console.log('Error updating the user', error));
+
+        successAlert("alertModal","User info changed successfully")
+
+        setTimeout(function(){
+            window.location.href = "/profile";
+        }, 3000);
 }
 
 /* Deletes the current user */
@@ -56,6 +71,25 @@ async function deleteUser() {
             "Content-type": "application/json",
             'Accept': 'application/json',
         }})
-        .then(result => result.json()).then(res => {localStorage.clear(); window.location.href = "/"})
-        .catch(error => console.log('Error deleting the user', error));
+        .then(result => {
+            if(result.ok) {
+                result.json().then(res => {
+                    localStorage.clear(); 
+                    window.location.href = "/";
+                })
+            }
+        
+            else {
+                result.json().then(res => {
+                    dangerAlert("alertModal", res);
+                    return;
+                })
+            }
+        })
+
+        successAlert("alertModal","User deleted successfully");
+
+        setTimeout(function(){
+            window.location.href = "/";
+        }, 3000);
 }

@@ -84,7 +84,7 @@ async function logoutUser() {
     .then(result => {
         if(result.ok) {
             result.json().then(res => {
-                successAlert(res);
+                successAlert("alert", res);
 
                 setTimeout(function(){
                     console.log(res)
@@ -95,7 +95,7 @@ async function logoutUser() {
         )}
         else {
             result.json().then(res => {
-                dangerAlert(res)
+                dangerAlert("alert", res)
                 return
             })
         }
@@ -103,8 +103,8 @@ async function logoutUser() {
 }
 
 /* Updates the alert div when the server sends a message */
-function successAlert(message) {
-    document.getElementById("alert").innerHTML = 
+function successAlert(id, message) {
+    document.getElementById(id).innerHTML = 
     `
     <div class="alert alert-success" role="alert">
         <h5 class="alert-heading">${message}</h5>
@@ -112,8 +112,8 @@ function successAlert(message) {
     `
 }
 
-function dangerAlert(message) {
-    document.getElementById("alert").innerHTML = 
+function dangerAlert(id, message) {
+    document.getElementById(id).innerHTML = 
     `
     <div class="alert alert-danger" role="alert">
         <h5 class="alert-heading">${message}</h5>

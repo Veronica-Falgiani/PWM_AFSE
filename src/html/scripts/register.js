@@ -122,7 +122,7 @@ async function sendForm() {
                         .then(response => response.json()).then(result => {localStorage.setItem("series", result[0].title)})
                         .catch(error => alert("Failed to fetch series"));
             
-                    successAlert("User signed up     successfully")
+                    successAlert("alert", "User signed up successfully")
 
                     /* window.location.href doesn't wait for the function to finish */
                     setTimeout(function(){
@@ -132,7 +132,7 @@ async function sendForm() {
             }
             else {
                 result.json().then(res => {
-                    dangerAlert(res)
+                    dangerAlert("alert", res)
                     return
                 })
             }

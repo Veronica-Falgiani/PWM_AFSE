@@ -215,7 +215,7 @@ const loginUser = async (req, res) => {
     var loggedUser = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
     if (loggedUser == null) {
-        res.status(400).json("User not found")
+        res.status(400).json("Credentials are incorrect")
     } else {
         /* Generate and sens a session token as a cookie */
         token = generateSession(username)
