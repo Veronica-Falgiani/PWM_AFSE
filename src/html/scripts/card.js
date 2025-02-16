@@ -47,6 +47,7 @@ function writeHero(heroJson, status) {
     `
     <h3>${name} </h3>
     <hr>
+    <div id="alert"></div>
     <img class="mb-3" src="${hero.thumbnail.path}.${hero.thumbnail.extension}" width="300px" height="300px">  
     <h4> Description: </h4>
     <p>${hero.description}</p>
@@ -70,17 +71,33 @@ async function sellCard() {
     var id = localStorage.getItem("heroId")
     var username = localStorage.getItem("username")
 
-    await fetch(`/card/${id}`, {
+    await fetch(`/card/${username}`, {
         method: "DELETE",
         headers: {
             "Content-type": "application/json",
             'Accept': 'application/json',
         },
-        body: JSON.stringify({ "username": username })
+        body: JSON.stringify({ "id": id })
     })
-    .then(response => response.json()).then(res => {
-        localStorage.setItem("credits", res);
+    .then(result => {
+        console.log(result)
+        if(result.ok) {
+            result.json().then(res => {
+                localStorage.setItem("credits", res.credits);
+            })
+        }
+    
+        else {
+            result.json().then(res => {
+                dangerAlert("alert", res)
+                return
+            })
+        }
+    })
+
+    successAlert("alert", "Card sold successfully")
+
+    setTimeout(function(){
         window.location.href = "/album";
-    })
-    .catch(error => console.log('Cannot delete card of the user', error));   
+    }, 3000);
 }

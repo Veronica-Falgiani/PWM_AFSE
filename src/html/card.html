@@ -32,8 +32,20 @@
                     body: JSON.stringify({ "urlAPI" : `/characters/${id}`,
                                         "query" : ""})
                 })
-                    .then(response => response.json()).then(result => writeHero(result[0], status))
-                    .catch(error => console.log('error', error));
+                .then(result => {
+                    if(result.ok) {
+                        result.json().then(res => {
+                            writeHero(res[0], status)
+                        })
+                    }
+
+                    else {
+                        result.json().then(res => {
+                            dangerAlert("alert", res)
+                            return
+                        })
+                    }
+                })
             })
         </script>
     </body>
