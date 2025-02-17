@@ -1,4 +1,4 @@
-# Relazioone Progettazione Web e Mobile 2025
+# Relazione Progettazione Web e Mobile 2025
 
 **Progetto**: Album delle Figurine dei Supereroi <br>
 **Corso**: Progettazione Web e Mobile <br>
@@ -43,7 +43,7 @@ Questo progetto è stato svolto per il corso di Programmazione Web e Mobile.
 
 La seguente relazione descrive il procedimento per la creazione del sito web "Album delle Figurine dei Supereroi" e il suo funzionamento in modo dettagliato.
 
-Il progetto è stato scritto interamente in lingua inglese come esercitazione personale e per seguire lo "standard di programmazione" che utilizza principalemnte l'inglese.
+Il progetto è stato scritto interamente in lingua inglese come esercitazione personale e per seguire lo "standard di programmazione" che utilizza principalmente l'inglese.
 
 ## Implementazione
 
@@ -76,7 +76,7 @@ I file HTML sono contenuti all'interno della cartella `/src/html`:
 
 Molte pagine possono sembrare spoglie, ma vengono popolate tramite scripts solo quando sono caricate. Questo permette di avere dati sempre aggiornati e non dover creare tanti file HTML per rappresentare uno stesso gruppo di informazioni, ma che hanno leggere differenze. 
 
-All'interno di ogni pagine è stato inserito un `<div id="alert"></div>` che si popola ogni volta che vengono ricevute delle risposte dal server. In questo modo l'utente è sempre aggiornato su quello che sta succededo all'interno del sito.
+All'interno di ogni pagina è stato inserito un `<div id="alert"></div>` che si popola ogni volta che vengono ricevute delle risposte dal server. In questo modo l'utente è sempre aggiornato su quello che sta succededo all'interno del sito.
 
 Stesso principio si applica al menù in cima alla pagina che è contenuto in `<div id="alert"></div>`.
 
@@ -302,7 +302,95 @@ Successivamente ho scritto delle funzioni che gestiscono i vari passaggi di aute
 
 ### SWAGGER
 
+Per testare la funzionalità delle API e fornire una documentazione dettagliata ho utilizzato il modulo Swagger. Per configurarlo ho creato un file `src/api/swagger.js` che contiene le configurazioni principali e la descrizione degli endpoint.
 
+Il file si presenta in questo modo (ho omesso del codice per leggibilità):
+```js
+const swaggerJSDoc = require("swagger-jsdoc");
+
+const swaggerDefinition = {
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Album delle Figurine dei Supereroi API",
+        "description": "Documentation for the \"Album delle Figurine dei Supereroi\" API",
+        "version": "1.0.11"
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "tags": [
+        {
+        "name": "session",
+        "description": "Manages log in, register and log out of users"
+        },
+        {
+        "name": "user",
+        "description": "Manages user information"
+        },
+        {
+        "name": "credits",
+        "description": "Manages user credits"
+        },
+        {
+        "name": "cards",
+        "description": "Manages getting, selling and updating cards"
+        },
+        {
+        "name": "trades",
+        "description": "Manages trades between users"
+        }
+    ],
+    "paths": {
+        /* SESSION */
+        "/register": {
+            "post": {
+                "tags": [
+                "session"
+                ],
+                "description": "Registers a user with the info given in the body",
+                "requestBody": {
+                    "description": "tuple used for registration",
+                    "required": true,
+                    "content": {
+                        "application/Json": {
+                            "schema": {
+                            "$ref": "#/definitions/userRegister"
+                            }   
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returns user info",
+                    },
+                    "400": {
+                        "description": "User input missing",
+                    },
+                    "500": {
+                        "description": "Error fetching the database",
+                    },
+                }
+            }
+        },
+...
+
+...
+const options = {
+    swaggerDefinition,
+    apis: ["../../app.js"],
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+module.exports = swaggerSpec;
+```
+
+Per poter visualizzare la pagina creata da Swagger basterà navigare alla pagina `/api-docs`:
+
+![alt text](img/swagger1.png)
+
+Inoltre si potranno anche visualizzare e testare i vari endpoint:
+
+![alt text](img/swagger2.png)
+![alt text](img/swagger3.png)
 
 ## Funzionamento
 
