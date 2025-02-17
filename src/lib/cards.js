@@ -118,7 +118,7 @@ const getCard = async (req,res) => {
 
     var filter = {
         $and: [
-            { "id": id },
+            { "id": Number(id) },
         ]
     }
 
@@ -131,7 +131,7 @@ const getCard = async (req,res) => {
     } 
 }
 
-/* GET - /card/:username */
+/* POST - /card/:username */
 /* Returns a single card of the user */
 const getCardUser = async (req,res) => {
     var username = req.params.username
@@ -145,7 +145,7 @@ const getCardUser = async (req,res) => {
     {
         "$match": {
           "username": username,
-          "cards.id": id
+          "cards.id": Number(id)
         }
     },
     {
@@ -161,9 +161,13 @@ const getCardUser = async (req,res) => {
 
     if (card == null) {
         res.status(500).json("Server error: failed to fetch card of the user")
-    } else {
-        res.status(200).json(card)
     } 
+    else if (card.length == 0) {
+        res.status(400).json("Card of the user not found")
+    } 
+    else {
+        res.status(200).json(card)
+    }
 }
 
 /* PUT - /card/:username */
@@ -188,8 +192,6 @@ const modifyTradeCard = async (req,res) => {
         res.status(500).json("Server error: failed to fetch user info")
         return
     }
-
-    console.log(user, id)
 
     for(i = 0; i < user.cards.length; i++) {
         console.log(user.cards[i], id)
@@ -218,7 +220,7 @@ const modifyTradeCard = async (req,res) => {
 }
 
 /* DELETE - /card/:username */
-/* Removes a card from the collection of the user and updates its values */
+/* Removes a card from the collection of the user or updates its number value */
 const removeCard = async (req,res) => {
     var username = req.params.username
     var id = req.body.id

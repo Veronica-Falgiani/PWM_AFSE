@@ -3,16 +3,17 @@ const cors = require('cors');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const swaggerUI = require("swagger-ui-express");
-const swaggerSpec = require("./swagger");
+const swaggerSpec = require("./src/api/swagger");
 require("dotenv").config();
 
 /* Import my functions */
 const { validateSession, refreshSession, addUser, loginUser, logout } = require('./src/lib/session')
-const { getCards, getUserCards, addCards, getCard, getCardUser, modifyTradeCard, removeCard } = require('./src/lib/cards')
-const { getCredits, changeCredits } = require('./src/lib/credits')
 const { getUserInfo, updateUser, deleteUser } = require('./src/lib/user')
-const { getTrades, getTrade, createTrade, deleteTrade, acceptTrade } = require('./src/lib/trades')
 const { getFromMarvel } = require('./src/lib/marvel')
+const { getCredits, changeCredits } = require('./src/lib/credits')
+const { getCards, getUserCards, addCards, getCard, getCardUser, modifyTradeCard, removeCard } = require('./src/lib/cards')
+const { getTrades, getTrade, createTrade, deleteTrade, acceptTrade } = require('./src/lib/trades')
+
 
 /* Start server */
 const app = express();
@@ -52,44 +53,121 @@ app.get("/login", (req,res) =>{
     res.sendFile(path.join(__dirname, "src/html/login.html"));
 })
 
-/* Verifying cookies 
-if(!validateSession(req.cookies)) {
-    res.status(400).send("Unauthorized user")
-    return
-}
-/* Refresh cookies session 
-token = refreshSession(req.cookies)
-if (!token) {
-    res.status(400).send("Unauthorized user")
-    return
-}
-res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })*/
-
-app.get("/profile", (req,res) =>{    
+app.get("/profile", (req,res) =>{  
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })  
     res.sendFile(path.join(__dirname, "src/html/profile.html"));
 })
 
-app.get("/credits", (req,res) =>{       
+app.get("/credits", (req,res) =>{ 
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })   
+
     res.sendFile(path.join(__dirname, "src/html/credits.html"));
 })
 
-app.get("/packs", (req,res) => {        
+app.get("/packs", (req,res) => {  
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+
     res.sendFile(path.join(__dirname, "src/html/packs.html"));
 })
 
-app.get("/trades", (req,res) =>{        
+app.get("/trades", (req,res) =>{  
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+
     res.sendFile(path.join(__dirname, "src/html/trades.html"));
 })
 
 app.get("/album", (req,res) =>{
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+
     res.sendFile(path.join(__dirname, "src/html/album.html"));
 })
 
-app.get("/card", (req,res) =>{    
+app.get("/card", (req,res) =>{   
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+     
     res.sendFile(path.join(__dirname, "src/html/card.html"));
 })
 
-app.get("/trade", (req,res) =>{   
+app.get("/trade", (req,res) =>{  
+    /* Verifying cookies */
+    if(!validateSession(req.cookies)) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    /* Refresh cookies session */
+    token = refreshSession(req.cookies)
+    if (!token) {
+        res.status(400).send("Unauthorized user")
+        return
+    }
+    res.cookie("session_token", token.sessionToken, { expires: token.expiresAt })
+     
     res.sendFile(path.join(__dirname, "src/html/trade.html"));
 })
 
@@ -182,7 +260,7 @@ app.get("/card/:id", (req,res) => {
 
 /* ---- GET A SINGLE USER CARD ---- */
 /* Inside: CARDS.JS */
-app.get("/card/:username", (req,res) => {
+app.post("/card/:username", (req,res) => {
     getCardUser(req,res);
 })
 

@@ -1,4 +1,4 @@
-/* GET - /marvelAPI */
+/* POST - /marvelAPI */
 /* Main function to talk to the marvel API */
 const getFromMarvel = async (req,res) => {
     urlAPI = req.body.urlAPI
@@ -17,7 +17,7 @@ const getFromMarvel = async (req,res) => {
     .catch(error => console.log('error', error));
 
     if(response == undefined) {
-        res.status(500).send("Server error: cannot request Marvel API")
+        res.status(500).json("Server error: cannot request Marvel API")
     }
     else {
         res.status(200).json(response.data.results) 

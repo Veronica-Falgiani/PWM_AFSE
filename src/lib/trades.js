@@ -41,6 +41,29 @@ const getTrade = async (req, res) => {
     }
 }
 
+/* DELETE - /trade/:id */
+/* Deletes a trade from the db */
+const deleteTrade = async (req,res) => { 
+    var id = req.params.id
+    id = new ObjectId(id)
+  
+    var clientdb = await new mongoClient(mongodbURI).connect();
+
+    var filter = {
+        $and: [
+            { "_id": id },
+        ]
+    }
+
+    var response = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
+    if(response.deletedCount == 0) {
+        res.status(500).json("Server error: failed to delete the trade")
+    }
+    else {
+        res.status(200).json("Trade deleted successfully")
+    }
+}
+
 /* POST - /trade */
 /* Given the trade info creates a trade in the db */
 const createTrade = async (req,res) => {
@@ -79,29 +102,6 @@ const createTrade = async (req,res) => {
     }
     else {
         res.status(200).json("Trade created successfully")
-    }
-}
-
-/* DELETE - /trade/:id */
-/* Deletes a trade from the db */
-const deleteTrade = async (req,res) => { 
-    var id = req.params.id
-    id = new ObjectId(id)
-  
-    var clientdb = await new mongoClient(mongodbURI).connect();
-
-    var filter = {
-        $and: [
-            { "_id": id },
-        ]
-    }
-
-    var response = await clientdb.db("AFSM").collection("Trades").deleteOne(filter);
-    if(response.deletedCount == 0) {
-        res.status(500).json("Server error: failed to delete the trade")
-    }
-    else {
-        res.status(200).json("Trade deleted successfully")
     }
 }
 

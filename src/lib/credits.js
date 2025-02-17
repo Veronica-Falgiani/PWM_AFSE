@@ -5,7 +5,7 @@ const mongodbURI = process.env.MONGODB_URI;
 /* GET - /credits/:username */
 /* Returns the credits of the specified user */
 const getCredits = async (req,res) => {
-    let username = req.body.username;
+    let username = req.params.username;
 
     var clientdb = await new mongoClient(mongodbURI).connect();
 
