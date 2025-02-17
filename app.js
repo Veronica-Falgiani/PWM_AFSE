@@ -27,7 +27,7 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 const port = process.env.PORT;
 const host = process.env.HOST;
 
-app.listen(port, host, () => console.log("Server up on port 3100"));
+app.listen(port, host, () => console.log("Server up on port 3000"));
 
 
 /* Serving static files in express */
