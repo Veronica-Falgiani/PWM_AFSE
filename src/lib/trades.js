@@ -9,7 +9,7 @@ const getTrades = async (req,res) => {
     var clientdb = await new mongoClient(mongodbURI).connect();
 
     var trades = await clientdb.db("AFSM").collection("Trades").find().toArray();
-    
+
     if(trades == null) {
         res.status(500).json("Server error: failed to fetch trades")
     }
@@ -41,10 +41,10 @@ const getTrade = async (req, res) => {
     }
 }
 
-/* POST - /trade/:username */
+/* POST - /trade */
 /* Given the trade info creates a trade in the db */
 const createTrade = async (req,res) => {
-    username = req.params.username
+    username = req.body.username
     name = req.body.name
     receive = req.body.heroReceive
     send = req.body.heroSend
@@ -357,7 +357,7 @@ const acceptTrade = async (req,res) => {
     }
     else {
         console.log("trade deleted")
-        res.status(200).json("Trade deleted successfully");
+        res.status(200).json("The trade was successful!");
     }
 }
 

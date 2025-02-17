@@ -28,8 +28,20 @@
                         'Accept': 'application/json',
                     },
                 })
-                    .then(response => response.json()).then(res => getTrade(res))
-                    .catch(error => console.log('Cannot get all the trades', error));
+                .then(result => {
+                    if(result.ok) {
+                        result.json().then(res => {
+                            getTrade(res)
+                        })
+                    }
+
+                    else {
+                        result.json().then(res => {
+                            dangerAlert("alert", res)
+                            return
+                        })
+                    }
+                })
             })
         </script>
     </body>

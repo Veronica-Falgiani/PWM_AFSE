@@ -60,6 +60,22 @@ async function acceptTrade(id) {
         },
         body: JSON.stringify({ "username": username })
     })
-    .then(response => response.json()).then(res => window.location.href = "/trades")  
-    .catch(error => console.log('Cannot get all the trades', error));
+    .then(result => {
+        if(result.ok) {
+            result.json().then(res => {
+                successAlert("alert", res)
+            })
+        }
+    
+        else {
+            result.json().then(res => {
+                dangerAlert("alert", res)
+                return
+            })
+        }
+    })
+
+    setTimeout(function(){
+        window.location.href = "/trades";
+    }, 3000);
 }

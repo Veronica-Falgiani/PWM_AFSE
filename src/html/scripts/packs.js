@@ -37,7 +37,7 @@ async function getRandomHero() {
                             "query" : `limit=1&offset=${num}`})
     })
         .then(response => response.json()).then(res => {return res[0]})
-        .catch(error => console.log('error', error));
+        .catch(error => alert("Marvel API: failed to fetch hero"));
 
     return hero
 }
@@ -70,8 +70,20 @@ async function buyCards() {
         body: JSON.stringify({ "cards" : cards,
                             "credits" : credits})
     })
-        .then(response => response.json()).then(res => localStorage.setItem("credits", res.credits))
-        .catch(error => console.log("Errore nell'aggiornare i crediti", error));
+    .then(result => {
+        if(result.ok) {
+            result.json().then(res => {
+                localStorage.setItem("credits", res.credits)
+            })
+        }
+    
+        else {
+            result.json().then(res => {
+                dangerAlert("alert", res)
+                return
+            })
+        }
+    })
 
     writeCards(cards)
 }

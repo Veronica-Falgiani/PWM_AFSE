@@ -88,7 +88,7 @@ function populateUserCards(userCards, page) {
     for(i = start; i < end; i++) {
         cardsRow.innerHTML += 
         `
-        <button class="p-3 m-3 border rounded" onclick="getCard(${userCards[i].id}, 'obtained')" id="card">
+        <button class="btn btn-danger p-3 m-3 border rounded" onclick="getCard(${userCards[i].id}, 'obtained')" id="card">
             <img class="mb-3" src="${userCards[i].thumbnail}" width="100px" height="100px">  
             <p> (${userCards[i].number}) ${userCards[i].name}</p>
         </button>

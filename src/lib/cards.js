@@ -180,18 +180,31 @@ const modifyTradeCard = async (req,res) => {
         ]
     }
 
+    console.log(username, id)
+
     user = await clientdb.db("AFSM").collection("Users").findOne(filter);
 
+    if(user == null) {
+        res.status(500).json("Server error: failed to fetch user info")
+        return
+    }
+
+    console.log(user, id)
+
     for(i = 0; i < user.cards.length; i++) {
+        console.log(user.cards[i], id)
         if(user.cards[i].id == id) {
+            console.log(user.cards[i].id)
             if(user.cards[i].inTrade == true) {
+                console.log("true -> false")
                 var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: false} });
                 if (response.modifiedCount == 0) {
                     res.status(500).json("Server error: failed to update trade status of card")
                     return
                 }
             }
-            else {
+            else if(user.cards[i].inTrade == false) {
+                console.log("false -> true")
                 var response = await clientdb.db("AFSM").collection("Users").updateOne(filter, { $set : {[`cards.${i}.inTrade`]: true} });
                 if (response.modifiedCount == 0) {
                     res.status(500).json("Server error: failed to update trade status of card")
@@ -245,7 +258,7 @@ const removeCard = async (req,res) => {
     
     /* Only cards not in trade can be deleted */
     if(card[0].inTrade == true) {
-        res.status(400).json("Carta bloccata in un altro scambio")
+        res.status(400).json("Can't sell, the card is blocked in a trade")
         return
     }
 
@@ -298,7 +311,7 @@ const removeCard = async (req,res) => {
         res.status(500).json("Server error: failed to fetch user")
     }
     else {
-        res.status(200).json(user.credits)
+        res.status(200).json(user)
     }
 }
 

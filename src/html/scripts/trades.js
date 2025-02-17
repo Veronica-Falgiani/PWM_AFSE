@@ -118,7 +118,7 @@ async function updateRecHero() {
                             "query" : `nameStartsWith=${recHero}`})
     })
         .then(response => response.json()).then(res => {updateTradeRec(res)})
-        .catch(error => console.log('error', error));
+        .catch(error => alert("Marvel API: failed to fetch hero"));
 }  
 
 /* Receives the info of the searched hero to receive and displays it */
@@ -166,24 +166,36 @@ async function updateSendHero() {
     username = localStorage.getItem("username")
     heroes = []
 
-    userCards = await fetch(`/cards/${username}`, {
+    await fetch(`/cards/${username}`, {
         method: "GET",
         headers: {
             "Content-type": "application/json",
             'Accept': 'application/json',
         },
     })
-        .then(response => response.json()).then(res => {return res})
-        .catch(error => console.log('Cannot get cards of the user', error));
-    
-    for(i = 0; i < userCards.length; i++) {
-        name = userCards[i].name.toLowerCase()
-        if(userCards[i].inTrade == false && userCards[i].number > 1 && name.includes(sendHero)) {
-            heroes.push(userCards[i])
+    .then(result => {
+        if(result.ok) {
+            result.json().then(res => {
+                console.log(res)
+                userCards = res
+                for(i = 0; i < userCards.length; i++) {
+                    name = userCards[i].name.toLowerCase()
+                    if(userCards[i].inTrade == false && userCards[i].number > 1 && name.includes(sendHero)) {
+                        heroes.push(userCards[i])
+                    }
+                }
+            
+                updateTradeSend(heroes)
+            })
         }
-    }
-
-    updateTradeSend(heroes)
+    
+        else {
+            result.json().then(res => {
+                dangerAlert("alertModal", res)
+                return
+            })
+        }
+    })
 }
 
 /* Receives the info of the searched hero to send and displays it */
@@ -230,23 +242,34 @@ async function selectSendHero(id, thumbnail) {
 async function addTrade() {
     username = localStorage.getItem("username")
     name = document.getElementById("inputName").value
+    userCards = []
 
-    console.log(name)
-
-    userCards = await fetch(`/cards/${username}`, {
+    await fetch(`/cards/${username}`, {
         method: "GET",
         headers: {
             "Content-type": "application/json",
             'Accept': 'application/json',
         }})
-        .then(result => result.json()).then(res => { return res })
-
+        .then(result => {
+            if(result.ok) {
+                result.json().then(res => {
+                    userCards = res
+                })
+            }
+        
+            else {
+                result.json().then(res => {
+                    dangerAlert("alertModal", res)
+                    return
+                })
+            }
+        })
     
     /* Verifies that the requested card is not present in the user cards */
     for(i = 0; i < userCards.length; i++) {
         for(j = 0; j < heroReceive.length; j ++) {
             if(userCards[i].id == heroReceive[j].id) {
-                alert("Carta richiesta già presente nell'album")
+                dangerAlert("alertModal", "You already possess that card")
                 document.getElementById("savedRecButtons").innerHTML = ``
                 heroReceive = []
                 return
@@ -259,94 +282,164 @@ async function addTrade() {
         for(i = 0; i <= heroSend.length-1; i++) {
             for(j = i+1; j < heroSend.length; j++) {
                 if(heroSend[i].id == heroSend[j].id) {
-                alert("Le carte da mandare sono uguali")
-                document.getElementById("savedSendButtons").innerHTML = ``
-                heroSend = []
-                return
+                    dangerAlert("alertModal", "Send and Receive cards are the same")
+                    document.getElementById("savedSendButtons").innerHTML = ``
+                    heroSend = []
+                    return
                 }
             }
         }
     }
 
     /* Inserts the trade in the db */
-    await fetch(`/trade/${username}`, {
+    await fetch(`/trade`, {
         method: "POST",
         headers: {
             "Content-type": "application/json",
             'Accept': 'application/json',
         },
         body: JSON.stringify({  "name": name,
+                                "username": username,
                                 "heroSend": heroSend,
                                 "heroReceive": heroReceive })
     })
-    .then(result => result.json()).then(res => console.log(res))
-    .catch(error => console.log('Scambio non aggiunto correttamente', error));  
+    .then(result => {
+        if(result.ok) {
+            result.json().then(res => {
+                successAlert("alertModal", res)
+            })
+        }
     
+        else {
+            result.json().then(res => {
+                dangerAlert("alertModal", res)
+                return
+            })
+        }
+    })
+
     /* Updates the value of inTrade of the user cards */
     for(i = 0; i < heroSend.length; i++) {
-        await fetch(`/card/${heroSend[i].id}`, {
+        await fetch(`/card/${username}`, {
             method: "PUT",
             headers: {
                 "Content-type": "application/json",
                 'Accept': 'application/json',
             },
-            body: JSON.stringify({  "username": username })
+            body: JSON.stringify({ "id": heroSend[i].id })
         })
-        .then(result => result.json()).then(res => console.log(res))
-        .catch(error => console.log('Aggiornamento carte inTrade non andato', error));  
+        .then(result => {
+            if(result.ok) {
+                result.json().then(res => {
+                    setTimeout(function(){
+                        clearModal();
+                        location.reload();
+                    }, 3000);
+                })
+            }
+        
+            else {
+                result.json().then(res => {
+                    dangerAlert("alertModal", res)
+                    return
+                })
+            }
+        })
     }
-
-    clearModal()
-
-    location.reload()
 }
 
 function getTradeId(id) {
-    localStorage.setItem("tradeId", id)  
+    localStorage.setItem("tradeId", id);  
     window.location.href = "/trade";  
 }
 
 /* It changes inTrade values and then deletes the trade */
 async function deleteTrade(id) {
     username = localStorage.getItem("username")
+    trade = {}
 
     /* gets all the info of the trade */
-    trade = await fetch(`/trade/${id}`, {
+    await fetch(`/trade/${id}`, {
         method: "GET",
         headers: {
             "Content-type": "application/json",
             'Accept': 'application/json',
         }
     })
-    .then(result => result.json()).then(res => {return res})
-    .catch(error => console.log('Aggiornamento carte inTrade non andato', error));  
+    .then(result => {
+        if(result.ok) {
+            result.json().then(res => {
+                trade = res
+            })
+        }
+    
+        else {
+            result.json().then(res => {
+                dangerAlert("alert", res)
+                return
+            })
+        }
+    })
 
-    /* Updates to false the value inTrade of all the cards to send */
-    for(i = 0; i < trade.send.length; i++) {
-        await fetch(`/card/${trade.send[i].id}`, {
-            method: "PUT",
+    setTimeout(async function(){
+        console.log(trade)
+
+        /* Updates to false the value inTrade of all the cards to send */
+        for(i = 0; i < trade.send.length; i++) {
+            console.log(trade.send[i].name)
+            await fetch(`/card/${username}`, {
+                method: "PUT",
+                headers: {
+                    "Content-type": "application/json",
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ "id": trade.send[i].id })
+            })
+            .then(result => {
+                if(result.ok) {
+                    result.json().then(res => {
+                        successAlert("alert", res)
+                    })
+                }
+            
+                else {
+                    result.json().then(res => {
+                        dangerAlert("alert", res)
+                        return
+                    })
+                }
+            })
+        }
+    }, 2000);
+
+    setTimeout(async function(){
+        /* Deletes the trade */
+        await fetch(`/trade/${id}`, {
+            method: "DELETE",
             headers: {
                 "Content-type": "application/json",
                 'Accept': 'application/json',
             },
-            body: JSON.stringify({  "username": username })
         })
-        .then(result => result.json()).then(res => console.log(res))
-        .catch(error => console.log('Aggiornamento carte inTrade non andato', error));  
-    }
-
-    /* Deletes the trade */
-    await fetch(`/trade/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Content-type": "application/json",
-            'Accept': 'application/json',
-        },
-    })
-        .then(result => result.json()).then(res => console.log(res))
-        .catch(error => console.log('Scambio non eliminato correttamente', error));  
-
-    location.reload()
+        .then(result => {
+            if(result.ok) {
+                result.json().then(res => {
+                    successAlert("alert", res)
+                    
+                    setTimeout(function(){
+                        location.reload();
+                    }, 3000);
+                })
+            }
+        
+            else {
+                result.json().then(res => {
+                    dangerAlert("alert", res)
+                    return
+                })
+            }
+        })    
+    }, 4000);
 }
 
 /* When a user exits the modal everything is cancelled */

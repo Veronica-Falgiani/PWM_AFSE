@@ -214,7 +214,7 @@ app.get("/trade/:id", (req,res) => {
 
 /* ---- CREATE TRADES ---- */
 /* Inside: TRADES.JS */
-app.post("/trade/:username", (req,res) => {
+app.post("/trade", (req,res) => {
     createTrade(req,res)
 })
 

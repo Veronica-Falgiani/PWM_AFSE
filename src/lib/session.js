@@ -228,10 +228,10 @@ const loginUser = async (req, res) => {
 /* POST - /logout */
 /* Logs out the user by deleting the session cookie */
 const logout = (req,res) => {
-    if(!logoutSession(req.cookies)) {
+    /*if(!logoutSession(req.cookies)) {
         res.status(400).json("Error logging out")
         return
-    }
+    }*/
     res.status(200).json("Logged out successfully")
 }
 
