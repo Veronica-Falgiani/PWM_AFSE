@@ -9,6 +9,7 @@
     src: url("../../public/fonts/Marvel-text-font/Marvel-Regular.ttf");
 }
 
+/* Define fixed sizes for containers */
 #login-form {
     width: 500px;
 }
@@ -21,42 +22,13 @@
     min-height: 100vh;
 }
 
-.mx-auto {
-    background-color: #212529;
-}
-
-body {
-    background-image:    url('../../public/images/marvelbg.jpg');
-    background-size:     cover;                      
-    background-repeat:   no-repeat;
-    background-position: center center;  
-    font-family: "MarvelText";  
-    font-weight: bold;
-    font-size: larger;      
-}
-
 #mainContainer {
     padding: 70px 0;
-}
-
-.btn, .navbar-nav, h5 {
-    font-family: "MarvelText";  
-    font-size: large; 
-    font-weight: bold;  
-}
-
-/* Background color of panels */
-.border, .navbar, .modal-content, .dropdown-menu {
-    background: rgb(20, 20, 20);
 }
 
 #card {
     text-align: center;
     width: 150px;
-}
-
-#unobtained {
-    filter: grayscale(100%);
 }
 
 #creditButton {
@@ -67,13 +39,49 @@ body {
     width: 140px;
 }
 
-.btn-danger {
-    background-color: #F0131E;
-    color:#212529
+#indexList {
+    margin-left: 20px
 }
 
 #trade {
     width: 600px
+}
+
+/* Sets image of unobtained card to gryscale */
+#unobtained {
+    filter: grayscale(100%);
+}
+
+/* Background color of various items */
+.border, .navbar, .modal-content, .dropdown-menu {
+    background: rgb(20, 20, 20);
+}
+
+.mx-auto {
+    background-color: #212529;
+}
+
+/* Define background and font of entire page */
+body {
+    background-image:    url('../../public/images/marvelbg.jpg');
+    background-size:     cover;                      
+    background-repeat:   no-repeat;
+    background-position: center center;  
+    font-family: "MarvelText";  
+    font-weight: bold;
+    font-size: larger;      
+}
+
+/* Define fonts and colors */
+.btn, .navbar-nav, h5 {
+    font-family: "MarvelText";  
+    font-size: large; 
+    font-weight: bold;  
+}
+
+.btn-danger {
+    background-color: #F0131E;
+    color:#212529
 }
 
 .navbar-brand {
@@ -92,6 +100,3 @@ h1, h3 {
     color: #F0131E;
 }
 
-#indexList {
-    margin-left: 20px
-}
