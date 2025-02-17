@@ -74,6 +74,7 @@ async function buyCards() {
         if(result.ok) {
             result.json().then(res => {
                 localStorage.setItem("credits", res.credits)
+                document.getElementById("credits").innerHTML = `Total credits: ${res.credits}`
             })
         }
     
@@ -118,5 +119,5 @@ function writeCards(heroes) {
         `
     }
 
-    document.getElementById("crediti").innerHTML = `Total credits: ${localStorage.getItem("credits")}`
+    document.getElementById("credits").innerHTML = `Total credits: ${localStorage.getItem("credits")}`
 }

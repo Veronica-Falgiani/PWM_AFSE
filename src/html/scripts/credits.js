@@ -24,7 +24,7 @@ async function addCredits() {
             result.json().then(res => {
                 localStorage.removeItem("euros")
                 crediti = localStorage.setItem("credits", res)
-                document.getElementById("crediti").innerHTML = `Total credits: ${res}`
+                document.getElementById("credits").innerHTML = `Total credits: ${res}`
             })
         }
     

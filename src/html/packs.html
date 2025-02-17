@@ -15,7 +15,7 @@
                 <h3> BUY PACKS </h3>
                 <hr>
                 <div id="alert"></div>
-                <h5 class="p-3" style="text-align:center" id="crediti"> Total credits: </h5>              
+                <h5 class="p-3" style="text-align:center" id="credits"> Total credits: </h5>              
                 <div class="row p-3">
                     <div class="col">
                         <button class="btn btn-danger" onclick="setCards(5, 1)" data-bs-toggle="modal" data-bs-target="#cardModal" id="packsButton">
@@ -57,7 +57,7 @@
         <script src="src/html/scripts/packs.js"></script>
         <script>
             window.addEventListener("load", (event) => {
-                document.getElementById("crediti").innerHTML = `Total credits: ${localStorage.getItem("credits")}`
+                document.getElementById("credits").innerHTML = `Total credits: ${localStorage.getItem("credits")}`
             })
         </script>
     </body>

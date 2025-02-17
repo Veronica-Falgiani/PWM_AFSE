@@ -53,12 +53,12 @@
 }
 
 /* Background color of various items */
-.border, .navbar, .modal-content, .dropdown-menu {
-    background: rgb(20, 20, 20);
-}
-
 .mx-auto {
     background-color: #212529;
+}
+
+.border, .navbar, .modal-content, .dropdown-menu {
+    background: rgb(20, 20, 20);
 }
 
 /* Define background and font of entire page */
