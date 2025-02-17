@@ -14,9 +14,14 @@
         - [CSS](#css)
         - [JavaScript](#javascript)
     - [Back-end](#back-end)
-        - [NodeJS](#nodejs)
+        - [NodeJS + Express](#nodejs--express)
         - [MongoDB](#mongodb)
+    - [Moduli aggiuntivi](#moduli-aggiuntivi)
+        - [.env](#env)
+        - [uuid (Session Tokens)](#uuid-session-tokens)
+        - [Swagger](#swagger)
 - [Funzionamento](#funzionamento)
+    - [Homepage](#homepage)
     - [Registrazione](#registrazione)
     - [Login](#login)
     - [Modifica profilo](#modifica-profilo)
@@ -42,8 +47,6 @@ Il progetto è stato scritto interamente in lingua inglese come esercitazione pe
 
 ## Implementazione
 
-JSON come standard
-
 Per questo progetto ho usato diverse tecnologie:
 - **Front-end**
     - HTML
@@ -52,6 +55,9 @@ Per questo progetto ho usato diverse tecnologie:
 - **Back-end**
     - NodeJS + Express
     - MongoDB
+
+Per semplicità ho utilizzato lo standard **JSON** per gestire le 
+richieste e le risposte tra client e server.
 
 ### FRONT-END
 
@@ -103,13 +109,16 @@ I file javascript sono all'interno di `/src/html/scripts` e sono:
 
 ### BACK-END
 
-#### NODEJS
+#### NODEJS + EXPRESS
 
-Moduli utilizzati:
-- Express
-- .env
-- uuid (Cookie session)
-- swagger
+Le funzionalità di NodeJS+Express sono contenute nei seguenti file:
+- `app.js`: è l'entrypoint dell'applicazione. Contiene le funzioni per avviare il server e definire gli endpoint.
+- `src/lib/cards.js`: contiene le funzioni principali per gli endpoint che lavorano sulle carte.
+- `src/lib/credits.js`: contiene le funzioni per gli endpoint che lavorano sui crediti.
+- `src/lib/marvel.js`: contiene la funzione che permette di dialogare con le API Marvel server-side.  
+- `src/lib/session.js`: contiene le funzioni per gestire i token di sessione degli utenti (salvati come cookie) e le funzioni per gli endpoint di login, register, logout.
+- `src/lib/trades.js`: contiene le funzioni per gli endpoint che lavorano sugli scambi.
+- `src/lib/user.js`: contiene le funzioni per gli endpoint che lavorano sugli utenti.
 
 #### MONGODB
 
@@ -243,33 +252,140 @@ Campi:
     - `name`: nome dell'eroe da inviare
     - `thumbnail`: immagine dell'eroe da inviare
 
+## Moduli aggiuntivi
+
+### .ENV
+
+Questo modulo viene utilizzato per salvare credenziali, chiavi e dati sensibili in locale, senza esporli direttamente sul server. Per fare ciò ho salvato nella directory principale un file `.env` con il seguente contenuto (le informazioni originale sono state omesse per sicurezza):
+
+```sh
+# Server setup
+HOST = "localhost"
+PORT = "3000"
+
+# Mongodb connection string
+MONGODB_URI = "your mongodb connection string"
+
+# Marvel API keys
+PUBLIC_MARVEL_KEY = "your public api key"
+PRIVATE_MARVEL_KEY = "your private api key"
+```
+
+### UUID (SESSION TOKENS)
+
+Per gestire le sessioni degli utenti sul sito e evitare che si acceda a pagine senza previa autorizzazione, ho utilizzato il modulo UUID. Questo mi permette di creare token da passare come cookie al browser dell'utente per fornire autenticazione.
+
+Le funzioni principali  e le classi sono contenute in `/src/lib/session.js`.
+
+Ho creato una classe che contiene un costruttore con username e data di scadenza del token sessione e una funzione che verifica se il token è scaduto:
+```js
+class Session {
+    constructor(username, expiresAt) {
+        this.username = username
+        this.expiresAt = expiresAt
+    }
+
+    isExpired() {
+        this.expiresAt < (new Date())
+    }
+}
+
+/* We save locally all the session tokens */
+const sessions = {}
+```
+
+Successivamente ho scritto delle funzioni che gestiscono i vari passaggi di autenticazione e si possono riassumere in:
+- `generateSession(username)`: genero un token che dura 30 minuti, creo una sessione con l'username e la data di scadenza e poi salvo l'informazione dentro `sessions`. Alla fine ritorno il token di sessione e il server lo invierà all'utente sotto forma di cookie.
+- `validateSession(cookies)`: riceve il cookie dell'utente che contiene la sessioen e verifica che sia valida e non scaduta confrontandola con quella salvata localmente su `sessions`. Se il token è valido ritorna true, altrimenti false.
+- `refreshSession(cookies)`: ogni volta che si carica una pagina il cookie, dopo essere verificato, viene rigenerato e inviato nuovamente all'utente. Questo permette di allungare la scadenza del token, senza far perdere la sessione all'utente.
+- `logoutSession(cookies)`: quando l'utente vuole fare il logout viene ricevuto il cookie di sessione per poter eliminare il token salvato localmente in `sessions`, in modo tale che non possa più essere utilizzato. Ritorna true se il token è stato eliminato, false se il token era errato.
+
+### SWAGGER
+
+
+
 ## Funzionamento
+
+### HOMEPAGE
+
+![alt text](img/homepage.png)
 
 ### REGISTRAZIONE
 
+![alt text](img/register.png)
+
 ### LOGIN
 
-### MODIFICA PROFILO
+![alt text](img/login.png)
+
+### PROFILO
+
+![alt text](img/profilo.png)
+
+#### MODIFICA PROFILO
+
+![alt text](img/modifyprofile1.png)
+![alt text](img/modifyprofile2.png)
+
+#### ELIMINA PROFILO
+
+![alt text](img/deleteprofile.png)
+
+Si verrà riportati alla homepage
 
 ### ACQUISTO CREDITI
 
+![alt text](img/credits1.png)
+![alt text](img/credits2.png)
+![alt text](img/credits3.png)
+
 ### ACQUISTO PACCHETTI
+
+![alt text](img/packs1.png)
+![alt text](img/packs2.png)
+![alt text](img/packs3.png)
 
 ### ALBUM
 
+Tutti gli eroi:
+![alt text](img/album1.png)
+
+Eroi collezionati:
+![alt text](img/album2.png)
+
 #### VISUALIZZAZIONE CARTE
 
+Carte non ottenute:
+![alt text](img/card1.png)
+
+Carte ottenute:
+![alt text](img/card2.png)
+
 #### VENDITA CARTE
+
+![alt text](img/card3.png)
+![alt text](img/card4.png)
 
 ### SCAMBI
 
 #### VISUALIZZAZIONE SCAMBI
 
+![alt text](img/trades1.png)
+
 #### CREAZIONE SCAMBI
+
+![alt text](img/trades2.png)
+![alt text](img/trades3.png)
+![alt text](img/trades4.png)
 
 #### ELIMINAZIONE SCAMBIO
 
+![alt text](img/trades5.png)
+
 #### ACCETTA SCAMBIO
+
+![alt text](img/trade1.png)
+![alt text](img/trade2.png)
 
 ## Note extra
 
