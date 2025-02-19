@@ -129,7 +129,7 @@ async function updateTradeRec(rec) {
 
     for(i = 0; i < rec.length; i++) {
         id = rec[i].id 
-        name = rec[i].name
+        name = rec[i].name.replace(/'/g, " ")
         thumbnail = `${rec[i].thumbnail.path}.${rec[i].thumbnail.extension}`
     
         heroRecButtons.innerHTML += 
@@ -206,12 +206,12 @@ async function updateTradeSend(send) {
 
     for(i = 0; i < send.length; i++) {
         id = send[i].id 
-        heroName = send[i].name
+        heroName = send[i].name.replace(/'/g, " ")
         thumbnail = `${send[i].thumbnail}`
 
         heroSendButtons.innerHTML += 
         `
-        <button class="col p-3 m-3 border rounded" onclick='selectSendHero(${id}, "${thumbnail}")' id="card">
+        <button class="col p-3 m-3 border rounded" onclick='selectSendHero(${id}, "${thumbnail}", "${heroName}")' id="card">
             <img class="mb-3" src="${thumbnail}" width="100px" height="100px">  
             <p>${heroName}</p>
         </button>
@@ -220,7 +220,7 @@ async function updateTradeSend(send) {
 }
 
 /* Shows the selectable cards to send based on the string given */
-async function selectSendHero(id, thumbnail) {
+async function selectSendHero(id, thumbnail, heroName) {
     document.getElementById("savedSendButtons").innerHTML += 
     `
     <div class="col p-3 m-3 border rounded" id="card">
